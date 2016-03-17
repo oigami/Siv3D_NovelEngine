@@ -88,6 +88,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="kag_executor\kag_executor.cpp" />
+    <ClCompile Include="kag_executor\message_layer.cpp" />
+    <ClCompile Include="kag_executor\message_manager.cpp" />
     <ClCompile Include="kag_parser\kag_parser.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="kag_tokenizer\tokenizer.cpp" />
@@ -194,6 +197,9 @@
     <Font Include="Example\YomogiFont.ttf" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="kag_executor\kag_executor.h" />
+    <ClInclude Include="kag_executor\message_layer.h" />
+    <ClInclude Include="kag_executor\message_manager.h" />
     <ClInclude Include="kag_parser\kag_parser.h" />
     <ClInclude Include="kag_tokenizer\tokenizer.h" />
   </ItemGroup>
