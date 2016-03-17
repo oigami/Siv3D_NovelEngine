@@ -168,7 +168,8 @@ namespace kag {
         }
       } while (str[e_pos - 1] == L'`'); // 文字列がエスケープされている場合は再度検索する
 
-      next_token_ = Token({ str_, s_pos, ++e_pos }, KAGTokenType::SymbolEqual);
+      next_token_ = Token({ str_, s_pos + 1, e_pos }, KAGTokenType::Identifier);
+      ++e_pos;
       break;
     }
     }

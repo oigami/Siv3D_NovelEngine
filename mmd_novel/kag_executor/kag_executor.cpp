@@ -8,6 +8,7 @@ namespace kag {
     tag_func_[SnapShotSpan(L"er")] = &Executor::ERTag;
     tag_func_[SnapShotSpan(L"cm")] = &Executor::CMTag;
     tag_func_[SnapShotSpan(L"ct")] = &Executor::CTTag;
+    tag_func_[SnapShotSpan(L"font")] = &Executor::FontTTag;
     Clear();
   }
   void Executor::Clear() {
@@ -79,50 +80,83 @@ namespace kag {
     is_wait_click_ = true;
   }
 
-  enum class FindAttributeResult {
-    NotName,
-    TypeIsIncorrect,
-    Ok,
-  };
-  template<class T> std::pair<FindAttributeResult, T> FindAttributeValue(const Parser::CommandToken::Arguments& args,
-    const SnapShotSpan& attribute_name);
 
-  template<>std::pair<FindAttributeResult, int>
-    FindAttributeValue<int>(
-      const Parser::CommandToken::Arguments& args,
-      const SnapShotSpan& attribute_name) {
+  void Executor::DelayTag(const Parser::CommandToken & token) {
+    auto& args = token.arguments();
+    auto res = args.AttributeValTo<SnapShotSpan>(L"speed");
+    if (res.result == FindAttributeResult::Ok) {
+      auto i = ToCast<int>(*res.val);
+      message_manager_.SetDelayTime(*i);
+    } else {
+      ShowErrorMsg(L"[delay] にはspeed属性が必須");
+    }
+  }
 
-      auto attr = args.find(attribute_name);
-      if (attr == args.end())
-        return{ FindAttributeResult::NotName, 0 };
+  void Executor::ERTag(const Parser::CommandToken & token) {
+    message_manager_.Clear();
+  }
 
-      auto i = attr->second.ToInt();
-      if (!i.has_value())
-        return{ FindAttributeResult::TypeIsIncorrect,0 };
-      return{ FindAttributeResult::Ok,*i };
+  void Executor::CMTag(const Parser::CommandToken & token) {
+    message_manager_.AllClear();
+  }
+
+  void Executor::CTTag(const Parser::CommandToken & token) {
+    CMTag(token);
+    message_manager_.SetCurrent(0, LayerPage::Fore);
+  }
+
+  void Executor::FontTTag(const Parser::CommandToken & token) {
+    FontProperty prop;
+
+    auto& args = token.arguments();
+    auto& current = message_manager_.Current();
+    auto& now_font = current.NowFont();
+    bool is_italic;
+    bool is_bold;
+    switch (now_font.font_.style()) {
+    case s3d::FontStyle::BitmapBoldItalic:
+    case s3d::FontStyle::BoldItalic:
+      is_italic = true;
+    case s3d::FontStyle::BitmapBold:
+    case s3d::FontStyle::Bold:
+      is_bold = true;
+      break;
+    case s3d::FontStyle::BitmapItalic:
+    case s3d::FontStyle::Italic:
+      is_italic = true;
+    default:
+      is_italic = false;
+      is_bold = false;
+      break;
     }
 
-    void Executor::DelayTag(const Parser::CommandToken & token) {
-      auto& arguments = token.arguments();
-      auto res = FindAttributeValue<int>(arguments, L"speed");
-      if (res.first == FindAttributeResult::Ok) {
-        message_manager_.SetDelayTime(res.second);
-      } else {
-        ShowErrorMsg(L"[delay]のエラー");
-      }
+    args.AttributeValTo<SnapShotSpan>(L"face", [&](const SnapShotSpan& val) {
+      prop.name = val.ToStr();
+    }, [&](auto err) {
+      prop.name = now_font.font_.name();
+    });
+
+    args.AttributeValTo<SnapShotSpan>(L"size", [&](const SnapShotSpan& val) {
+      prop.size = *val.ToInt();
+    });
+
+    args.AttributeValTo<SnapShotSpan>(L"italic", [&](const SnapShotSpan& val) {
+      is_italic = val == L"true";
+    });
+
+    args.AttributeValTo<SnapShotSpan>(L"bold", [&](const SnapShotSpan& val) {
+      is_bold = val == L"true";
+    });
+    int style_cnt = (is_italic == true) + (is_bold == true) * 2;
+    switch (style_cnt) {
+    case 0: prop.style = FontStyle::Regular;    break;
+    case 1: prop.style = FontStyle::Italic;     break;
+    case 2: prop.style = FontStyle::Bold;       break;
+    case 3: prop.style = FontStyle::BoldItalic; break;
     }
 
-    void Executor::ERTag(const Parser::CommandToken & token) {
-      message_manager_.Clear();
-    }
+    message_manager_.Current().SetFont({ Font(prop),Palette::White });
 
-    void Executor::CMTag(const Parser::CommandToken & token) {
-      message_manager_.AllClear();
-    }
-
-    void Executor::CTTag(const Parser::CommandToken & token) {
-      CMTag(token);
-      message_manager_.SetCurrent(0, LayerPage::Fore);
-    }
+  }
 
 }

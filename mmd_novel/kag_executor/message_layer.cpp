@@ -117,6 +117,7 @@ namespace kag {
 
     void MessageTextLine::AppendNewFont(const MessageTextFont & font) {
       text_.emplace_back(text_.back().GetWidth(), font);
+      max_height_ = std::max(max_height_, font.Height());
     }
   }
 }

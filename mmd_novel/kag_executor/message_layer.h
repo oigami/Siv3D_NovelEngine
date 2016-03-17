@@ -152,6 +152,13 @@ namespace kag {
 
     void Draw() const;
 
+    const message::MessageTextFont& NowFont() const { return now_font_; }
+
+    void SetFont(const message::MessageTextFont& font) {
+      text_line_.back().AppendNewFont(font);
+      now_font_ = font;
+    }
+
   private:
     void CheckByReturn();
 

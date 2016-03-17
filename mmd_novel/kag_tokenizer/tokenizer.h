@@ -34,6 +34,10 @@ namespace kag {
     SnapShotSpan(const Char *str, int start, int end)
       :c_(str), start_(start), end_(end) {
     }
+
+    SnapShotSpan(const String& str) :c_(str.data()), start_(0), end_(str.length) {
+
+    }
     template<size_t n> SnapShotSpan(const Char(&str)[n])
       : c_(str), start_(0), end_(n - 1) {
     }
@@ -68,6 +72,10 @@ namespace kag {
       return StrCmp(c_, r.c_, Length()) < 0;
     }
 
+    bool operator==(const SnapShotSpan& r) const {
+      return TextEqual(r);
+    }
+
     Char operator[](std::uint32_t index) {
       assert(Length() > index);
       return c_[index];
@@ -94,6 +102,21 @@ namespace kag {
     }
     return os;
   }
+
+  template<class T> Optional<T> ToCast(const SnapShotSpan& span);
+
+  template<> inline Optional<int> ToCast<int>(const SnapShotSpan & span) {
+    return span.ToInt();
+  }
+
+  template<> inline Optional<String> ToCast<String>(const SnapShotSpan & span) {
+    return span.ToStr();
+  }
+
+  template<> inline Optional<SnapShotSpan> ToCast<SnapShotSpan>(const SnapShotSpan & span) {
+    return span;
+  }
+
   class Tokenizer {
   public:
     enum class ParseType {
@@ -163,4 +186,5 @@ namespace kag {
     /// </summary>
     int now_pos_;
   };
+
 }

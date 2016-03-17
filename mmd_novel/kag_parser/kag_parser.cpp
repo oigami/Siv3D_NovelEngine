@@ -27,7 +27,7 @@ namespace kag {
   Parser::CommandToken Parser::readCommand() {
     kag::Tokenizer::Token token = tokenizer_.Read();
     SnapShotSpan name;
-    CommandToken::Arguments args;
+    Arguments args;
     if (token != KAGTokenType::SymbolOpenCommand)
       ShowErrorMsg(token);
 

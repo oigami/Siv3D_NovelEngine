@@ -1,54 +1,9 @@
-こんにちは。
-あいうえおa[r]aaaaaaaaaaaaaaa
-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-[delay speed=100]
-f[r][l]
-fteateaw[r][p]
-1a[r]
-a[r]
-2a[r]
-3[r]
-4[r]
-5[r]
-6[r]
-7[r]
-8[r]
-9[r]
-10[r]
-11[r]
-12[r]
-13[r]
-14[r]
-15[r]
-16[r]
-f
-f
-f
-
-ff
-f
-f
-f
-f
-
-ff
-f
-f
-f
-f
-
-ff
+@font size=50
+文[l]
+@font size=25
+字のサイズを変更します。
+[r]
+@font face="ＭＳ ゴシック"
+フォントを "ＭＳ ゴシック" に設定しました。[r]
+@font face=HG行書体
+フォントを "HG行書体" に設定しました。
