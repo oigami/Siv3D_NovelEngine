@@ -5,14 +5,16 @@ namespace kag {
   class Parser {
   public:
     enum class Type {
+      EndOfStream,
       Command,
       Text,
     };
+
     using TextToken = SnapShotSpan;
     class CommandToken {
     public:
 
-      using Arguments = std::vector<std::pair<SnapShotSpan, SnapShotSpan>>;
+      using Arguments = std::map<SnapShotSpan, SnapShotSpan>;
       CommandToken(const SnapShotSpan& n, Arguments&& args)
         :name_(n), arguments_(std::move(args)) {
       }
@@ -28,10 +30,16 @@ namespace kag {
 
     explicit Parser(const FilePath& path);
 
+    Parser();
+
     Type nextType();
 
     CommandToken readCommand();
     TextToken readText();
+
+    void ShowErrorMsg(const Tokenizer::Token& token) const;
+
+
   private:
 
     kag::Tokenizer tokenizer_;

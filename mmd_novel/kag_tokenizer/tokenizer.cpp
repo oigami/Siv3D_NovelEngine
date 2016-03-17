@@ -5,24 +5,38 @@ namespace kag {
   Tokenizer::Tokenizer() {
   }
 
-  void Tokenizer::Initialize(const String& str) {
-    str_ = std::make_shared<String>(str);
+  Tokenizer::Tokenizer(const String& str) {
+    str_ = std::make_shared<String>();
+    str_->reserve(str.length + 1);
+    *str_ += str;
     *str_ += L'\n';
     Reset();
   }
 
-  void Tokenizer::Initialize(String &&str) {
-    str.reserve(str.length + 2);
-    str.insert(str.begin(), L'\n');
-    str += L'\n';
+  Tokenizer::Tokenizer(String &&str) {
+    if (!str.endsWith(L'\n')) {
+      str.reserve(str.length + 1);
+      str += L'\n';
+    }
     str_ = std::make_shared<String>(std::move(str));
+    Reset();
+  }
+  Tokenizer::Tokenizer(const std::shared_ptr<String> &str_p) {
+    assert(str_p.get());
+    auto& str = *str_p;
+    if (!str.endsWith(L'\n')) {
+      str.reserve(str.length + 1);
+      str += L'\n';
+    }
+    str_ = str_p;
     Reset();
   }
 
   void Tokenizer::Reset() {
-    now_pos_ = 0;
+    now_pos_ = -1;
     now_tokenize_ = ParseType::Normal;
-    Read();
+    ReadNormal(KAGTokenType::SymbolNewLine);
+    if (next_token_ == KAGTokenType::SymbolNewLine) Read();
   }
 
   bool IsSpace(char c) {
@@ -81,7 +95,7 @@ namespace kag {
       ReadCommand();
       break;
     case ParseType::Normal:
-      ReadNormal();
+      ReadNormal(IsNormalSpecialSymbol(*str_, now_pos_));
       break;
     case ParseType::Label:
       ReadLabel();
@@ -184,7 +198,7 @@ namespace kag {
     now_tokenize_ = ParseType::Normal;
   }
 
-  void Tokenizer::ReadNormal() {
+  void Tokenizer::ReadNormal(KAGTokenType type) {
     const auto &str = *str_;
     int size = static_cast<int>(str_->length);
 
@@ -192,7 +206,6 @@ namespace kag {
     int s_pos = now_pos_; // start position
     int e_pos = s_pos;    // end position
 
-    auto type = IsNormalSpecialSymbol(str, s_pos);
     if (type == KAGTokenType::SymbolNewLine) {
       do {
         e_pos++;

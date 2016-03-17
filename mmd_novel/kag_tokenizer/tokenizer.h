@@ -30,9 +30,15 @@ namespace kag {
     SnapShotSpan(const std::shared_ptr<string> &str, int s, int e)
       :str_(str), start_(s), end_(e), c_(str->data() + s) {
     }
+
     SnapShotSpan(const Char *str, int start, int end)
       :c_(str), start_(start), end_(end) {
     }
+    template<size_t n> SnapShotSpan(const Char(&str)[n])
+      : c_(str), start_(0), end_(n - 1) {
+    }
+
+
 
     /// <summary>
     /// 文字列を返す 末尾に\0がないので注意（lengthで長さを判定）
@@ -40,21 +46,41 @@ namespace kag {
     /// <returns></returns>
     const Char *Str() const { return c_; }
     string ToStr() const { return string(c_, Length()); }
+    std::string ToNarrow() const { return Narrow(StringView(c_, Length())); }
+
+    Optional<int> ToInt() const {
+      Char *e;
+      int ret = wcstol(c_, &e, 10);
+      if (e != c_ + Length())
+        return none;
+      return ret;
+    }
+
     int Length() const { return end_ - start_; }
     int End() const { return end_; }
     int Start() const { return start_; }
 
     bool TextEqual(const SnapShotSpan& span) const {
       if (span.Length() != Length()) return false;
-      return StrCmp(c_, span.c_, Length());
+      return StrCmp(c_, span.c_, Length()) == 0;
+    }
+    bool operator<(const SnapShotSpan& r) const {
+      return StrCmp(c_, r.c_, Length()) < 0;
+    }
+
+    Char operator[](std::uint32_t index) {
+      assert(Length() > index);
+      return c_[index];
     }
 
   private:
-    static bool StrCmp(const char* l, const char* r, size_t size) {
-      return ::strncmp(l, r, size) == 0;
+
+    static int StrCmp(const char* l, const char* r, size_t size) {
+      return ::strncmp(l, r, size);
     }
-    static bool StrCmp(const wchar_t* l, const wchar_t*  r, size_t size) {
-      return ::wcsncmp(l, r, size) == 0;
+
+    static int StrCmp(const wchar_t* l, const wchar_t*  r, size_t size) {
+      return ::wcsncmp(l, r, size);
     }
     const Char *c_;
     int start_;
@@ -103,9 +129,11 @@ namespace kag {
 
     Tokenizer();
 
-    void Initialize(const String &str);
+    explicit Tokenizer(const String &str);
 
-    void Initialize(String &&str);
+    explicit Tokenizer(String &&str);
+
+    explicit Tokenizer(const std::shared_ptr<String> &not_null_str);
 
     Token Read();
 
@@ -120,9 +148,7 @@ namespace kag {
 
     void ReadLabelHeading();
 
-    void ReadNormal();
-
-
+    void ReadNormal(KAGTokenType type);
 
     KAGTokenType IsCommandSpecialSymbol(int pos);
 
