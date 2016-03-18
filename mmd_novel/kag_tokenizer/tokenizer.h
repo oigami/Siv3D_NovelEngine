@@ -76,7 +76,7 @@ namespace kag {
       return TextEqual(r);
     }
 
-    Char operator[](std::uint32_t index) {
+    const Char& operator[](std::uint32_t index) const {
       assert(Length() > index);
       return c_[index];
     }

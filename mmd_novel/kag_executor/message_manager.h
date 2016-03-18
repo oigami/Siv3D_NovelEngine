@@ -85,11 +85,18 @@ namespace kag {
     /// <param name="delay_time"></param>
     void SetDelayTime(int delay_time);
 
+    MessageLayer& GetLayer(int index, int page) {
+      return message_layer_[index][page];
+    }
+
     /// <summary>
     /// カレントレイヤを返す
     /// </summary>
     /// <returns></returns>
-    MessageLayer& Current() { return message_layer_[current_layer_][current_page_]; }
+    MessageLayer& Current() { return GetLayer(current_layer_, current_page_); }
+
+    int CurrentLayerNum() const { return current_layer_; }
+    int CurrentPageNum() const { return current_page_; }
 
   private:
 

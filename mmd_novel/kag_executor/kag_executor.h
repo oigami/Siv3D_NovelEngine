@@ -45,5 +45,6 @@ namespace kag {
     void CMTag(const Parser::CommandToken& token);
     void CTTag(const Parser::CommandToken& token);
     void FontTTag(const Parser::CommandToken& token);
+    void PositionTTag(const Parser::CommandToken& token);
   };
 }

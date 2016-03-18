@@ -9,6 +9,7 @@ namespace kag {
     tag_func_[SnapShotSpan(L"cm")] = &Executor::CMTag;
     tag_func_[SnapShotSpan(L"ct")] = &Executor::CTTag;
     tag_func_[SnapShotSpan(L"font")] = &Executor::FontTTag;
+    tag_func_[SnapShotSpan(L"position")] = &Executor::PositionTTag;
     Clear();
   }
   void Executor::Clear() {
@@ -156,6 +157,61 @@ namespace kag {
     }
 
     message_manager_.Current().SetFont({ Font(prop),Palette::White });
+
+  }
+
+  void Executor::PositionTTag(const Parser::CommandToken & token) {
+    int index;
+    int page;
+
+    auto& args = token.arguments();
+    args.AttributeValTo<SnapShotSpan>(L"layer", [&](const SnapShotSpan& val) {
+      index = _wtoi(&val[7]);
+    }, [&](const auto&) {
+      index = message_manager_.CurrentLayerNum();
+    });
+
+    args.AttributeValTo<SnapShotSpan>(L"page", [&](const SnapShotSpan& val) {
+      page = val == L"back";
+    }, [&](const auto&) {
+      page = message_manager_.CurrentPageNum();
+    });
+
+    auto& target = message_manager_.GetLayer(index, page);
+
+    args.AttributeValTo<int>(L"left", [&](int val) {
+      target.SetPositionLeft(val);
+    });
+
+    args.AttributeValTo<int>(L"top", [&](int val) {
+      target.SetPositionTop(val);
+    });
+
+    args.AttributeValTo<int>(L"width", [&](int val) {
+      target.SetPositionWidth(val);
+    });
+
+    args.AttributeValTo<int>(L"height", [&](int val) {
+      target.SetPositionHeight(val);
+    });
+
+    args.AttributeValTo<int>(L"marginl", [&](int val) {
+      target.SetMarginLeft(val);
+    });
+
+    args.AttributeValTo<int>(L"margint", [&](int val) {
+      target.SetMarginTop(val);
+    });
+
+    args.AttributeValTo<int>(L"marginr", [&](int val) {
+      target.SetMarginRight(val);
+    });
+
+    args.AttributeValTo<int>(L"marginb", [&](int val) {
+      target.SetMarginBottom(val);
+    });
+
+    target.Clear();
 
   }
 
