@@ -3,7 +3,7 @@ namespace kag {
   MessageManager::MessageManager() {
     resize(2);
     delay_time_ = 30;
-    delay_pos = 0;
+    delay_index_ = 0;
     current_page_ = 0;
     current_layer_ = 0;
   }
@@ -25,22 +25,22 @@ namespace kag {
   }
 
   bool MessageManager::IsFlush() const {
-    return delay_text.Length() == delay_pos;
+    return delay_text.Length() == delay_index_;
   }
 
   void MessageManager::Flush() {
     auto& current = Current();
-    for (auto& i : step(delay_text.Length() - delay_pos)) {
-      current.Append(delay_text[i + delay_pos]);
+    for (auto& i : step(delay_text.Length() - delay_index_)) {
+      current.Append(delay_text[i + delay_index_]);
     }
-    delay_pos = delay_text.Length();
+    delay_index_ = delay_text.Length();
   }
 
   void MessageManager::Append(const SnapShotSpan & text) {
     assert(IsFlush());
     delay_text = text;
     timer_.restart();
-    delay_pos = 0;
+    delay_index_ = 0;
   }
 
   void MessageManager::AppendNewLine() {
@@ -49,17 +49,17 @@ namespace kag {
 
   void MessageManager::NextPage() {
     Current().NextPage();
-    timer_.set(MillisecondsF(delay_time_ * delay_pos));
+    timer_.set(MillisecondsF(delay_time_ * delay_index_));
   }
 
   bool MessageManager::Update() {
     auto& current = Current();
     if (current.IsLimitHeihgt()) return false;
     int ms = timer_.ms();
-    int loop = ms / delay_time_ - delay_pos;
-    loop = std::min(loop, delay_text.Length() - delay_pos);
+    int loop = ms / delay_time_ - delay_index_;
+    loop = std::min(loop, delay_text.Length() - delay_index_);
     for (int i = 0; i < loop; i++) {
-      current.Append(delay_text[delay_pos++]);
+      current.Append(delay_text[delay_index_++]);
     }
     return true;
   }

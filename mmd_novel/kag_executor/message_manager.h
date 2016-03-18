@@ -85,6 +85,15 @@ namespace kag {
     /// <param name="delay_time"></param>
     void SetDelayTime(int delay_time);
 
+    /// <summary>
+    /// メッセージレイヤを返す
+    /// </summary>
+    /// <param name="index">レイヤ番号</param>
+    /// <param name="page">
+    /// <para>0 : 表</para>
+    /// <para>1 : 裏</para>
+    /// </param>
+    /// <returns></returns>
     MessageLayer& GetLayer(int index, int page) {
       return message_layer_[index][page];
     }
@@ -95,7 +104,16 @@ namespace kag {
     /// <returns></returns>
     MessageLayer& Current() { return GetLayer(current_layer_, current_page_); }
 
+    /// <summary>
+    /// 現在のレイヤ番号を返す
+    /// </summary>
+    /// <returns></returns>
     int CurrentLayerNum() const { return current_layer_; }
+
+    /// <summary>
+    /// 現在の画面（裏 か 表）を返す
+    /// </summary>
+    /// <returns></returns>
     int CurrentPageNum() const { return current_page_; }
 
   private:
@@ -109,6 +127,9 @@ namespace kag {
     static constexpr int message_fore_layer = 0;
     static constexpr int message_back_layer = 1;
 
+    /// <summary>
+    /// 現在のレイヤ番号を表す
+    /// </summary>
     int current_layer_;
 
     /// <summary>
@@ -116,9 +137,13 @@ namespace kag {
     /// </summary>
     int current_page_;
 
+    /// <summary>遅延表示してるテキスト</summary>
     SnapShotSpan delay_text;
-    int delay_pos;
 
+    /// <summary>次に表示する遅延テキストの添字</summary>
+    int delay_index_;
+
+    /// <summary>一文字あたりに遅延する時間</summary>
     int delay_time_;
 
   };

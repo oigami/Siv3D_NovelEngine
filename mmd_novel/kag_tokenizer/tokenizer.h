@@ -35,7 +35,7 @@ namespace kag {
       :c_(str), start_(start), end_(end) {
     }
 
-    SnapShotSpan(const String& str) :c_(str.data()), start_(0), end_(str.length) {
+    SnapShotSpan(const String& str) :c_(str.data()), start_(0), end_(static_cast<int>(str.length)) {
 
     }
     template<size_t n> SnapShotSpan(const Char(&str)[n])
@@ -76,8 +76,8 @@ namespace kag {
       return TextEqual(r);
     }
 
-    const Char& operator[](std::uint32_t index) const {
-      assert(Length() > index);
+    const Char& operator[](std::int32_t index) const {
+      assert(0 <= index && index < Length());
       return c_[index];
     }
 

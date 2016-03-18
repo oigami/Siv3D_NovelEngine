@@ -93,11 +93,11 @@ namespace kag {
     }
   }
 
-  void Executor::ERTag(const Parser::CommandToken & token) {
+  void Executor::ERTag(const Parser::CommandToken &) {
     message_manager_.Clear();
   }
 
-  void Executor::CMTag(const Parser::CommandToken & token) {
+  void Executor::CMTag(const Parser::CommandToken &) {
     message_manager_.AllClear();
   }
 
@@ -133,7 +133,7 @@ namespace kag {
 
     args.AttributeValTo<SnapShotSpan>(L"face", [&](const SnapShotSpan& val) {
       prop.name = val.ToStr();
-    }, [&](auto err) {
+    }, [&](auto) {
       prop.name = now_font.font_.name();
     });
 

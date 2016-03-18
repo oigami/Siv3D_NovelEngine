@@ -1,4 +1,4 @@
-#include <kag_executor/message_layer.h>
+﻿#include <kag_executor/message_layer.h>
 namespace kag {
 
   MessageLayer::MessageLayer() {
@@ -46,7 +46,7 @@ namespace kag {
     now_height += text_line_.back().Height();
     text_line_.emplace_back(0, now_font_);
     if (!IsLimitHeihgt()) {
-      limit_line_num = text_line_.size();
+      limit_line_num = static_cast<int>(text_line_.size());
     }
   }
 
@@ -59,7 +59,44 @@ namespace kag {
     position_.drawFrame();
   }
 
-  inline void MessageLayer::CheckByReturn() {
+  void MessageLayer::SetFont(const message::MessageTextFont & font) {
+    text_line_.back().AppendNewFont(font);
+    now_font_ = font;
+  }
+
+  void MessageLayer::SetPositionTop(int top) {
+    position_.y = top;
+  }
+
+  void MessageLayer::SetPositionLeft(int left) {
+    position_.x = left;
+  }
+
+  void MessageLayer::SetPositionWidth(int width) {
+    position_.w = width;
+  }
+
+  void MessageLayer::SetPositionHeight(int height) {
+    position_.h = height;
+  }
+
+  void MessageLayer::SetMarginTop(int top) {
+    margin_.y = top;
+  }
+
+  void MessageLayer::SetMarginLeft(int left) {
+    margin_.x = left;
+  }
+
+  void MessageLayer::SetMarginRight(int width) {
+    margin_.w = width;
+  }
+
+  void MessageLayer::SetMarginBottom(int height) {
+    margin_.h = height;
+  }
+
+  void MessageLayer::CheckByReturn() {
     assert(!IsLimitHeihgt());
     auto opt = text_line_.back().ByReturn(position_.w - margin_.x - margin_.w);
     if (!opt)
@@ -68,7 +105,7 @@ namespace kag {
     now_height += text_line_.back().Height();
     if (!IsLimitHeihgt()) {
       text_line_.emplace_back(*opt);
-      limit_line_num = text_line_.size();
+      limit_line_num = static_cast<int>(text_line_.size());
     } else {
       overflow_text = std::move(opt);
     }
@@ -93,7 +130,7 @@ namespace kag {
     int MessageTextLine::Draw(int x, int y) const {
       const int new_y = y + max_height_;
       for (auto& i : text_) {
-        x += i.Draw(x, new_y).w;
+        x += static_cast<int>(i.Draw(x, new_y).w);
       }
       return new_y;
     }
@@ -120,5 +157,48 @@ namespace kag {
       text_.emplace_back(text_.back().GetWidth(), font);
       max_height_ = std::max(max_height_, font.Height());
     }
+
+    int MessageTextLine::Height() const {
+      return max_height_;
+    }
+
+    MessageText::MessageText(int x, const MessageTextFont & font, String && text)
+      : start_x_(x), font_(font), text_(std::move(text)) {
+    }
+
+    MessageText::MessageText(int x, const MessageTextFont & font)
+      : start_x_(x), font_(font) {
+    }
+
+    RectF MessageText::Draw(int x, int y_add_fontheight) const {
+      return font_.Draw(text_, x, y_add_fontheight);
+    }
+
+    MessageText & MessageText::Append(const String & s) {
+      text_.append(s);
+      return *this;
+    }
+
+    MessageText & MessageText::Append(const wchar & s) {
+      text_ += s;
+      return *this;
+    }
+
+    Optional<MessageText> MessageText::ByReturn(int width) {
+
+      // すでに使用している分を引いて使える部分の幅のみで計算する
+      size_t index = font_.drawableCharacters(text_, width - start_x_);
+      if (text_.length == index) return none;
+      String s = text_.substr(index);
+      text_.resize(index);
+      return MessageText(0, font_, std::move(s));
+    }
+    int MessageText::GetWidth() const {
+      return start_x_ * font_.region(text_).w;
+    }
+    int MessageText::Height() const {
+      return font_.Height();
+    }
+    const MessageTextFont & MessageText::Font() const { return font_; }
   }
 }

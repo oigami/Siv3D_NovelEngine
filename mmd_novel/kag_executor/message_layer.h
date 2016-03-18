@@ -28,16 +28,11 @@ namespace kag {
 
     class MessageText {
     public:
-      MessageText() {
-      }
+      MessageText() = default;
 
-      MessageText(int x, const MessageTextFont& font, String&& text)
-        : start_x_(x), font_(font), text_(std::move(text)) {
-      }
+      MessageText(int x, const MessageTextFont& font, String&& text);
 
-      MessageText(int x, const MessageTextFont& font)
-        : start_x_(x), font_(font) {
-      }
+      MessageText(int x, const MessageTextFont& font);
 
       /// <summary>
       /// 文字列を描画する
@@ -45,43 +40,47 @@ namespace kag {
       /// <param name="x">表示するx座標</param>
       /// <param name="y_add_fontheight">表示するy座標にfont.heightを足した座標</param>
       /// <returns></returns>
-      RectF Draw(int x, int y_add_fontheight) const {
-        return font_.Draw(text_, x, y_add_fontheight);
-      }
+      RectF Draw(int x, int y_add_fontheight) const;
 
-      MessageText& Append(const String& s) {
-        text_.append(s);
-        return *this;
-      }
-      MessageText& Append(const wchar& s) {
-        text_ += s;
-        return *this;
-      }
+      /// <summary>
+      /// 文字列を末尾に追加する
+      /// </summary>
+      /// <param name="s">文字列</param>
+      /// <returns></returns>
+      MessageText& Append(const String& s);
+
+      /// <summary>
+      /// 文字を末尾に追加する
+      /// </summary>
+      /// <param name="s">文字</param>
+      /// <returns></returns>
+      MessageText& Append(const wchar& s);
 
       /// <summary>
       /// 折り返し他部分を新しく生成して返す
       /// </summary>
       /// <param name="width">折り返す時の幅</param>
       /// <returns></returns>
-      Optional<MessageText> ByReturn(int width) {
+      Optional<MessageText> ByReturn(int width);
 
-        // すでに使用している分を引いて使える部分の幅のみで計算する
-        size_t index = font_.drawableCharacters(text_, width - start_x_);
-        if (text_.length == index) return none;
-        String s = text_.substr(index);
-        text_.resize(index);
-        return MessageText(0, font_, std::move(s));
-      }
+      /// <summary>
+      /// コンストラクタで指定したx+文字列の幅を返す
+      /// </summary>
+      /// <returns></returns>
+      int GetWidth() const;
 
-      int GetWidth() const {
-        return start_x_ * font_.region(text_).w;
-      }
+      /// <summary>
+      /// フォントの高さを返す
+      /// </summary>
+      /// <returns></returns>
+      int Height() const;
 
-      int Height() const {
-        return font_.Height();
-      }
+      /// <summary>
+      /// フォントを返す
+      /// </summary>
+      /// <returns></returns>
+      const MessageTextFont& Font() const;
 
-      const MessageTextFont& Font() const { return font_; }
     private:
 
       MessageTextFont font_;
@@ -98,21 +97,43 @@ namespace kag {
 
       int Draw(int x, int y) const;
 
+      /// <summary>
+      /// 文字列を末尾に追加する
+      /// </summary>
+      /// <param name="str"></param>
       void Append(const String& str);
+
+      /// <summary>
+      /// 文字を末尾に追加する
+      /// </summary>
+      /// <param name="str"></param>
       void Append(const wchar& str);
+
+      /// <summary>
+      /// 文字列をフォント付きで末尾に追加する
+      /// </summary>
+      /// <param name="text"></param>
       void Append(const MessageText& text);
 
+      /// <summary>
+      /// 折り返し部分を新たに生成して返す
+      /// </summary>
+      /// <param name="width">折り返す幅</param>
+      /// <returns></returns>
       Optional<MessageText> ByReturn(int width);
 
+      /// <summary>
+      /// フォントを末尾に追加する
+      /// <para>ここで指定したフォントがAppend(wchar),Append(String)で使用される</para>
+      /// </summary>
+      /// <param name="font"></param>
       void AppendNewFont(const MessageTextFont& font);
 
       /// <summary>
       /// 最大の高さを返す
       /// </summary>
       /// <returns></returns>
-      int Height() const {
-        return max_height_;
-      }
+      int Height() const;
 
     private:
 
@@ -136,71 +157,84 @@ namespace kag {
     void NextPage();
 
     /// <summary>
-    /// 文字列を追加する
+    /// 文字列を末尾に追加する
     /// </summary>
     /// <param name="str"></param>
     void Append(const String& str);
 
+    /// <summary>
+    /// 文字を末尾に追加する
+    /// </summary>
+    /// <param name="str"></param>
     void Append(const wchar& str);
 
+    /// <summary>
+    /// 文字列が縦方向に収まらなくなった時trueを返す
+    /// </summary>
+    /// <returns></returns>
     bool IsLimitHeihgt();
 
     /// <summary>
-    /// 改行を末尾に追加する
+    /// 改行をする
     /// </summary>
     void AppenNewLine();
 
     void Draw() const;
 
+    /// <summary>
+    /// 現在指定されているフォントを返す
+    /// </summary>
+    /// <returns></returns>
     const message::MessageTextFont& NowFont() const { return now_font_; }
 
-    void SetFont(const message::MessageTextFont& font) {
-      text_line_.back().AppendNewFont(font);
-      now_font_ = font;
-    }
+    /// <summary>
+    /// フォントを設定する
+    /// </summary>
+    /// <param name="font"></param>
+    void SetFont(const message::MessageTextFont& font);
 
-    void SetPositionTop(int top) {
-      position_.y = top;
-    }
-    void SetPositionLeft(int left) {
-      position_.x = left;
-    }
-    void SetPositionWidth(int width) {
-      position_.w = width;
-    }
-    void SetPositionHeight(int height) {
-      position_.h = height;
-    }
+    void SetPositionTop(int top);
+    void SetPositionLeft(int left);
+    void SetPositionWidth(int width);
+    void SetPositionHeight(int height);
 
-    void SetMarginTop(int top) {
-      margin_.y = top;
-    }
-    void SetMarginLeft(int left) {
-      margin_.x = left;
-    }
-    void SetMarginRight(int width) {
-      margin_.w = width;
-    }
-    void SetMarginBottom(int height) {
-      margin_.h = height;
-    }
+    void SetMarginTop(int top);
+    void SetMarginLeft(int left);
+    void SetMarginRight(int width);
+    void SetMarginBottom(int height);
 
   private:
+
+    /// <summary>
+    /// 折り返しのチェックをする
+    /// <para>もし折り返して高さに収まらなくなった場合はoverflow_textに入れる</para>
+    /// </summary>
     void CheckByReturn();
 
     message::MessageTextFont now_font_;
+
+    /// <summary>メッセージレイヤのサイズ</summary>
     Rect position_;
+
+    /// <summary>
+    /// メッセージを表示する部分のマージン
+    /// <para>rect型だがposition_からの相対位置(内側が正)になっている</para>
+    /// </summary>
     Rect margin_;
 
+    /// <summary>表示するかどうか</summary>
     bool is_visible_;
 
+    /// <summary>描画してる文字列の高さの合計</summary>
     int now_height;
 
     /// <summary>表示できた限界の行数</summary>
     int limit_line_num;
 
+    /// <summary>テキスト一行ごとの配列</summary>
     Array<message::MessageTextLine> text_line_;
 
+    /// <summary>高さに収まらなくなった場合に飛び出した部分が入る</summary>
     Optional<message::MessageText> overflow_text;
   };
 
