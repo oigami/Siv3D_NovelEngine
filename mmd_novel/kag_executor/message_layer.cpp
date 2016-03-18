@@ -2,7 +2,8 @@
 namespace kag {
 
   MessageLayer::MessageLayer() {
-    position_.set(Point(0, 0), Point(600, 400));
+    position_.set(Point(16, 16), Point(Window::Size().x - 32, Window::Size().y - 32));
+    margin_.set({ 8,8 }, { 8,8 });
     Clear();
   }
 
@@ -38,7 +39,7 @@ namespace kag {
   }
 
   bool MessageLayer::IsLimitHeihgt() {
-    return position_.h <= now_height + now_font_.Height();
+    return position_.h - margin_.h - margin_.y <= now_height + now_font_.Height();
   }
 
   void MessageLayer::AppenNewLine() {
@@ -52,7 +53,7 @@ namespace kag {
   void MessageLayer::Draw() const {
     int y = 0;
     for (auto& i : step(limit_line_num)) {
-      y = text_line_[i].Draw(position_.x, y);
+      y = text_line_[i].Draw(position_.x + margin_.x, y);
     }
 
     position_.drawFrame();
@@ -60,7 +61,7 @@ namespace kag {
 
   inline void MessageLayer::CheckByReturn() {
     assert(!IsLimitHeihgt());
-    auto opt = text_line_.back().ByReturn(position_.w);
+    auto opt = text_line_.back().ByReturn(position_.w - margin_.x - margin_.w);
     if (!opt)
       return;
 

@@ -159,11 +159,39 @@ namespace kag {
       now_font_ = font;
     }
 
+    void SetPositionTop(int top) {
+      position_.y = top;
+    }
+    void SetPositionLeft(int left) {
+      position_.x = left;
+    }
+    void SetPositionWidth(int width) {
+      position_.w = width;
+    }
+    void SetPositionHeight(int height) {
+      position_.h = height;
+    }
+
+    void SetMarginTop(int top) {
+      margin_.y = top;
+    }
+    void SetMarginLeft(int left) {
+      margin_.x = left;
+    }
+    void SetMarginRight(int width) {
+      margin_.w = width;
+    }
+    void SetMarginBottom(int height) {
+      margin_.h = height;
+    }
+
   private:
     void CheckByReturn();
 
     message::MessageTextFont now_font_;
     Rect position_;
+    Rect margin_;
+
     bool is_visible_;
 
     int now_height;
