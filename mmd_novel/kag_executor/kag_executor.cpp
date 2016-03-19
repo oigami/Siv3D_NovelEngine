@@ -12,46 +12,70 @@ namespace kag {
   }
 
   void Executor::CommandL() {
-    is_wait_click_ = true;
+    command_.push([&]() {
+      is_wait_click_ = true;
+    });
   }
 
   void Executor::CommandR() {
-    message_manager_.AppendNewLine();
+    command_.push([&]() {
+      message_manager_.AppendNewLine();
+    });
   }
 
   void Executor::CommandP() {
-    is_wait_click_ = true;
+    command_.push([&]() {
+      is_wait_click_ = true;
+    });
   }
 
   void Executor::CommandDelay(int delay_time) {
-    message_manager_.SetDelayTime(delay_time);
+    command_.push([&]() {
+      message_manager_.SetDelayTime(delay_time);
+    });
   }
 
   void Executor::CommandER() {
-    message_manager_.Clear();
+    command_.push([&]() {
+      message_manager_.Clear();
+    });
   }
 
   void Executor::CommandCM() {
-    message_manager_.AllClear();
+    command_.push([&]() {
+      message_manager_.AllClear();
+    });
   }
 
   void Executor::CommandCT() {
-    CommandCM();
-    message_manager_.SetCurrent(0, LayerPage::Fore);
+    command_.push([&]() {
+      CommandCM();
+      message_manager_.SetCurrent(0, LayerPage::Fore);
+    });
   }
 
   void Executor::CommandText(const SnapShotSpan& str) {
-    message_manager_.Append(str);
+    command_.push([=]() {
+      message_manager_.Append(str);
+    });
   }
 
-  FontCommandEditor Executor::CommandFont() {
-    return FontCommandEditor(message_manager_);
+  void Executor::CommandFont(const CommandFunc<FontCommandEditor>& f) {
+    command_.push([f, this]() {
+      FontCommandEditor editor(message_manager_);
+      f(editor);
+      editor.Commit();
+    });
   }
 
-  PositionCommandEditor Executor::CommandPosition(Value<int> layer, Value<int> page) {
-    if (layer == kag::default) layer = message_manager_.CurrentLayerNum();
-    if (page == kag::default) page = message_manager_.CurrentPageNum();
-    return PositionCommandEditor(message_manager_.GetLayer(layer, page));
+  void Executor::CommandPosition(Value<int> layer, Value<int> page, const CommandFunc<PositionCommandEditor>& f) {
+    command_.push([=]()mutable {
+      if (layer == kag::default) layer = message_manager_.CurrentLayerNum();
+      if (page == kag::default) page = message_manager_.CurrentPageNum();
+      PositionCommandEditor editor(message_manager_.GetLayer(layer, page));
+      f(editor);
+      editor.Commit();
+    });
   }
 
   bool Executor::Update() {
@@ -72,6 +96,10 @@ namespace kag {
         is_click_new_page = false;
         message_manager_.NextPage();
       }
+    }
+    while (!is_wait_click_ && !command_.empty()) {
+      command_.front()();
+      command_.pop();
     }
     return true;
   }

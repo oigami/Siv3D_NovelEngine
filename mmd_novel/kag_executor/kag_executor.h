@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include <queue>
 #include <kag_parser/kag_parser.h>
 #include <kag_executor/message_layer.h>
 #include <kag_executor/message_manager.h>
@@ -38,10 +39,12 @@ namespace kag {
     /// テキストをメッセージレイヤに送る
     /// </summary>
     void CommandText(const SnapShotSpan& str);
+    template<class Editor>
+    using CommandFunc = std::function<void(Editor&)>;
 
-    FontCommandEditor CommandFont();
+    void CommandFont(const CommandFunc<FontCommandEditor>& f);
 
-    PositionCommandEditor CommandPosition(Value<int> layer, Value<int> page);
+    void CommandPosition(Value<int> layer, Value<int> page, const CommandFunc<PositionCommandEditor>& f);
 
   protected:
     void ShowErrorMsg(const String& str) const {
@@ -50,6 +53,7 @@ namespace kag {
 
   protected:
 
+    std::queue<std::function<void()>> command_;
     MessageManager message_manager_;
 
     /// <summary>クリック待ちするかどうか</summary>
@@ -58,5 +62,7 @@ namespace kag {
     /// <summary>クリックした時に改ページに行くかどうか</summary>
     bool is_click_new_page;
 
+    /// <summary>クリックによるスキップをするかどうか</summary>
+    bool is_click_skip;
   };
 }

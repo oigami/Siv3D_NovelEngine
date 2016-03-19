@@ -33,6 +33,7 @@ namespace kag {
 
     void StyleCheck(FontStyle style);
     FontStyle CreateStyle();
+    void Commit();
   public:
     This& size(int size) { size_ = size; return *this; }
     This& face(const String name) { face_ = name; return *this; }
@@ -40,7 +41,6 @@ namespace kag {
     This& is_italic(bool is_italic) { is_italic_ = is_italic; return *this; }
     This& is_bold(bool is_bold) { is_bold_ = is_bold; return *this; }
 
-    void Commit();
   private:
     int size_;
     String face_;
@@ -64,7 +64,9 @@ namespace kag {
     using This = PositionCommandEditor;
     PositionCommandEditor(MessageLayer& layer) :layer_(layer) {
     }
-
+    void Commit() {
+      layer_.Clear();
+    }
   public:
     This& position_left(int val) { layer_.SetPositionLeft(val); return *this; }
     This& position_top(int val) { layer_.SetPositionTop(val); return *this; }
@@ -76,9 +78,7 @@ namespace kag {
     This& margin_right(int val) { layer_.SetMarginRight(val); return *this; }
     This& margin_bottom(int val) { layer_.SetMarginBottom(val); return *this; }
 
-    void Commit() {
-      layer_.Clear();
-    }
+
 
   private:
     MessageLayer& layer_;

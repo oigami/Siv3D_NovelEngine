@@ -88,17 +88,18 @@ namespace kag {
   void FileExecutor::FontTTag(const Parser::CommandToken & token) {
 
     auto& args = token.arguments();
-    auto editor = CommandFont();
+    CommandFont([args](FontCommandEditor& editor) {
 
-    args.AttributeVal(L"face", [&](const SnapShotSpan& val) { editor.face(val.ToStr()); });
+      args.AttributeVal(L"face", [&](const SnapShotSpan& val) { editor.face(val.ToStr()); });
 
-    args.AttributeVal(L"size", [&](const SnapShotSpan& val) { editor.size(*val.ToInt()); });
+      args.AttributeVal(L"size", [&](const SnapShotSpan& val) { editor.size(*val.ToInt()); });
 
-    args.AttributeVal(L"italic", [&](const SnapShotSpan& val) { editor.is_italic(val == L"true"); });
+      args.AttributeVal(L"italic", [&](const SnapShotSpan& val) { editor.is_italic(val == L"true"); });
 
-    args.AttributeVal(L"bold", [&](const SnapShotSpan& val) { editor.is_bold(val == L"true"); });
+      args.AttributeVal(L"bold", [&](const SnapShotSpan& val) { editor.is_bold(val == L"true"); });
 
-    editor.Commit();
+    });
+
   }
 
   void FileExecutor::PositionTTag(const Parser::CommandToken & token) {
@@ -113,25 +114,24 @@ namespace kag {
       page = val == L"back";
     });
 
-    auto editor = CommandPosition(index, page);
+    CommandPosition(index, page, [args](PositionCommandEditor& editor) {
+      args.AttributeValTo<int>(L"left", [&](int val) { editor.position_left(val); });
 
-    args.AttributeValTo<int>(L"left", [&](int val) { editor.position_left(val); });
+      args.AttributeValTo<int>(L"top", [&](int val) { editor.position_top(val); });
 
-    args.AttributeValTo<int>(L"top", [&](int val) { editor.position_top(val); });
+      args.AttributeValTo<int>(L"width", [&](int val) { editor.position_width(val); });
 
-    args.AttributeValTo<int>(L"width", [&](int val) { editor.position_width(val); });
+      args.AttributeValTo<int>(L"height", [&](int val) { editor.position_height(val); });
 
-    args.AttributeValTo<int>(L"height", [&](int val) { editor.position_height(val); });
+      args.AttributeValTo<int>(L"marginl", [&](int val) { editor.margin_left(val); });
 
-    args.AttributeValTo<int>(L"marginl", [&](int val) { editor.margin_left(val); });
+      args.AttributeValTo<int>(L"margint", [&](int val) { editor.margin_top(val); });
 
-    args.AttributeValTo<int>(L"margint", [&](int val) { editor.margin_top(val); });
+      args.AttributeValTo<int>(L"marginr", [&](int val) { editor.margin_right(val); });
 
-    args.AttributeValTo<int>(L"marginr", [&](int val) { editor.margin_right(val); });
+      args.AttributeValTo<int>(L"marginb", [&](int val) { editor.margin_bottom(val); });
 
-    args.AttributeValTo<int>(L"marginb", [&](int val) { editor.margin_bottom(val); });
-
-    editor.Commit();
+    });
   }
 
 }
