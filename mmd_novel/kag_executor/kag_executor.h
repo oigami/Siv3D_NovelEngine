@@ -16,6 +16,14 @@ namespace kag {
     /// </summary>
     /// <returns></returns>
     bool Update();
+    bool CommandUpdate() {
+      while (!is_wait_click_ && !command_.empty()) {
+        if (message_manager_.IsFlush() == false) return false;
+        command_.front()();
+        command_.pop();
+      }
+      return true;
+    }
     void Draw();
     void Clear();
 

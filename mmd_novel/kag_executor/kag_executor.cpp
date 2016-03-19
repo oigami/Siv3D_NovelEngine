@@ -97,11 +97,7 @@ namespace kag {
         message_manager_.NextPage();
       }
     }
-    while (!is_wait_click_ && !command_.empty()) {
-      command_.front()();
-      command_.pop();
-    }
-    return true;
+    return CommandUpdate();
   }
 
   void Executor::Draw() {

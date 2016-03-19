@@ -26,6 +26,7 @@ namespace kag {
       switch (parser_.nextType()) {
       case  kag::Parser::Type::Text:
         CommandText(parser_.readText());
+        CommandUpdate();
         return;
 
       case  kag::Parser::Type::Command:
@@ -37,6 +38,7 @@ namespace kag {
         } else {
           throw std::runtime_error(token.name().ToNarrow());
         }
+        CommandUpdate();
         break;
       }
 
