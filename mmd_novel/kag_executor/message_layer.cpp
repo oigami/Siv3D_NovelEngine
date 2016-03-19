@@ -194,7 +194,7 @@ namespace kag {
       return MessageText(0, font_, std::move(s));
     }
     int MessageText::GetWidth() const {
-      return start_x_ * font_.region(text_).w;
+      return start_x_ + font_.region(text_).w;
     }
     int MessageText::Height() const {
       return font_.Height();

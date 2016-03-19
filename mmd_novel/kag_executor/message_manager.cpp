@@ -30,10 +30,10 @@ namespace kag {
 
   void MessageManager::Flush() {
     auto& current = Current();
-    for (auto& i : step(delay_text.Length() - delay_index_)) {
-      current.Append(delay_text[i + delay_index_]);
+    for (int i = 0, len = delay_text.Length() - delay_index_; i < len; i++) {
+      current.Append(delay_text[delay_index_++]);
+      if (current.IsLimitHeihgt()) return;
     }
-    delay_index_ = delay_text.Length();
   }
 
   void MessageManager::Append(const SnapShotSpan & text) {
@@ -60,6 +60,7 @@ namespace kag {
     loop = std::min(loop, delay_text.Length() - delay_index_);
     for (int i = 0; i < loop; i++) {
       current.Append(delay_text[delay_index_++]);
+      if (current.IsLimitHeihgt()) return false;
     }
     return true;
   }
