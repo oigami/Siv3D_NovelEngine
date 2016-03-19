@@ -18,6 +18,7 @@ namespace kag {
     now_height = 0;
     if (overflow_text) {
       text_line_.emplace_back(*overflow_text);
+      overflow_text = none;
       CheckByReturn();
     } else {
       text_line_.emplace_back(0, now_font_);
