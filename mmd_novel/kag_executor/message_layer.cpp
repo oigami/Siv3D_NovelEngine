@@ -51,7 +51,7 @@ namespace kag {
   }
 
   void MessageLayer::Draw() const {
-    int y = 0;
+    int y = position_.y + margin_.y;
     for (auto& i : step(limit_line_num)) {
       y = text_line_[i].Draw(position_.x + margin_.x, y);
     }
@@ -113,17 +113,19 @@ namespace kag {
 
   namespace message {
 
-    MessageTextLine::MessageTextLine(const int x, MessageTextFont & font) {
+    MessageTextLine::MessageTextLine(const int x, MessageTextFont & font) :max_height_(0) {
+      max_height_ = 0;
       Append({ x,font });
     }
 
-    MessageTextLine::MessageTextLine(const MessageText & text) {
+    MessageTextLine::MessageTextLine(const MessageText & text) : max_height_(0) {
       Append(text);
     }
 
     void MessageTextLine::Clear() {
       const auto font = text_.back().Font();
       text_.clear();
+      max_height_ = 0;
       Append({ 0, font });
     }
 
