@@ -1,8 +1,8 @@
 ﻿# include <Siv3D.hpp>
 # include <HamFramework.hpp>
-#include <kag_executor/kag_executor.h>
+#include <kag_file_executor/kag_file_executor.h>
 void Main() {
-  kag::Executor executor(L"test.txt");
+  kag::FileExecutor executor(L"test.txt");
 
   while (System::Update()) {
     Circle(Mouse::Pos(), 50).draw({ 255, 0, 0, 127 });

@@ -2,20 +2,53 @@
 #include <kag_parser/kag_parser.h>
 #include <kag_executor/message_layer.h>
 #include <kag_executor/message_manager.h>
+#include <kag_executor/tag_editor.h>
 namespace kag {
 
   class Executor {
   public:
 
-    Executor(const FilePath& path);
-    Executor() {}
+    Executor();
 
-    void Update();
+    /// <summary>
+    /// 次のコマンドに進める時にtrueを返す
+    /// </summary>
+    /// <returns></returns>
+    bool Update();
     void Draw();
     void Clear();
 
-  private:
-    Parser parser_;
+    /* コマンド */
+
+    void CommandL();
+
+    void CommandR();
+
+    void CommandP();
+
+    void CommandDelay(int delay_time);
+
+    void CommandER();
+
+    void CommandCM();
+
+    void CommandCT();
+
+    /// <summary>
+    /// テキストをメッセージレイヤに送る
+    /// </summary>
+    void CommandText(const SnapShotSpan& str);
+
+    FontCommandEditor CommandFont();
+
+    PositionCommandEditor CommandPosition(Value<int> layer, Value<int> page);
+
+  protected:
+    void ShowErrorMsg(const String& str) const {
+      MessageBox::Show(str);
+    }
+
+  protected:
 
     MessageManager message_manager_;
 
@@ -25,26 +58,5 @@ namespace kag {
     /// <summary>クリックした時に改ページに行くかどうか</summary>
     bool is_click_new_page;
 
-    using TagFunction = void(Executor::*)(const kag::Parser::CommandToken&);
-    std::map<SnapShotSpan, TagFunction> tag_func_;
-
-    void ShowErrorMsg(const String& str) const {
-      MessageBox::Show(str);
-    }
-  private:
-
-    //タグリファレンス
-    //http://devdoc.kikyou.info/tvp/docs/kag3doc/contents/index.html
-
-    //メッセージ関連
-    void LTag(const Parser::CommandToken& token);
-    void RTag(const Parser::CommandToken& token);
-    void PTag(const Parser::CommandToken& token);
-    void DelayTag(const Parser::CommandToken& token);
-    void ERTag(const Parser::CommandToken& token);
-    void CMTag(const Parser::CommandToken& token);
-    void CTTag(const Parser::CommandToken& token);
-    void FontTTag(const Parser::CommandToken& token);
-    void PositionTTag(const Parser::CommandToken& token);
   };
 }

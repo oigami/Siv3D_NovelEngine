@@ -1,4 +1,4 @@
-@font size=50
+@font face="ＭＳ ゴシック" size=50
 文[l]
 @font size=25
 字のサイズを変更します。
@@ -6,7 +6,7 @@
 @font face="ＭＳ ゴシック"
 フォントを "ＭＳ ゴシック" に設定しました。[r]
 @font face=HG行書体
-フォントを "HG行書体" に設定しました。
+フォントを "HG行書体" に設定しました。[l]
 [position layer=message0 page=fore left=30 top=15 width=400 height=400 frame="" marginl=20 margint=40 marginr=20 marginb=40 visible=true]
 
 aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
