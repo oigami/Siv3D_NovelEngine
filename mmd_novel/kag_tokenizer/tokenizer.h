@@ -31,13 +31,10 @@ namespace kag {
       :str_(str), start_(s), end_(e), c_(str->data() + s) {
     }
 
-    SnapShotSpan(const Char *str, int start, int end)
-      :c_(str), start_(start), end_(end) {
+    template<size_t n> SnapShotSpan(const Char(&str)[n], int start, int end)
+      : c_(str), start_(start), end_(end) {
     }
 
-    SnapShotSpan(const String& str) :c_(str.data()), start_(0), end_(static_cast<int>(str.length)) {
-
-    }
     template<size_t n> SnapShotSpan(const Char(&str)[n])
       : c_(str), start_(0), end_(n - 1) {
     }
