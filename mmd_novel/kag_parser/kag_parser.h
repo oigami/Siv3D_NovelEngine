@@ -85,6 +85,8 @@ namespace kag {
           Optional<T> opt = ToCast<T>(val);
           if (opt) {
             find_f(*opt);
+          } else {
+            throw std::runtime_error(val.ToNarrow());
           }
         });
       }
@@ -115,7 +117,7 @@ namespace kag {
 
     explicit Parser(const FilePath& path);
 
-    Parser();
+    Parser() = default;
 
     Type nextType();
 
