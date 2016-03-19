@@ -40,8 +40,14 @@ namespace kag {
         if (it == args.end())  not_found_f(FindAttributeResult::NotName);
         else find_f(it->second);
       }
-      template<class Func>
-      void AttributeVal(const SnapShotSpan& name, Func find_f) const {
+
+      /// <summary>
+      /// 属性の値を関数に渡す
+      /// <para>見つからなかった場合は何もしない</para>
+      /// </summary>
+      /// <param name="name"></param>
+      /// <param name="find_f"></param>
+      template<class Func> void AttributeVal(const SnapShotSpan& name, Func find_f) const {
         auto it = args.find(name);
         if (it == args.end()) return;
         return find_f(it->second);
@@ -65,6 +71,14 @@ namespace kag {
           }
         }, not_found_f);
       }
+
+      /// <summary>
+      /// 属性の値を型変換して関数に渡す
+      /// <para>見つからなかった場合は何もしない</para>
+      /// <para>型変換に失敗した場合は例外を投げる</para>
+      /// </summary>
+      /// <param name="name"></param>
+      /// <param name="find_f"></param>
       template<class T, class Func>
       void AttributeValTo(const SnapShotSpan& name, Func find_f) const {
         AttributeVal(name, [&](const SnapShotSpan& val) {
