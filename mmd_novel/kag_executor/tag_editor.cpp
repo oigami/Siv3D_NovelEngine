@@ -29,10 +29,10 @@ namespace kag {
   FontStyle FontCommandEditor::CreateStyle() {
     int style_cnt = (is_italic_ == true) + (is_italic_ == true) * 2;
     switch (style_cnt) {
-    case 0: return FontStyle::Regular;
     case 1: return FontStyle::Italic;
     case 2: return FontStyle::Bold;
     case 3: return FontStyle::BoldItalic;
+    default:return FontStyle::Regular;
     }
   }
   void FontCommandEditor::Commit() {
