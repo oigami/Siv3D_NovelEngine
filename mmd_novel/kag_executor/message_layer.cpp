@@ -4,6 +4,9 @@ namespace kag {
   MessageLayer::MessageLayer() {
     position_.set(Point(16, 16), Point(Window::Size().x - 32, Window::Size().y - 32));
     margin_.set({ 8,8 }, { 8,8 });
+    is_visible_ = false;
+    background_color_ = Palette::Gray;
+    background_color_.a = 128;
     Clear();
   }
 
@@ -52,12 +55,15 @@ namespace kag {
   }
 
   void MessageLayer::Draw() const {
+    if (!is_visible_) return;
+    position_.draw(background_color_);
+    if (!background_tex_.isEmpty())
+      position_(background_tex_).draw();
+
     int y = position_.y + margin_.y;
     for (auto& i : step(limit_line_num)) {
       y = text_line_[i].Draw(position_.x + margin_.x, y);
     }
-
-    position_.drawFrame();
   }
 
   void MessageLayer::SetFont(const message::MessageTextFont & font) {
@@ -95,6 +101,27 @@ namespace kag {
 
   void MessageLayer::SetMarginBottom(int height) {
     margin_.h = height;
+  }
+
+  void MessageLayer::SetVisible(bool is_visible) {
+    is_visible_ = is_visible;
+  }
+
+  void MessageLayer::SetBackgroundColor(Color argb) {
+    background_color_ = argb;
+  }
+
+  void MessageLayer::SetBackgroundRGB(int r, int g, int b) {
+    const int a = background_color_.a;
+    background_color_ = Color(r, g, b, a);
+  }
+
+  void MessageLayer::SetBackgroundOpacity(int a) {
+    background_color_ = a;
+  }
+
+  void MessageLayer::SetBackgroundTex(Texture tex) {
+    background_tex_ = tex;
   }
 
   void MessageLayer::CheckByReturn() {

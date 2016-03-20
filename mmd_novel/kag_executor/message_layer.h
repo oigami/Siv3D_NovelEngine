@@ -203,6 +203,12 @@ namespace kag {
     void SetMarginRight(int width);
     void SetMarginBottom(int height);
 
+    void SetVisible(bool is_visible);
+
+    void SetBackgroundColor(Color argb);
+    void SetBackgroundRGB(int r, int g, int b);
+    void SetBackgroundOpacity(int a);
+    void SetBackgroundTex(Texture tex);
   private:
 
     /// <summary>
@@ -221,6 +227,16 @@ namespace kag {
     /// <para>rect型だがposition_からの相対位置(内側が正)になっている</para>
     /// </summary>
     Rect margin_;
+
+    /// <summary>背景テクスチャ</summary>
+    Texture background_tex_;
+
+    /// <summary>背景色</summary>
+    Color background_color_;
+
+    // TODO: 全体に反映させるための処理を追加する
+    /// <summary>レイヤ全体の透明度</summary>
+    int opacity_;
 
     /// <summary>表示するかどうか</summary>
     bool is_visible_;

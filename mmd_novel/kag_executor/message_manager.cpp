@@ -2,6 +2,7 @@
 namespace kag {
   MessageManager::MessageManager() {
     resize(2);
+    message_layer_[0][0].SetVisible(true);
     delay_time_ = 30;
     delay_index_ = 0;
     current_page_ = 0;
