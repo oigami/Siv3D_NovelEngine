@@ -6,14 +6,17 @@ namespace kag {
     Clear();
   }
   void Executor::Clear() {
-    is_wait_click_ = false;
-    is_click_new_page = false;
     message_manager_.Clear();
+  }
+
+  bool Executor::IsWait() const {
+    if (message_manager_.IsWait())return true;
+    return false;
   }
 
   void Executor::CommandL() {
     command_.push([&]() {
-      is_wait_click_ = true;
+      message_manager_.SetWaitClick();
     });
   }
 
@@ -25,7 +28,7 @@ namespace kag {
 
   void Executor::CommandP() {
     command_.push([&]() {
-      is_wait_click_ = true;
+      message_manager_.SetWaitClick();
     });
   }
 
@@ -79,24 +82,7 @@ namespace kag {
   }
 
   bool Executor::Update() {
-    if (!message_manager_.Update()) {
-      if (Input::MouseL.clicked)
-        message_manager_.NextPage();
-      return false;
-    } else if (message_manager_.IsFlush() == false) {
-      if (Input::MouseL.clicked)
-        message_manager_.Flush();
-      return false;
-    }
-    if (is_wait_click_) {
-      if (!Input::MouseL.clicked)
-        return false;
-      is_wait_click_ = false;
-      if (is_click_new_page) {
-        is_click_new_page = false;
-        message_manager_.NextPage();
-      }
-    }
+    message_manager_.Update();
     return CommandUpdate();
   }
 

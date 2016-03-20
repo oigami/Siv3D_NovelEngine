@@ -22,11 +22,10 @@ namespace kag {
   void FileExecutor::Update() {
     if (!Executor::Update()) return;
 
-    while (!is_wait_click_) {
+    while (CommandUpdate()) {
       switch (parser_.nextType()) {
       case  kag::Parser::Type::Text:
         CommandText(parser_.readText());
-        CommandUpdate();
         return;
 
       case  kag::Parser::Type::Command:
@@ -38,7 +37,6 @@ namespace kag {
         } else {
           throw std::runtime_error(token.name().ToNarrow());
         }
-        CommandUpdate();
         break;
       }
 

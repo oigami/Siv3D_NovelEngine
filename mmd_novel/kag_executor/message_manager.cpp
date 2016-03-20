@@ -13,6 +13,8 @@ namespace kag {
   }
 
   void MessageManager::Clear() {
+    is_wait_click_ = false;
+    is_click_new_page = false;
     message_layer_[current_layer_][current_page_].Clear();
   }
 
@@ -32,7 +34,11 @@ namespace kag {
     auto& current = Current();
     for (int i = 0, len = delay_text.Length() - delay_index_; i < len; i++) {
       current.Append(delay_text[delay_index_++]);
-      if (current.IsLimitHeihgt()) return;
+      if (current.IsLimitHeihgt()) {
+        is_click_new_page = true;
+        is_wait_click_ = true;
+        return;
+      }
     }
   }
 
@@ -53,15 +59,34 @@ namespace kag {
   }
 
   bool MessageManager::Update() {
+    if (is_wait_click_) {
+      if (Input::MouseL.clicked) {
+        if (is_click_new_page)
+          NextPage();
+        is_click_new_page = false;
+        is_wait_click_ = false;
+      }
+      return false;
+    }
     auto& current = Current();
-    if (current.IsLimitHeihgt()) return false;
     int ms = timer_.ms();
     int loop = ms / delay_time_ - delay_index_;
     loop = std::min(loop, delay_text.Length() - delay_index_);
     for (int i = 0; i < loop; i++) {
       current.Append(delay_text[delay_index_++]);
-      if (current.IsLimitHeihgt()) return false;
+      if (current.IsLimitHeihgt()) {
+        is_click_new_page = true;
+        is_wait_click_ = true;
+        return false;
+      }
     }
+
+    if (IsFlush() == false) {
+      if (Input::MouseL.clicked)
+        Flush();
+      return false;
+    }
+
     return true;
   }
 

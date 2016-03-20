@@ -17,8 +17,8 @@ namespace kag {
     /// <returns></returns>
     bool Update();
     bool CommandUpdate() {
-      while (!is_wait_click_ && !command_.empty()) {
-        if (message_manager_.IsFlush() == false) return false;
+      while (!command_.empty()) {
+        if (IsWait()) return false;
         command_.front()();
         command_.pop();
       }
@@ -26,6 +26,8 @@ namespace kag {
     }
     void Draw();
     void Clear();
+
+    bool IsWait() const;
 
     /* コマンド */
 
@@ -64,13 +66,5 @@ namespace kag {
     std::queue<std::function<void()>> command_;
     MessageManager message_manager_;
 
-    /// <summary>クリック待ちするかどうか</summary>
-    bool is_wait_click_;
-
-    /// <summary>クリックした時に改ページに行くかどうか</summary>
-    bool is_click_new_page;
-
-    /// <summary>クリックによるスキップをするかどうか</summary>
-    bool is_click_skip;
   };
 }

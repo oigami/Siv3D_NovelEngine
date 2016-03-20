@@ -56,6 +56,9 @@ namespace kag {
     /// </summary>
     void NextPage();
 
+    void SetWaitClick() { is_wait_click_ = true; }
+    void SetClickNextPage() { is_click_new_page = true; }
+
     /// <summary>
     /// メッセージレイヤーの更新をする
     /// <para>メッセージが貯まり改ページ待ちの時にfalseを返す</para>
@@ -116,6 +119,7 @@ namespace kag {
     /// <returns></returns>
     int CurrentPageNum() const { return current_page_; }
 
+    bool IsWait() const { return is_wait_click_ || !IsFlush(); }
   private:
 
     Stopwatch timer_;
@@ -145,6 +149,15 @@ namespace kag {
 
     /// <summary>一文字あたりに遅延する時間</summary>
     int delay_time_;
+
+    /// <summary>クリック待ちするかどうか</summary>
+    bool is_wait_click_;
+
+    /// <summary>クリックした時に改ページに行くかどうか</summary>
+    bool is_click_new_page;
+
+    /// <summary>クリックによるスキップをするかどうか</summary>
+    bool is_click_skip;
 
   };
 
