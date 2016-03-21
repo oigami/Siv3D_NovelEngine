@@ -64,13 +64,18 @@ namespace kag {
 
   void FileExecutor::DelayTag(const Parser::CommandToken & token) {
     auto& args = token.arguments();
-    auto res = args.AttributeValTo<SnapShotSpan>(L"speed");
-    if (res.result == FindAttributeResult::Ok) {
-      auto i = ToCast<int>(*res.val);
-      CommandDelay(*i);
-    } else {
-      ShowErrorMsg(L"[delay] にはspeed属性が必須");
-    }
+    args.AttributeVal(L"speed", [&](const SnapShotSpan& val) {
+      if (val == L"user") {
+        CommandDelay(30);
+      } else if (val == L"nowait") {
+        CommandDelay(0);
+      } else {
+        CommandDelay(converter::ToInt10(val));
+      }
+    }, []() {
+      throw std::runtime_error("[delay] にはspeed属性が必須");
+    });
+
   }
 
   void FileExecutor::ERTag(const Parser::CommandToken &) {
@@ -89,48 +94,60 @@ namespace kag {
 
     auto& args = token.arguments();
     CommandFont([args](FontCommandEditor& editor) {
-
+      using namespace converter;
       args.AttributeVal(L"face", [&](const SnapShotSpan& val) { editor.face(val.ToStr()); });
 
-      args.AttributeVal(L"size", [&](const SnapShotSpan& val) { editor.size(*val.ToInt()); });
+      args.AttributeValTo(L"size", ToInt10, [&](int val) { editor.size(val); });
 
-      args.AttributeVal(L"italic", [&](const SnapShotSpan& val) { editor.is_italic(val == L"true"); });
+      args.AttributeValTo(L"italic", ToBool, [&](bool val) { editor.is_italic(val); });
 
-      args.AttributeVal(L"bold", [&](const SnapShotSpan& val) { editor.is_bold(val == L"true"); });
+      args.AttributeValTo(L"bold", ToBool, [&](bool val) { editor.is_bold(val); });
 
     });
 
   }
 
   void FileExecutor::PositionTTag(const Parser::CommandToken & token) {
+    using namespace converter;
     int index = kag::default;
     int page = kag::default;
     auto& args = token.arguments();
-    args.AttributeVal(L"layer", [&](const SnapShotSpan& val) {
-      index = _wtoi(&val[7]);
-    });
+    args.AttributeValTo(L"layer", ToMessageLayerNum, [&](int val) { index = val; });
 
-    args.AttributeVal(L"page", [&](const SnapShotSpan& val) {
-      page = val == L"back";
-    });
+    args.AttributeValTo(L"page", ToPageNum, [&](int val) { page = val; });
 
     CommandPosition(index, page, [args](PositionCommandEditor& editor) {
-      args.AttributeValTo<int>(L"left", [&](int val) { editor.position_left(val); });
+      args.AttributeValTo(L"left", ToInt10, [&](int val) { editor.position_left(val); });
 
-      args.AttributeValTo<int>(L"top", [&](int val) { editor.position_top(val); });
+      args.AttributeValTo(L"top", ToInt10, [&](int val) { editor.position_top(val); });
 
-      args.AttributeValTo<int>(L"width", [&](int val) { editor.position_width(val); });
+      args.AttributeValTo(L"width", ToInt10, [&](int val) { editor.position_width(val); });
 
-      args.AttributeValTo<int>(L"height", [&](int val) { editor.position_height(val); });
+      args.AttributeValTo(L"height", ToInt10, [&](int val) { editor.position_height(val); });
 
-      args.AttributeValTo<int>(L"marginl", [&](int val) { editor.margin_left(val); });
+      args.AttributeValTo(L"marginl", ToInt10, [&](int val) { editor.margin_left(val); });
 
-      args.AttributeValTo<int>(L"margint", [&](int val) { editor.margin_top(val); });
+      args.AttributeValTo(L"margint", ToInt10, [&](int val) { editor.margin_top(val); });
 
-      args.AttributeValTo<int>(L"marginr", [&](int val) { editor.margin_right(val); });
+      args.AttributeValTo(L"marginr", ToInt10, [&](int val) { editor.margin_right(val); });
 
-      args.AttributeValTo<int>(L"marginb", [&](int val) { editor.margin_bottom(val); });
+      args.AttributeValTo(L"marginb", ToInt10, [&](int val) { editor.margin_bottom(val); });
 
+      args.AttributeValTo(L"color", ToColor, [&](const Color& col) {
+        editor.color(col.r, col.g, col.b);
+      });
+
+      args.AttributeVal(L"frame", [&](const SnapShotSpan& val) {
+        if (val.Length() != 0) {
+          editor.frame(Texture(val.ToStr()));
+        } else {
+          editor.frame(Texture());
+        }
+      });
+
+      args.AttributeValTo(L"opacity", ToInt10, [&](int val) { editor.opacity(val); });
+
+      args.AttributeValTo(L"visible", ToBool, [&](bool val) { editor.visible(val); })
     });
   }
 

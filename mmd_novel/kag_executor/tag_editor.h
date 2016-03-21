@@ -1,30 +1,7 @@
 ﻿#pragma once
 #include <kag_executor/message_manager.h>
 namespace kag {
-  struct Default {
-    constexpr operator int() const { return -1; }
-  };
-  constexpr Default default;
 
-  template<class Type> class Value {
-  public:
-    constexpr Value(const Type& v) :t(v) {}
-    constexpr Value() : t(kag::default) {}
-    constexpr operator const Type&() const { return t; }
-    Type& operator=(const Type& v) {
-      t = v;
-      return t;
-    }
-    constexpr bool operator==(const Default& def) const {
-      return t == def;
-    }
-  private:
-
-    Type t;
-  };
-  template<class Type> constexpr bool operator==(const Type& t, const Default&) {
-    return t == static_cast<Type>(kag::default);
-  }
   class Executor;
   class FontCommandEditor {
     friend Executor;
@@ -78,8 +55,15 @@ namespace kag {
     This& margin_right(int val) { layer_.SetMarginRight(val); return *this; }
     This& margin_bottom(int val) { layer_.SetMarginBottom(val); return *this; }
 
-
-
+    This& frame(Texture tex) { layer_.SetBackgroundTex(tex); return*this; }
+    This& color(int r, int g, int b) { layer_.SetBackgroundRGB(r, g, b); return*this; }
+    This& opacity(int a) { layer_.SetBackgroundOpacity(a); return*this; }
+    This& visible(bool visible) { layer_.SetVisible(visible); return *this; }
+  private:
+    //TODO: 未実装
+    This& draggable() {}
+    This& vertical() {}
+    This& framekey() {}
   private:
     MessageLayer& layer_;
   };

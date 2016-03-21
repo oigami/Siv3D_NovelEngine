@@ -26,6 +26,11 @@ namespace kag {
   public:
     using string = String;
     using Char = string::value_type;
+    struct tag {};
+  private:
+    explicit SnapShotSpan(const Char* c, int start, int end, tag) : c_(c), start_(start), end_(end) {
+    }
+  public:
     SnapShotSpan() {}
     SnapShotSpan(const std::shared_ptr<string> &str, int s, int e)
       :str_(str), start_(s), end_(e), c_(str->data() + s) {
@@ -40,7 +45,16 @@ namespace kag {
     }
 
 
-
+    SnapShotSpan substr(std::uint_fast32_t start, std::uint_fast32_t count) const {
+      int new_start = start_ + start;
+      int new_end = new_start + count;
+      assert(new_end <= end_);
+      if (str_) {
+        return SnapShotSpan(str_, new_start, new_end);
+      } else {
+        return SnapShotSpan(c_ + start, new_start, new_end, tag());
+      }
+    }
     /// <summary>
     /// 文字列を返す 末尾に\0がないので注意（lengthで長さを判定）
     /// </summary>
@@ -48,14 +62,6 @@ namespace kag {
     const Char *Str() const { return c_; }
     string ToStr() const { return string(c_, Length()); }
     std::string ToNarrow() const { return Narrow(StringView(c_, Length())); }
-
-    Optional<int> ToInt() const {
-      Char *e;
-      int ret = wcstol(c_, &e, 10);
-      if (e != c_ + Length())
-        return none;
-      return ret;
-    }
 
     int Length() const { return end_ - start_; }
     int End() const { return end_; }
@@ -71,6 +77,10 @@ namespace kag {
 
     bool operator==(const SnapShotSpan& r) const {
       return TextEqual(r);
+    }
+
+    bool operator!=(const SnapShotSpan& r) const {
+      return !(*this == r);
     }
 
     const Char& operator[](std::int32_t index) const {
@@ -94,24 +104,11 @@ namespace kag {
   };
 
   inline std::wostream &operator<<(std::wostream &os, const SnapShotSpan &span) {
+    const auto& str = span.Str();
     for (int i = 0; i < span.Length(); i++) {
-      os << span.Str()[i];
+      os << str[i];
     }
     return os;
-  }
-
-  template<class T> Optional<T> ToCast(const SnapShotSpan& span);
-
-  template<> inline Optional<int> ToCast<int>(const SnapShotSpan & span) {
-    return span.ToInt();
-  }
-
-  template<> inline Optional<String> ToCast<String>(const SnapShotSpan & span) {
-    return span.ToStr();
-  }
-
-  template<> inline Optional<SnapShotSpan> ToCast<SnapShotSpan>(const SnapShotSpan & span) {
-    return span;
   }
 
   class Tokenizer {
