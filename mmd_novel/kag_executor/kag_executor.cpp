@@ -63,6 +63,12 @@ namespace kag {
     });
   }
 
+  void Executor::CommandTextNoDelay(const SnapShotSpan & str) {
+    command_.push([=]() {
+      message_manager_.Current().Append(str.ToStr());
+    });
+  }
+
   void Executor::CommandFont(const CommandFunc<FontCommandEditor>& f) {
     command_.push([f, this]() {
       FontCommandEditor editor(message_manager_);

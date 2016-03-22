@@ -147,8 +147,13 @@ namespace kag {
 
       args.AttributeValTo(L"opacity", ToInt10, [&](int val) { editor.opacity(val); });
 
-      args.AttributeValTo(L"visible", ToBool, [&](bool val) { editor.visible(val); })
+      args.AttributeValTo(L"visible", ToBool, [&](bool val) { editor.visible(val); });
+
     });
+  }
+
+  void FileExecutor::CHTag(const Parser::CommandToken & token) {
+    CommandTextNoDelay(token.arguments().find_or_throw(L"text"));
   }
 
 }

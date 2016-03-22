@@ -49,6 +49,9 @@ namespace kag {
     /// テキストをメッセージレイヤに送る
     /// </summary>
     void CommandText(const SnapShotSpan& str);
+
+    void CommandTextNoDelay(const SnapShotSpan& str);
+
     template<class Editor>
     using CommandFunc = std::function<void(Editor&)>;
 

@@ -146,6 +146,11 @@ namespace kag {
         return args.insert(std::move(p));
       }
 
+      const SnapShotSpan& find_or_throw(const SnapShotSpan& name) const {
+        auto it = args.find(name);
+        if (it == args.end()) throw std::runtime_error(name.ToNarrow());
+        return it->second;
+      }
       /// <summary>
       /// 属性の値を関数に渡す
       /// <para>見つからなかった場合はふたつ目の関数を呼び出す</para>
