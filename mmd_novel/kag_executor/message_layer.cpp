@@ -72,6 +72,14 @@ namespace kag {
     now_font_ = font;
   }
 
+  void MessageLayer::SetDefaultFont(const message::MessageTextFont & font) {
+    default_font_ = font;
+  }
+
+  void MessageLayer::ResetFont() {
+    SetFont(default_font_);
+  }
+
   void MessageLayer::SetPositionTop(int top) {
     position_.y = top;
   }

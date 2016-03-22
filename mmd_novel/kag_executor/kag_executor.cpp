@@ -115,6 +115,12 @@ namespace kag {
     });
   }
 
+  void Executor::CommandResetFont() {
+    command_.push([=]() {
+      message_manager_.Current().ResetFont();
+    });
+  }
+
   void Executor::CommandPosition(Value<int> layer, Value<int> page, const CommandFunc<PositionCommandEditor>& f) {
     command_.push([=]()mutable {
       if (layer == kag::default) layer = message_manager_.CurrentLayerNum();

@@ -1,14 +1,15 @@
 @font size=50 
 文[l]
-@font size=25
+@font size=25  face="ＭＳ ゴシック"
 字のサイズを変更します。
 [r]
 @font face="ＭＳ ゴシック"
 フォントを "ＭＳ ゴシック" に設定しました。[r]
 [nowait]
 @deffont face=HG行書体 size=30
+
 フォントを "HG行書体" に設定しました。[l][er]
-[endnowait]
+[endnowait][resetfont]
 ？？？「[indent]あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよらりるれろわをん」[endindent][l]
 [position layer=message0 page=fore left=30 top=15 width=400 height=400 frame="" color="0xff1122" marginl=20 margint=40 marginr=20 marginb=40 visible=true]
 

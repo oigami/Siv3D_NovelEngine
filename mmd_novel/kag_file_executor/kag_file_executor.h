@@ -43,7 +43,7 @@ namespace kag {
     void PTag(const Parser::CommandToken& token);
     void PositionTTag(const Parser::CommandToken& token);
     void RTag(const Parser::CommandToken& token);
-    //void ResetFontTag(const Parser::CommandToken& token);
+    void ResetFontTag(const Parser::CommandToken& token);
     //void ResetStyleTag(const Parser::CommandToken& token);
     //void RubyTag(const Parser::CommandToken& token);
     //void StyleTag(const Parser::CommandToken& token);

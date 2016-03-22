@@ -66,6 +66,8 @@ namespace kag {
     void CommandFont(const CommandFunc<FontCommandEditor>& f);
     void CommandDefFont(const CommandFunc<DefFontCommandEditor>& f);
 
+    void CommandResetFont();
+
     void CommandPosition(Value<int> layer, Value<int> page, const CommandFunc<PositionCommandEditor>& f);
 
   protected:

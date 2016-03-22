@@ -28,7 +28,7 @@ namespace kag {
     tag_func_[SnapShotSpan(L"p")] = &FileExecutor::PTag;
     tag_func_[SnapShotSpan(L"position")] = &FileExecutor::PositionTTag;
     tag_func_[SnapShotSpan(L"r")] = &FileExecutor::RTag;
-    //tag_func_[SnapShotSpan(L"resetfont")] = &FileExecutor::ResetFontTag;
+    tag_func_[SnapShotSpan(L"resetfont")] = &FileExecutor::ResetFontTag;
     //tag_func_[SnapShotSpan(L"resetstyle")] = &FileExecutor::ResetStyleTag;
     //tag_func_[SnapShotSpan(L"ruby")] = &FileExecutor::RubyTag;
     //tag_func_[SnapShotSpan(L"style")] = &FileExecutor::StyleTag;
@@ -77,6 +77,10 @@ namespace kag {
 
   void FileExecutor::RTag(const Parser::CommandToken &) {
     CommandR();
+  }
+
+  void FileExecutor::ResetFontTag(const Parser::CommandToken & token) {
+    CommandResetFont();
   }
 
   void FileExecutor::NoWaitTag(const Parser::CommandToken & token) {

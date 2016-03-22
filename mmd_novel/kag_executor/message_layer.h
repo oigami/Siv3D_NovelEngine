@@ -201,9 +201,9 @@ namespace kag {
     /// <param name="font"></param>
     void SetFont(const message::MessageTextFont& font);
 
-    void SetDefaultFont(const message::MessageTextFont& font) {
-      default_font_ = font;
-    }
+    void SetDefaultFont(const message::MessageTextFont& font);
+
+    void ResetFont();
 
     void SetPositionTop(int top);
     void SetPositionLeft(int left);
