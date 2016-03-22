@@ -1,8 +1,7 @@
 #include "tag_editor.h"
 namespace kag {
   FontCommandEditor::FontCommandEditor(MessageManager & manager) :manager_(manager) {
-    auto& current = manager.Current();
-    auto& now_font = current.NowFont();
+    auto& now_font = manager.NowFont();
     size_ = now_font.font_.size();
     face_ = now_font.font_.name();
     color_ = now_font.color_;
@@ -40,7 +39,7 @@ namespace kag {
     prop.name = std::move(face_);
     prop.size = size_;
     prop.style = CreateStyle();
-    manager_.Current().SetFont({ Font(prop),color_ });
+    manager_.SetFont({ Font(prop),color_ });
   }
 
 

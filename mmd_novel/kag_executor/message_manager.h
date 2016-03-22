@@ -90,6 +90,19 @@ namespace kag {
 
     void SetNoWaitText(bool is_no_wait);
 
+    void SetDefaultFont(const message::MessageTextFont& font) {
+      default_font_ = font;
+    }
+
+    void SetFont(const message::MessageTextFont& font) {
+      for (auto& i : message_layer_) {
+        for (auto& j : i) {
+          j.SetFont(font);
+        }
+      }
+    }
+
+    const message::MessageTextFont& NowFont() const { return now_font_; }
     /// <summary>
     /// メッセージレイヤを返す
     /// </summary>
@@ -162,6 +175,10 @@ namespace kag {
     bool is_click_skip;
 
     bool is_no_wait_;
+
+    message::MessageTextFont default_font_;
+
+    message::MessageTextFont now_font_;
   };
 
 }
