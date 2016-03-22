@@ -135,17 +135,20 @@ namespace kag {
 
   void MessageLayer::CheckByReturn() {
     assert(!IsLimitHeihgt());
-    auto opt = text_line_.back().ByReturn(position_.w - margin_.x - margin_.w);
-    if (!opt)
-      return;
-    if (indent_width_ != InvalidIndent)
-      opt->Indent(indent_width_);
-    now_height += text_line_.back().Height();
-    if (!IsLimitHeihgt()) {
-      text_line_.emplace_back(*opt);
-      limit_line_num = static_cast<int>(text_line_.size());
-    } else {
-      overflow_text = std::move(opt);
+    for (;;) {
+      auto opt = text_line_.back().ByReturn(position_.w - margin_.x - margin_.w);
+      if (!opt)
+        return;
+      if (indent_width_ != InvalidIndent)
+        opt->Indent(indent_width_);
+      now_height += text_line_.back().Height();
+      if (!IsLimitHeihgt()) {
+        text_line_.emplace_back(*opt);
+        limit_line_num = static_cast<int>(text_line_.size());
+      } else {
+        overflow_text = std::move(opt);
+        return;
+      }
     }
   }
 
