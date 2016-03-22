@@ -72,7 +72,12 @@ namespace kag {
       return StrCmp(c_, span.c_, Length()) == 0;
     }
     bool operator<(const SnapShotSpan& r) const {
-      return StrCmp(c_, r.c_, Length()) < 0;
+      const int len = Length();
+      const int len2 = r.Length();
+      const int a = StrCmp(c_, r.c_, std::min(len, len2));
+      if (a == 0)return len < len2;
+      if (a < 0) return true;
+      return false;
     }
 
     bool operator==(const SnapShotSpan& r) const {
