@@ -14,7 +14,7 @@ namespace kag {
     //tag_func_[SnapShotSpan(L"defstyle")] = &FileExecutor::DefStyleTag;
     tag_func_[SnapShotSpan(L"delay")] = &FileExecutor::DelayTag;
     tag_func_[SnapShotSpan(L"endindent")] = &FileExecutor::EndIndentTag;
-    //tag_func_[SnapShotSpan(L"endnowait")] = &FileExecutor::EndNoWaitTag;
+    tag_func_[SnapShotSpan(L"endnowait")] = &FileExecutor::EndNoWaitTag;
     tag_func_[SnapShotSpan(L"er")] = &FileExecutor::ERTag;
     tag_func_[SnapShotSpan(L"font")] = &FileExecutor::FontTTag;
     //tag_func_[SnapShotSpan(L"glyph")] = &FileExecutor::GlyphTag;
@@ -105,6 +105,10 @@ namespace kag {
 
   void FileExecutor::EndIndentTag(const Parser::CommandToken & token) {
     CommandEndIndent();
+  }
+
+  void FileExecutor::EndNoWaitTag(const Parser::CommandToken & token) {
+    CommandEndNoWait();
   }
 
   void FileExecutor::ERTag(const Parser::CommandToken &) {

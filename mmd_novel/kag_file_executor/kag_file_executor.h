@@ -29,7 +29,7 @@ namespace kag {
     //void DefStyleTag(const Parser::CommandToken& token);
     void DelayTag(const Parser::CommandToken& token);
     void EndIndentTag(const Parser::CommandToken& token);
-    //void EndNoWaitTag(const Parser::CommandToken& token);
+    void EndNoWaitTag(const Parser::CommandToken& token);
     void ERTag(const Parser::CommandToken& token);
     void FontTTag(const Parser::CommandToken& token);
     //void GlyphTag(const Parser::CommandToken& token);

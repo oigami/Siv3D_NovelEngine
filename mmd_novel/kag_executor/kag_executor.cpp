@@ -44,6 +44,12 @@ namespace kag {
     });
   }
 
+  void Executor::CommandEndNoWait() {
+    command_.push([&]() {
+      message_manager_.SetNoWaitText(false);
+    });
+  }
+
   void Executor::CommandER() {
     command_.push([&]() {
       message_manager_.Clear();

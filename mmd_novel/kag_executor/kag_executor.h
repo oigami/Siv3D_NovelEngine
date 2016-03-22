@@ -40,6 +40,8 @@ namespace kag {
     void CommandDelay(int delay_time);
 
     void CommandNoWait();
+    void CommandEndNoWait();
+
     void CommandER();
 
     void CommandCM();
