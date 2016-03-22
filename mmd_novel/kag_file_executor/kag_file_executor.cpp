@@ -24,7 +24,7 @@ namespace kag {
     tag_func_[SnapShotSpan(L"l")] = &FileExecutor::LTag;
     //tag_func_[SnapShotSpan(L"locate")] = &FileExecutor::LocateTag;
     //tag_func_[SnapShotSpan(L"locklink")] = &FileExecutor::LockLinkTag;
-    //tag_func_[SnapShotSpan(L"nowait")] = &FileExecutor::NoWaitTag;
+    tag_func_[SnapShotSpan(L"nowait")] = &FileExecutor::NoWaitTag;
     tag_func_[SnapShotSpan(L"p")] = &FileExecutor::PTag;
     tag_func_[SnapShotSpan(L"position")] = &FileExecutor::PositionTTag;
     tag_func_[SnapShotSpan(L"r")] = &FileExecutor::RTag;
@@ -79,10 +79,13 @@ namespace kag {
     CommandR();
   }
 
+  void FileExecutor::NoWaitTag(const Parser::CommandToken & token) {
+    CommandNoWait();
+  }
+
   void FileExecutor::PTag(const Parser::CommandToken &) {
     CommandP();
   }
-
 
   void FileExecutor::DelayTag(const Parser::CommandToken & token) {
     auto& args = token.arguments();
@@ -90,7 +93,7 @@ namespace kag {
       if (val == L"user") {
         CommandDelay(30);
       } else if (val == L"nowait") {
-        CommandDelay(0);
+        CommandNoWait();
       } else {
         CommandDelay(converter::ToInt10(val));
       }

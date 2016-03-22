@@ -45,9 +45,13 @@ namespace kag {
 
   void MessageManager::Append(const SnapShotSpan & text) {
     assert(IsFlush());
-    delay_text = text;
-    timer_.restart();
-    delay_index_ = 0;
+    if (is_no_wait_) {
+      Current().Append(text.ToStr());
+    } else {
+      delay_text = text;
+      timer_.restart();
+      delay_index_ = 0;
+    }
   }
 
   void MessageManager::AppendNewLine() {
@@ -108,6 +112,10 @@ namespace kag {
 
   void MessageManager::SetDelayTime(int delay_time) {
     delay_time_ = delay_time;
+  }
+
+  void MessageManager::SetNoWaitText(bool is_no_wait) {
+    is_no_wait_ = is_no_wait;
   }
 
 }

@@ -88,6 +88,8 @@ namespace kag {
     /// <param name="delay_time"></param>
     void SetDelayTime(int delay_time);
 
+    void SetNoWaitText(bool is_no_wait);
+
     /// <summary>
     /// メッセージレイヤを返す
     /// </summary>
@@ -159,6 +161,7 @@ namespace kag {
     /// <summary>クリックによるスキップをするかどうか</summary>
     bool is_click_skip;
 
+    bool is_no_wait_;
   };
 
 }
