@@ -4,15 +4,37 @@ namespace kag {
 
 
   FileExecutor::FileExecutor() {
-    tag_func_[SnapShotSpan(L"l")] = &FileExecutor::LTag;
-    tag_func_[SnapShotSpan(L"r")] = &FileExecutor::RTag;
-    tag_func_[SnapShotSpan(L"p")] = &FileExecutor::PTag;
-    tag_func_[SnapShotSpan(L"delay")] = &FileExecutor::DelayTag;
-    tag_func_[SnapShotSpan(L"er")] = &FileExecutor::ERTag;
+    //tag_func_[SnapShotSpan(L"cancelautomode")] = &FileExecutor::CancelAutoModeTag;
+    //tag_func_[SnapShotSpan(L"cancelskip")] = &FileExecutor::CancelSkipTag;
+    tag_func_[SnapShotSpan(L"ch")] = &FileExecutor::CHTag;
     tag_func_[SnapShotSpan(L"cm")] = &FileExecutor::CMTag;
     tag_func_[SnapShotSpan(L"ct")] = &FileExecutor::CTTag;
+    tag_func_[SnapShotSpan(L"current")] = &FileExecutor::CurrentTag;
+    //tag_func_[SnapShotSpan(L"deffont")] = &FileExecutor::DefFontTag;
+    //tag_func_[SnapShotSpan(L"defstyle")] = &FileExecutor::DefStyleTag;
+    tag_func_[SnapShotSpan(L"delay")] = &FileExecutor::DelayTag;
+    tag_func_[SnapShotSpan(L"endindent")] = &FileExecutor::EndIndentTag;
+    //tag_func_[SnapShotSpan(L"endnowait")] = &FileExecutor::EndNoWaitTag;
+    tag_func_[SnapShotSpan(L"er")] = &FileExecutor::ERTag;
     tag_func_[SnapShotSpan(L"font")] = &FileExecutor::FontTTag;
+    //tag_func_[SnapShotSpan(L"glyph")] = &FileExecutor::GlyphTag;
+    //tag_func_[SnapShotSpan(L"graph")] = &FileExecutor::GraphTag;
+    //tag_func_[SnapShotSpan(L"hch")] = &FileExecutor::HCH;
+    tag_func_[SnapShotSpan(L"indent")] = &FileExecutor::IndentTag;
+    tag_func_[SnapShotSpan(L"l")] = &FileExecutor::LTag;
+    //tag_func_[SnapShotSpan(L"locate")] = &FileExecutor::LocateTag;
+    //tag_func_[SnapShotSpan(L"locklink")] = &FileExecutor::LockLinkTag;
+    //tag_func_[SnapShotSpan(L"nowait")] = &FileExecutor::NoWaitTag;
+    tag_func_[SnapShotSpan(L"p")] = &FileExecutor::PTag;
     tag_func_[SnapShotSpan(L"position")] = &FileExecutor::PositionTTag;
+    tag_func_[SnapShotSpan(L"r")] = &FileExecutor::RTag;
+    //tag_func_[SnapShotSpan(L"resetfont")] = &FileExecutor::ResetFontTag;
+    //tag_func_[SnapShotSpan(L"resetstyle")] = &FileExecutor::ResetStyleTag;
+    //tag_func_[SnapShotSpan(L"ruby")] = &FileExecutor::RubyTag;
+    //tag_func_[SnapShotSpan(L"style")] = &FileExecutor::StyleTag;
+    //tag_func_[SnapShotSpan(L"unlocklink")] = &FileExecutor::UnlockLinkTag;
+
+
   }
 
   FileExecutor::FileExecutor(const FilePath & filename) :FileExecutor() {
