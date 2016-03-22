@@ -35,6 +35,12 @@ namespace kag {
       MessageText(int x, const MessageTextFont& font);
 
       /// <summary>
+      /// インデントをセットする
+      /// </summary>
+      /// <param name="x"></param>
+      void Indent(int x);
+
+      /// <summary>
       /// 文字列を描画する
       /// </summary>
       /// <param name="x">表示するx座標</param>
@@ -64,7 +70,7 @@ namespace kag {
       Optional<MessageText> ByReturn(int width);
 
       /// <summary>
-      /// コンストラクタで指定したx+文字列の幅を返す
+      /// 指定したインデントx+文字列の幅を返す
       /// </summary>
       /// <returns></returns>
       int GetWidth() const;
@@ -134,6 +140,8 @@ namespace kag {
       /// </summary>
       /// <returns></returns>
       int Height() const;
+
+      int Width() const;
 
     private:
 
@@ -209,6 +217,9 @@ namespace kag {
     void SetBackgroundRGB(int r, int g, int b);
     void SetBackgroundOpacity(int a);
     void SetBackgroundTex(Texture tex);
+
+    void SetIndent();
+    void SetEndIndent();
   private:
 
     /// <summary>
@@ -216,6 +227,11 @@ namespace kag {
     /// <para>もし折り返して高さに収まらなくなった場合はoverflow_textに入れる</para>
     /// </summary>
     void CheckByReturn();
+
+    static constexpr int InvalidIndent = std::numeric_limits<int>::max();
+
+    /// <summary>インデントの開始位置(InvalidIndentで無効)</summary>
+    int indent_width_;
 
     message::MessageTextFont now_font_;
 

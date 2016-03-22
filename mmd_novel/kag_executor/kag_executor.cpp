@@ -75,6 +75,18 @@ namespace kag {
     });
   }
 
+  void Executor::CommandIndent() {
+    command_.push([this]() {
+      this->message_manager_.Current().SetIndent();
+    });
+  }
+
+  void Executor::CommandEndIndent() {
+    command_.push([this]() {
+      this->message_manager_.Current().SetEndIndent();
+    });
+  }
+
   void Executor::CommandFont(const CommandFunc<FontCommandEditor>& f) {
     command_.push([f, this]() {
       FontCommandEditor editor(message_manager_);

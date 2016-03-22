@@ -54,6 +54,9 @@ namespace kag {
 
     void CommandCurrent(int index, int page);
 
+    void CommandIndent();
+    void CommandEndIndent();
+
     template<class Editor>
     using CommandFunc = std::function<void(Editor&)>;
 

@@ -7,6 +7,7 @@ namespace kag {
     is_visible_ = false;
     background_color_ = Palette::Gray;
     background_color_.a = 128;
+    indent_width_ = InvalidIndent;
     Clear();
   }
 
@@ -124,12 +125,21 @@ namespace kag {
     background_tex_ = tex;
   }
 
+  void MessageLayer::SetIndent() {
+    indent_width_ = text_line_.back().Width();
+  }
+
+  void MessageLayer::SetEndIndent() {
+    indent_width_ = InvalidIndent;
+  }
+
   void MessageLayer::CheckByReturn() {
     assert(!IsLimitHeihgt());
     auto opt = text_line_.back().ByReturn(position_.w - margin_.x - margin_.w);
     if (!opt)
       return;
-
+    if (indent_width_ != InvalidIndent)
+      opt->Indent(indent_width_);
     now_height += text_line_.back().Height();
     if (!IsLimitHeihgt()) {
       text_line_.emplace_back(*opt);
@@ -160,7 +170,7 @@ namespace kag {
     int MessageTextLine::Draw(int x, int y) const {
       const int new_y = y + max_height_;
       for (auto& i : text_) {
-        x += static_cast<int>(i.Draw(x, new_y).w);
+        static_cast<int>(i.Draw(x, new_y).w);
       }
       return new_y;
     }
@@ -192,6 +202,8 @@ namespace kag {
       return max_height_;
     }
 
+    int MessageTextLine::Width() const { return text_.back().GetWidth(); }
+
     MessageText::MessageText(int x, const MessageTextFont & font, String && text)
       : start_x_(x), font_(font), text_(std::move(text)) {
     }
@@ -200,8 +212,15 @@ namespace kag {
       : start_x_(x), font_(font) {
     }
 
+    /// <summary>
+    /// インデントをセットする
+    /// </summary>
+    /// <param name="x"></param>
+
+    void MessageText::Indent(int x) { start_x_ = x; }
+
     RectF MessageText::Draw(int x, int y_add_fontheight) const {
-      return font_.Draw(text_, x, y_add_fontheight);
+      return font_.Draw(text_, x + start_x_, y_add_fontheight);
     }
 
     MessageText & MessageText::Append(const String & s) {

@@ -78,6 +78,10 @@ namespace kag {
 
   }
 
+  void FileExecutor::EndIndentTag(const Parser::CommandToken & token) {
+    CommandEndIndent();
+  }
+
   void FileExecutor::ERTag(const Parser::CommandToken &) {
     CommandER();
   }
@@ -115,6 +119,10 @@ namespace kag {
 
     });
 
+  }
+
+  void FileExecutor::IndentTag(const Parser::CommandToken & token) {
+    CommandIndent();
   }
 
   void FileExecutor::PositionTTag(const Parser::CommandToken & token) {

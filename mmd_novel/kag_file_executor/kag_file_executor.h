@@ -28,15 +28,14 @@ namespace kag {
     //void DefFontTag(const Parser::CommandToken& token);
     //void DefStyleTag(const Parser::CommandToken& token);
     void DelayTag(const Parser::CommandToken& token);
-    //void EndIndentTag(const Parser::CommandToken& token);
+    void EndIndentTag(const Parser::CommandToken& token);
     //void EndNoWaitTag(const Parser::CommandToken& token);
     void ERTag(const Parser::CommandToken& token);
     void FontTTag(const Parser::CommandToken& token);
     //void GlyphTag(const Parser::CommandToken& token);
     //void GraphTag(const Parser::CommandToken& token);
     //void HCHTag(const Parser::CommandToken& token);
-    //void IndentTag(const Parser::CommandToken& token);
-    //void LTagTag(const Parser::CommandToken& token);
+    void IndentTag(const Parser::CommandToken& token);
     void LTag(const Parser::CommandToken& token);
     //void LocateTag(const Parser::CommandToken& token);
     //void LockLinkTag(const Parser::CommandToken& token);
