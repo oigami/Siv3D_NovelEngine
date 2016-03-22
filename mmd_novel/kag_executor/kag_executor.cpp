@@ -69,6 +69,12 @@ namespace kag {
     });
   }
 
+  void Executor::CommandCurrent(int index, int page) {
+    command_.push([=]() {
+      message_manager_.SetCurrent(index, page == 0 ? LayerPage::Fore : LayerPage::Back);
+    });
+  }
+
   void Executor::CommandFont(const CommandFunc<FontCommandEditor>& f) {
     command_.push([f, this]() {
       FontCommandEditor editor(message_manager_);

@@ -90,6 +90,16 @@ namespace kag {
     CommandCT();
   }
 
+  void FileExecutor::CurrentTag(const Parser::CommandToken & token) {
+    int layer = kag::default;
+    int page = 0;
+    auto& args = token.arguments();
+    using namespace converter;
+    args.AttributeValTo(L"layer", ToMessageLayerNum, [&](int val) { layer = val; });
+    args.AttributeValTo(L"page", ToPageNum, [&](int val) { page = val; });
+    CommandCurrent(layer, page);
+  }
+
   void FileExecutor::FontTTag(const Parser::CommandToken & token) {
 
     auto& args = token.arguments();

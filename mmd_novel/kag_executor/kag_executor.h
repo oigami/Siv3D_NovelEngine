@@ -52,6 +52,8 @@ namespace kag {
 
     void CommandTextNoDelay(const SnapShotSpan& str);
 
+    void CommandCurrent(int index, int page);
+
     template<class Editor>
     using CommandFunc = std::function<void(Editor&)>;
 
