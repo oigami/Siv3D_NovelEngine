@@ -201,6 +201,10 @@ namespace kag {
     /// <param name="font"></param>
     void SetFont(const message::MessageTextFont& font);
 
+    void SetDefaultFont(const message::MessageTextFont& font) {
+      default_font_ = font;
+    }
+
     void SetPositionTop(int top);
     void SetPositionLeft(int left);
     void SetPositionWidth(int width);
@@ -234,6 +238,8 @@ namespace kag {
     int indent_width_;
 
     message::MessageTextFont now_font_;
+
+    message::MessageTextFont default_font_;
 
     /// <summary>メッセージレイヤのサイズ</summary>
     Rect position_;

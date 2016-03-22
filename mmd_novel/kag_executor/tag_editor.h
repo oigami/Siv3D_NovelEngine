@@ -10,7 +10,7 @@ namespace kag {
     void StyleCheck(FontStyle style);
     FontStyle CreateStyle();
     virtual void commit(const message::MessageTextFont& font) {
-      manager_.SetFont(font);
+      manager_.Current().SetFont(font);
     }
 
     void Commit();
@@ -46,7 +46,7 @@ namespace kag {
   class DefFontCommandEditor : public FontCommandEditor {
     friend Executor;
     void commit(const message::MessageTextFont& font) override {
-      manager_.SetDefaultFont(font);
+      manager_.Current().SetDefaultFont(font);
     }
     using FontCommandEditor::FontCommandEditor;
   };
