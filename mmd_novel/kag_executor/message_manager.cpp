@@ -46,7 +46,13 @@ namespace kag {
   void MessageManager::Append(const SnapShotSpan & text) {
     assert(IsFlush());
     if (is_no_wait_) {
-      Current().Append(text.ToStr());
+      auto& current = Current();
+      current.Append(text.ToStr());
+      if (current.IsLimitHeihgt()) {
+        is_click_new_page = true;
+        is_wait_click_ = true;
+        return;
+      }
     } else {
       delay_text = text;
       timer_.restart();
