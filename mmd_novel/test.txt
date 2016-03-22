@@ -6,7 +6,7 @@
 @font face="ＭＳ ゴシック"
 フォントを "ＭＳ ゴシック" に設定しました。[r]
 [nowait]
-@font face=HG行書体 size=30
+@deffont face=HG行書体 size=30
 フォントを "HG行書体" に設定しました。[l][er]
 [endnowait]
 ？？？「[indent]あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよらりるれろわをん」[endindent][l]

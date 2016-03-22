@@ -107,6 +107,14 @@ namespace kag {
     });
   }
 
+  void Executor::CommandDefFont(const CommandFunc<DefFontCommandEditor>& f) {
+    command_.push([f, this]() {
+      DefFontCommandEditor editor(message_manager_);
+      f(editor);
+      editor.Commit();
+    });
+  }
+
   void Executor::CommandPosition(Value<int> layer, Value<int> page, const CommandFunc<PositionCommandEditor>& f) {
     command_.push([=]()mutable {
       if (layer == kag::default) layer = message_manager_.CurrentLayerNum();

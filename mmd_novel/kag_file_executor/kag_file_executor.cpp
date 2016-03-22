@@ -10,7 +10,7 @@ namespace kag {
     tag_func_[SnapShotSpan(L"cm")] = &FileExecutor::CMTag;
     tag_func_[SnapShotSpan(L"ct")] = &FileExecutor::CTTag;
     tag_func_[SnapShotSpan(L"current")] = &FileExecutor::CurrentTag;
-    //tag_func_[SnapShotSpan(L"deffont")] = &FileExecutor::DefFontTag;
+    tag_func_[SnapShotSpan(L"deffont")] = &FileExecutor::DefFontTag;
     //tag_func_[SnapShotSpan(L"defstyle")] = &FileExecutor::DefStyleTag;
     tag_func_[SnapShotSpan(L"delay")] = &FileExecutor::DelayTag;
     tag_func_[SnapShotSpan(L"endindent")] = &FileExecutor::EndIndentTag;
@@ -131,6 +131,21 @@ namespace kag {
     args.AttributeValTo(L"layer", ToMessageLayerNum, [&](int val) { layer = val; });
     args.AttributeValTo(L"page", ToPageNum, [&](int val) { page = val; });
     CommandCurrent(layer, page);
+  }
+
+  void FileExecutor::DefFontTag(const Parser::CommandToken & token) {
+    auto& args = token.arguments();
+    CommandDefFont([args](FontCommandEditor& editor) {
+      using namespace converter;
+      args.AttributeVal(L"face", [&](const SnapShotSpan& val) { editor.face(val.ToStr()); });
+
+      args.AttributeValTo(L"size", ToInt10, [&](int val) { editor.size(val); });
+
+      args.AttributeValTo(L"italic", ToBool, [&](bool val) { editor.is_italic(val); });
+
+      args.AttributeValTo(L"bold", ToBool, [&](bool val) { editor.is_bold(val); });
+
+    });
   }
 
   void FileExecutor::FontTTag(const Parser::CommandToken & token) {

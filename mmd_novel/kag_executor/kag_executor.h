@@ -64,6 +64,7 @@ namespace kag {
     using CommandFunc = std::function<void(Editor&)>;
 
     void CommandFont(const CommandFunc<FontCommandEditor>& f);
+    void CommandDefFont(const CommandFunc<DefFontCommandEditor>& f);
 
     void CommandPosition(Value<int> layer, Value<int> page, const CommandFunc<PositionCommandEditor>& f);
 

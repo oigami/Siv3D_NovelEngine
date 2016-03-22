@@ -39,7 +39,7 @@ namespace kag {
     prop.name = std::move(face_);
     prop.size = size_;
     prop.style = CreateStyle();
-    manager_.SetFont({ Font(prop),color_ });
+    commit({ Font(prop),color_ });
   }
 
 

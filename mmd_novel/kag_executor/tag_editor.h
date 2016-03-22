@@ -6,19 +6,26 @@ namespace kag {
   class FontCommandEditor {
     friend Executor;
     using This = FontCommandEditor;
-    FontCommandEditor(MessageManager& manager);
 
     void StyleCheck(FontStyle style);
     FontStyle CreateStyle();
+    virtual void commit(const message::MessageTextFont& font) {
+      manager_.SetFont(font);
+    }
+
     void Commit();
+  protected:
+    FontCommandEditor(MessageManager& manager);
+
   public:
+
     This& size(int size) { size_ = size; return *this; }
     This& face(const String name) { face_ = name; return *this; }
     This& color(const Color& color) { color_ = color; return *this; }
     This& is_italic(bool is_italic) { is_italic_ = is_italic; return *this; }
     This& is_bold(bool is_bold) { is_bold_ = is_bold; return *this; }
 
-  private:
+  protected:
     int size_;
     String face_;
     Color color_;
@@ -34,6 +41,14 @@ namespace kag {
     Color edge_color_;
 
     MessageManager& manager_;
+  };
+
+  class DefFontCommandEditor : public FontCommandEditor {
+    friend Executor;
+    void commit(const message::MessageTextFont& font) override {
+      manager_.SetDefaultFont(font);
+    }
+    using FontCommandEditor::FontCommandEditor;
   };
 
   class PositionCommandEditor {
