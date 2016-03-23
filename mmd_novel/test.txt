@@ -7,7 +7,7 @@
 フォントを "ＭＳ ゴシック" に設定しました。[r]
 [nowait]
 @deffont face=HG行書体 size=30
-
+[style linespacing=40]
 フォントを[locate x=0] "HG行書体" に設定しました。[l][er]
 [endnowait][resetfont]
 ？？？「[indent]あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよらりるれろわをん」[endindent][l]

@@ -31,7 +31,7 @@ namespace kag {
     tag_func_[SnapShotSpan(L"resetfont")] = &FileExecutor::ResetFontTag;
     //tag_func_[SnapShotSpan(L"resetstyle")] = &FileExecutor::ResetStyleTag;
     //tag_func_[SnapShotSpan(L"ruby")] = &FileExecutor::RubyTag;
-    //tag_func_[SnapShotSpan(L"style")] = &FileExecutor::StyleTag;
+    tag_func_[SnapShotSpan(L"style")] = &FileExecutor::StyleTag;
     //tag_func_[SnapShotSpan(L"unlocklink")] = &FileExecutor::UnlockLinkTag;
 
 
@@ -92,6 +92,24 @@ namespace kag {
 
   void FileExecutor::ResetFontTag(const Parser::CommandToken & token) {
     CommandResetFont();
+  }
+
+  void FileExecutor::StyleTag(const Parser::CommandToken & token) {
+    auto& args = token.arguments();
+    CommandStyle([=](StyleCommandEditor& editor) {
+      args.AttributeVal(L"linesize", [&](const SnapShotSpan& val) {
+        if (val == L"default") {
+          editor.linesize();
+        } else {
+          editor.linesize(converter::ToInt10(val));
+        }
+      });
+
+      args.AttributeValTo(L"linespacing", converter::ToInt10, [&](int val) {
+        editor.linespacing(val);
+      });
+
+    });
   }
 
   void FileExecutor::NoWaitTag(const Parser::CommandToken & token) {

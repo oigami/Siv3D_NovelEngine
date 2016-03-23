@@ -82,4 +82,31 @@ namespace kag {
   private:
     MessageLayer& layer_;
   };
+
+  class StyleCommandEditor {
+    friend Executor;
+    using This = StyleCommandEditor;
+  protected:
+    StyleCommandEditor(MessageManager& manager) : layer_(manager.Current()){
+    }
+    void Commit() {}
+  public:
+    enum AlignType {
+      Left,
+      Center,
+      Right,
+    };
+
+    This& linespacing(int px) { layer_.SetLineSpacing(px); return *this; }
+    This& linesize(int px) { layer_.SetLineSize(px); return *this; }
+    This& linesize() { layer_.ResetLineSize(); return *this; }
+  private:
+
+    // 未実装
+    //This& autoreturn(bool is_auto_return) {}
+    //This& align(AlignType type) {}
+    //This& pitch(int px) {}
+
+    MessageLayer& layer_;
+  };
 }
