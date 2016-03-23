@@ -151,9 +151,22 @@ namespace kag {
     });
   }
 
+  void Executor::ShowErrorMsg(const String & str) const {
+    MessageBox::Show(str);
+  }
+
   bool Executor::Update() {
     message_manager_.Update();
     return CommandUpdate();
+  }
+
+  bool Executor::CommandUpdate() {
+    while (!command_.empty()) {
+      if (IsWait()) return false;
+      command_.front()();
+      command_.pop();
+    }
+    return true;
   }
 
   void Executor::Draw() {

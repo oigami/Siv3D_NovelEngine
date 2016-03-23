@@ -16,14 +16,8 @@ namespace kag {
     /// </summary>
     /// <returns></returns>
     bool Update();
-    bool CommandUpdate() {
-      while (!command_.empty()) {
-        if (IsWait()) return false;
-        command_.front()();
-        command_.pop();
-      }
-      return true;
-    }
+    bool CommandUpdate();
+
     void Draw();
     void Clear();
 
@@ -60,7 +54,6 @@ namespace kag {
     void CommandIndent();
     void CommandEndIndent();
 
-
     void CommandLocate(Value<int> x, Value<int> y);
 
     template<class Editor>
@@ -76,9 +69,7 @@ namespace kag {
     void CommandPosition(Value<int> layer, Value<int> page, const CommandFunc<PositionCommandEditor>& f);
 
   protected:
-    void ShowErrorMsg(const String& str) const {
-      MessageBox::Show(str);
-    }
+    void ShowErrorMsg(const String& str) const;
 
   protected:
 
