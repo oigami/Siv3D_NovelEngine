@@ -143,22 +143,14 @@ namespace kag {
 
       int Width() const;
 
-      void SetLineSize(int px) {
-        line_size_ = px;
-      }
+      void SetLineSize(int px);
 
-      void ResetLineSize() {
-        line_size_ = default_line_size;
-      }
+      void ResetLineSize();
 
-      int LineSpacing() const { return line_spacing_; }
+      int LineSpacing() const;
 
-      void SetLineSpacing(int px) {
-        line_spacing_ = px;
-      }
-      void ResetLineSpacing() {
-        line_spacing_ = default_line_spacing;
-      }
+      void SetLineSpacing(int px);
+      void ResetLineSpacing();
 
     private:
 
@@ -223,7 +215,7 @@ namespace kag {
     /// 現在指定されているフォントを返す
     /// </summary>
     /// <returns></returns>
-    const message::MessageTextFont& NowFont() const { return now_font_; }
+    const message::MessageTextFont& NowFont() const;
 
     /// <summary>
     /// フォントを設定する

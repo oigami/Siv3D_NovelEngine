@@ -67,6 +67,8 @@ namespace kag {
     }
   }
 
+  const message::MessageTextFont & MessageLayer::NowFont() const { return now_font_; }
+
   void MessageLayer::SetFont(const message::MessageTextFont & font) {
     text_line_.back().AppendNewFont(font);
     now_font_ = font;
@@ -248,6 +250,24 @@ namespace kag {
 
     int MessageTextLine::Width() const { return text_.back().GetWidth(); }
 
+    void MessageTextLine::SetLineSize(int px) {
+      line_size_ = px;
+    }
+
+    void MessageTextLine::ResetLineSize() {
+      line_size_ = default_line_size;
+    }
+
+    int MessageTextLine::LineSpacing() const { return line_spacing_; }
+
+    void MessageTextLine::SetLineSpacing(int px) {
+      line_spacing_ = px;
+    }
+
+    void MessageTextLine::ResetLineSpacing() {
+      line_spacing_ = default_line_spacing;
+    }
+
     MessageText::MessageText(int x, const MessageTextFont & font, String && text)
       : start_x_(x), font_(font), text_(std::move(text)) {
     }
@@ -255,11 +275,6 @@ namespace kag {
     MessageText::MessageText(int x, const MessageTextFont & font)
       : start_x_(x), font_(font) {
     }
-
-    /// <summary>
-    /// インデントをセットする
-    /// </summary>
-    /// <param name="x"></param>
 
     void MessageText::Indent(int x) { start_x_ = x; }
 
