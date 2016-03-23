@@ -69,6 +69,10 @@ namespace kag {
     timer_.set(MillisecondsF(delay_time_ * delay_index_));
   }
 
+  void MessageManager::SetWaitClick() { is_wait_click_ = true; }
+
+  void MessageManager::SetClickNextPage() { is_click_new_page = true; }
+
   bool MessageManager::Update() {
     if (is_wait_click_) {
       if (Input::MouseL.clicked) {
@@ -123,5 +127,17 @@ namespace kag {
   void MessageManager::SetNoWaitText(bool is_no_wait) {
     is_no_wait_ = is_no_wait;
   }
+
+  MessageLayer & MessageManager::GetLayer(int index, int page) {
+    return message_layer_[index][page];
+  }
+
+  MessageLayer & MessageManager::Current() { return GetLayer(current_layer_, current_page_); }
+
+  int MessageManager::CurrentLayerNum() const { return current_layer_; }
+
+  int MessageManager::CurrentPageNum() const { return current_page_; }
+
+  bool MessageManager::IsWait() const { return is_wait_click_ || !IsFlush(); }
 
 }

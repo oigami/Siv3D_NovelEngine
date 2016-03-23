@@ -56,8 +56,8 @@ namespace kag {
     /// </summary>
     void NextPage();
 
-    void SetWaitClick() { is_wait_click_ = true; }
-    void SetClickNextPage() { is_click_new_page = true; }
+    void SetWaitClick();
+    void SetClickNextPage();
 
     /// <summary>
     /// メッセージレイヤーの更新をする
@@ -99,29 +99,27 @@ namespace kag {
     /// <para>1 : 裏</para>
     /// </param>
     /// <returns></returns>
-    MessageLayer& GetLayer(int index, int page) {
-      return message_layer_[index][page];
-    }
+    MessageLayer& GetLayer(int index, int page);
 
     /// <summary>
     /// カレントレイヤを返す
     /// </summary>
     /// <returns></returns>
-    MessageLayer& Current() { return GetLayer(current_layer_, current_page_); }
+    MessageLayer& Current();
 
     /// <summary>
     /// 現在のレイヤ番号を返す
     /// </summary>
     /// <returns></returns>
-    int CurrentLayerNum() const { return current_layer_; }
+    int CurrentLayerNum() const;
 
     /// <summary>
     /// 現在の画面（裏 か 表）を返す
     /// </summary>
     /// <returns></returns>
-    int CurrentPageNum() const { return current_page_; }
+    int CurrentPageNum() const;
 
-    bool IsWait() const { return is_wait_click_ || !IsFlush(); }
+    bool IsWait() const;
   private:
 
     Stopwatch timer_;
