@@ -96,8 +96,7 @@ namespace kag {
 
     class MessageTextLine {
     public:
-      MessageTextLine(const int x, MessageTextFont& font);
-      MessageTextLine(const MessageText& text);
+      MessageTextLine(int y, const MessageText& text);
 
       void Clear();
 
@@ -145,8 +144,18 @@ namespace kag {
 
     private:
 
+      int y_;
+
       /// <summary>一行の中で最大の高さを保持する</summary>
       int max_height_;
+
+      static constexpr int default_line_size = std::numeric_limits<int>::max();
+
+      /// <summary>行（文字）の幅</summary>
+      int line_size_;
+
+      /// <summary>行間</summary>
+      int line_spacing_;
 
       Array<MessageText> text_;
 

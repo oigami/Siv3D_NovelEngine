@@ -21,11 +21,11 @@ namespace kag {
     limit_line_num = 0;
     now_height = 0;
     if (overflow_text) {
-      text_line_.emplace_back(*overflow_text);
+      text_line_.emplace_back(0, *overflow_text);
       overflow_text = none;
       CheckByReturn();
     } else {
-      text_line_.emplace_back(0, now_font_);
+      text_line_.emplace_back(0, message::MessageText(0, now_font_));
     }
     limit_line_num = 1;
   }
@@ -49,7 +49,7 @@ namespace kag {
 
   void MessageLayer::AppenNewLine() {
     now_height += text_line_.back().Height();
-    text_line_.emplace_back(0, now_font_);
+    text_line_.emplace_back(now_height, message::MessageText(0, now_font_));
     if (!IsLimitHeihgt()) {
       limit_line_num = static_cast<int>(text_line_.size());
     }
@@ -63,7 +63,7 @@ namespace kag {
 
     int y = position_.y + margin_.y;
     for (auto& i : step(limit_line_num)) {
-      y = text_line_[i].Draw(position_.x + margin_.x, y);
+      text_line_[i].Draw(position_.x + margin_.x, y);
     }
   }
 
@@ -151,7 +151,7 @@ namespace kag {
         opt->Indent(indent_width_);
       now_height += text_line_.back().Height();
       if (!IsLimitHeihgt()) {
-        text_line_.emplace_back(*opt);
+        text_line_.emplace_back(now_height, *opt);
         limit_line_num = static_cast<int>(text_line_.size());
       } else {
         overflow_text = std::move(opt);
@@ -162,12 +162,8 @@ namespace kag {
 
   namespace message {
 
-    MessageTextLine::MessageTextLine(const int x, MessageTextFont & font) :max_height_(0) {
-      max_height_ = 0;
-      Append({ x,font });
-    }
-
-    MessageTextLine::MessageTextLine(const MessageText & text) : max_height_(0) {
+    MessageTextLine::MessageTextLine(int y, const MessageText & text)
+      : max_height_(0), line_spacing_(0), line_size_(default_line_size), y_(y) {
       Append(text);
     }
 
@@ -179,9 +175,9 @@ namespace kag {
     }
 
     int MessageTextLine::Draw(int x, int y) const {
-      const int new_y = y + max_height_;
+      const int new_y = y_ + y + Height();
       for (auto& i : text_) {
-        static_cast<int>(i.Draw(x, new_y).w);
+        i.Draw(x, new_y);
       }
       return new_y;
     }
@@ -210,7 +206,7 @@ namespace kag {
     }
 
     int MessageTextLine::Height() const {
-      return max_height_;
+      return (line_size_ == default_line_size ? max_height_ : line_size_);
     }
 
     int MessageTextLine::Width() const { return text_.back().GetWidth(); }
