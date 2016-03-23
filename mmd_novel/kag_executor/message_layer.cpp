@@ -133,6 +133,19 @@ namespace kag {
     background_tex_ = tex;
   }
 
+  void MessageLayer::SetLocate(int x, int y) {
+    text_line_.emplace_back(y, message::MessageText(x, now_font_));
+    now_height = y;
+  }
+
+  void MessageLayer::SetLocateX(int x) {
+    text_line_.back().AppendNewFont(x, now_font_);
+  }
+
+  void MessageLayer::SetLocateY(int y) {
+    SetLocate(0, y);
+  }
+
   void MessageLayer::SetIndent() {
     indent_width_ = text_line_.back().Width();
   }
@@ -202,6 +215,11 @@ namespace kag {
 
     void MessageTextLine::AppendNewFont(const MessageTextFont & font) {
       text_.emplace_back(text_.back().GetWidth(), font);
+      max_height_ = std::max(max_height_, font.Height());
+    }
+
+    inline void MessageTextLine::AppendNewFont(int x, const MessageTextFont & font) {
+      text_.emplace_back(x, font);
       max_height_ = std::max(max_height_, font.Height());
     }
 

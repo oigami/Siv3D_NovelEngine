@@ -60,6 +60,8 @@ namespace kag {
     void CommandIndent();
     void CommandEndIndent();
 
+    void CommandLocate(Value<int> x, Value<int> y);
+
     template<class Editor>
     using CommandFunc = std::function<void(Editor&)>;
 

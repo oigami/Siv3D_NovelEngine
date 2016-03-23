@@ -22,7 +22,7 @@ namespace kag {
     //tag_func_[SnapShotSpan(L"hch")] = &FileExecutor::HCH;
     tag_func_[SnapShotSpan(L"indent")] = &FileExecutor::IndentTag;
     tag_func_[SnapShotSpan(L"l")] = &FileExecutor::LTag;
-    //tag_func_[SnapShotSpan(L"locate")] = &FileExecutor::LocateTag;
+    tag_func_[SnapShotSpan(L"locate")] = &FileExecutor::LocateTag;
     //tag_func_[SnapShotSpan(L"locklink")] = &FileExecutor::LockLinkTag;
     tag_func_[SnapShotSpan(L"nowait")] = &FileExecutor::NoWaitTag;
     tag_func_[SnapShotSpan(L"p")] = &FileExecutor::PTag;
@@ -73,6 +73,17 @@ namespace kag {
   - - - -  - - -  - - - - -  - - -  - - - - -  - - -  - - - - -  - - -  - - - - -  - - -  - */
   void FileExecutor::LTag(const Parser::CommandToken &) {
     CommandL();
+  }
+
+  void FileExecutor::LocateTag(const Parser::CommandToken & token) {
+    int x = kag::default;
+    int y = kag::default;
+    auto& args = token.arguments();
+    using namespace converter;
+    args.AttributeValTo(L"x", ToInt10, [&](int val) { x = val; });
+    args.AttributeValTo(L"y", ToInt10, [&](int val) { y = val; });
+
+    CommandLocate(x, y);
   }
 
   void FileExecutor::RTag(const Parser::CommandToken &) {

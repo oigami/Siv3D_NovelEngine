@@ -37,7 +37,7 @@ namespace kag {
     //void HCHTag(const Parser::CommandToken& token);
     void IndentTag(const Parser::CommandToken& token);
     void LTag(const Parser::CommandToken& token);
-    //void LocateTag(const Parser::CommandToken& token);
+    void LocateTag(const Parser::CommandToken& token);
     //void LockLinkTag(const Parser::CommandToken& token);
     void NoWaitTag(const Parser::CommandToken& token);
     void PTag(const Parser::CommandToken& token);

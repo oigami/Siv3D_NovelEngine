@@ -99,6 +99,18 @@ namespace kag {
     });
   }
 
+  void Executor::CommandLocate(Value<int> x, Value<int> y) {
+    command_.push([=]() {
+      if (x == kag::default) {
+        message_manager_.Current().SetLocateY(y);
+      } else if (y == kag::default) {
+        message_manager_.Current().SetLocateX(x);
+      } else {
+        message_manager_.Current().SetLocate(x, y);
+      }
+    });
+  }
+
   void Executor::CommandFont(const CommandFunc<FontCommandEditor>& f) {
     command_.push([f, this]() {
       FontCommandEditor editor(message_manager_);

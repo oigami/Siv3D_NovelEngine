@@ -8,7 +8,7 @@
 [nowait]
 @deffont face=HG行書体 size=30
 
-フォントを "HG行書体" に設定しました。[l][er]
+フォントを[locate x=0] "HG行書体" に設定しました。[l][er]
 [endnowait][resetfont]
 ？？？「[indent]あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよらりるれろわをん」[endindent][l]
 [position layer=message0 page=fore left=30 top=15 width=400 height=400 frame="" color="0xff1122" marginl=20 margint=40 marginr=20 marginb=40 visible=true]

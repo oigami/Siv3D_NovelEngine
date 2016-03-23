@@ -134,6 +134,7 @@ namespace kag {
       /// <param name="font"></param>
       void AppendNewFont(const MessageTextFont& font);
 
+      void AppendNewFont(int x, const MessageTextFont & font);
       /// <summary>
       /// 最大の高さを返す
       /// </summary>
@@ -230,6 +231,10 @@ namespace kag {
     void SetBackgroundRGB(int r, int g, int b);
     void SetBackgroundOpacity(int a);
     void SetBackgroundTex(Texture tex);
+
+    void SetLocate(int x, int y);
+    void SetLocateX(int x);
+    void SetLocateY(int y);
 
     void SetIndent();
     void SetEndIndent();
