@@ -44,7 +44,7 @@ namespace kag {
   }
 
   bool MessageLayer::IsLimitHeihgt() {
-    return position_.h - margin_.h - margin_.y <= sum_height_ + now_font_.Height();
+    return position_.h - margin_.h - margin_.y <= sum_height_ + text_line_.back().Height();
   }
 
   void MessageLayer::AppenNewLine() {
