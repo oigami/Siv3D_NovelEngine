@@ -154,17 +154,36 @@ namespace kag {
     indent_width_ = InvalidIndent;
   }
 
+  void MessageLayer::SetLineSize(int px) {
+    text_line_.back().SetLineSize(px);
+  }
+
+  void MessageLayer::ResetLineSize() {
+    text_line_.back().ResetLineSize();
+  }
+
+  void MessageLayer::SetLineSpacing(int px) {
+    text_line_.back().SetLineSpacing(px);
+  }
+
+  void MessageLayer::ResetLineSpacing() {
+    text_line_.back().ResetLineSpacing();
+  }
+
   void MessageLayer::CheckByReturn() {
     assert(!IsLimitHeihgt());
+    int line_spacing = text_line_.back().LineSpacing();
     for (;;) {
       auto opt = text_line_.back().ByReturn(position_.w - margin_.x - margin_.w);
       if (!opt)
         return;
+      
       if (indent_width_ != InvalidIndent)
         opt->Indent(indent_width_);
       now_height += text_line_.back().Height();
       if (!IsLimitHeihgt()) {
         text_line_.emplace_back(now_height, *opt);
+        text_line_.back().SetLineSpacing(line_spacing);
         limit_line_num = static_cast<int>(text_line_.size());
       } else {
         overflow_text = std::move(opt);
@@ -224,7 +243,7 @@ namespace kag {
     }
 
     int MessageTextLine::Height() const {
-      return (line_size_ == default_line_size ? max_height_ : line_size_);
+      return line_spacing_ + (line_size_ == default_line_size ? max_height_ : line_size_);
     }
 
     int MessageTextLine::Width() const { return text_.back().GetWidth(); }

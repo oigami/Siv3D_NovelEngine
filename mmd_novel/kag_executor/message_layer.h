@@ -143,6 +143,23 @@ namespace kag {
 
       int Width() const;
 
+      void SetLineSize(int px) {
+        line_size_ = px;
+      }
+
+      void ResetLineSize() {
+        line_size_ = default_line_size;
+      }
+
+      int LineSpacing() const { return line_spacing_; }
+
+      void SetLineSpacing(int px) {
+        line_spacing_ = px;
+      }
+      void ResetLineSpacing() {
+        line_spacing_ = default_line_spacing;
+      }
+
     private:
 
       int y_;
@@ -154,6 +171,9 @@ namespace kag {
 
       /// <summary>行（文字）の幅</summary>
       int line_size_;
+
+      static constexpr int default_line_spacing = 0;
+
 
       /// <summary>行間</summary>
       int line_spacing_;
@@ -238,6 +258,13 @@ namespace kag {
 
     void SetIndent();
     void SetEndIndent();
+
+    void SetLineSize(int px);
+    void ResetLineSize();
+
+    void SetLineSpacing(int px);
+    void ResetLineSpacing();
+
   private:
 
     /// <summary>
