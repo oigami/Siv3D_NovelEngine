@@ -305,7 +305,7 @@ namespace kag {
     bool is_visible_;
 
     /// <summary>描画してる文字列の高さの合計</summary>
-    int now_height;
+    int sum_height_;
 
     /// <summary>表示できた限界の行数</summary>
     int limit_line_num;

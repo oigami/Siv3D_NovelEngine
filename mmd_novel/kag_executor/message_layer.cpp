@@ -19,7 +19,7 @@ namespace kag {
   void MessageLayer::NextPage() {
     text_line_.clear();
     limit_line_num = 0;
-    now_height = 0;
+    sum_height_ = 0;
     if (overflow_text) {
       text_line_.emplace_back(0, *overflow_text);
       overflow_text = none;
@@ -44,12 +44,12 @@ namespace kag {
   }
 
   bool MessageLayer::IsLimitHeihgt() {
-    return position_.h - margin_.h - margin_.y <= now_height + now_font_.Height();
+    return position_.h - margin_.h - margin_.y <= sum_height_ + now_font_.Height();
   }
 
   void MessageLayer::AppenNewLine() {
-    now_height += text_line_.back().Height();
-    text_line_.emplace_back(now_height, message::MessageText(0, now_font_));
+    sum_height_ += text_line_.back().Height();
+    text_line_.emplace_back(sum_height_, message::MessageText(0, now_font_));
     if (!IsLimitHeihgt()) {
       limit_line_num = static_cast<int>(text_line_.size());
     }
@@ -135,7 +135,7 @@ namespace kag {
 
   void MessageLayer::SetLocate(int x, int y) {
     text_line_.emplace_back(y, message::MessageText(x, now_font_));
-    now_height = y;
+    sum_height_ = y;
   }
 
   void MessageLayer::SetLocateX(int x) {
@@ -180,9 +180,9 @@ namespace kag {
       
       if (indent_width_ != InvalidIndent)
         opt->Indent(indent_width_);
-      now_height += text_line_.back().Height();
+      sum_height_ += text_line_.back().Height();
       if (!IsLimitHeihgt()) {
-        text_line_.emplace_back(now_height, *opt);
+        text_line_.emplace_back(sum_height_, *opt);
         text_line_.back().SetLineSpacing(line_spacing);
         limit_line_num = static_cast<int>(text_line_.size());
       } else {
