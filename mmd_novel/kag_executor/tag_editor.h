@@ -91,11 +91,6 @@ namespace kag {
     }
     void Commit() {}
   public:
-    enum AlignType {
-      Left,
-      Center,
-      Right,
-    };
 
     This& linespacing(int px) { layer_.SetLineSpacing(px); return *this; }
     This& linesize(int px) { layer_.SetLineSize(px); return *this; }

@@ -197,7 +197,7 @@ namespace kag {
   namespace message {
 
     MessageTextLine::MessageTextLine(int y, const MessageText & text)
-      : max_height_(0), line_spacing_(0), line_size_(default_line_size), y_(y) {
+      : max_height_(0),  y_(y) {
       Append(text);
     }
 
@@ -245,27 +245,27 @@ namespace kag {
     }
 
     int MessageTextLine::Height() const {
-      return line_spacing_ + (line_size_ == default_line_size ? max_height_ : line_size_);
+      return style_.line_spacing_ + style_.LineSize(max_height_);
     }
 
     int MessageTextLine::Width() const { return text_.back().GetWidth(); }
 
     void MessageTextLine::SetLineSize(int px) {
-      line_size_ = px;
+      style_.line_size_ = px;
     }
 
     void MessageTextLine::ResetLineSize() {
-      line_size_ = default_line_size;
+      style_.ResetLineSize();
     }
 
-    int MessageTextLine::LineSpacing() const { return line_spacing_; }
+    int MessageTextLine::LineSpacing() const { return style_.line_spacing_; }
 
     void MessageTextLine::SetLineSpacing(int px) {
-      line_spacing_ = px;
+      style_.line_spacing_ = px;
     }
 
     void MessageTextLine::ResetLineSpacing() {
-      line_spacing_ = default_line_spacing;
+      style_.ResetLineSpacing();
     }
 
     MessageText::MessageText(int x, const MessageTextFont & font, String && text)

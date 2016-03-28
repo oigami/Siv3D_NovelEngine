@@ -3,6 +3,40 @@
 
 namespace kag {
   namespace message {
+    enum AlignType {
+      Left,
+      Center,
+      Right,
+    };
+
+    struct Style {
+      Style() :line_spacing_(0), line_size_(default_line_size) {}
+
+      bool IsDefaultLineSize() const { return line_size_ == default_line_size; }
+
+      int LineSize(int default_size) const {
+        return IsDefaultLineSize() ? default_size : line_size_;
+      }
+      void ResetLineSize() {
+        line_size_ = default_line_size;
+      }
+      void ResetLineSpacing() {
+        line_spacing_ = default_line_spacing;
+      }
+      static constexpr int default_line_size = std::numeric_limits<int>::max();
+      static constexpr int default_line_spacing = 0;
+
+      /// <summary>行（文字）の幅</summary>
+      int line_size_;
+
+      /// <summary>行間</summary>
+      int line_spacing_;
+
+      //TODO: 未実装
+      int pitch_;
+      AlignType align_type_;
+      bool auto_return_;
+    };
     struct MessageTextFont {
       Font font_;
       Color color_;
@@ -159,16 +193,7 @@ namespace kag {
       /// <summary>一行の中で最大の高さを保持する</summary>
       int max_height_;
 
-      static constexpr int default_line_size = std::numeric_limits<int>::max();
-
-      /// <summary>行（文字）の幅</summary>
-      int line_size_;
-
-      static constexpr int default_line_spacing = 0;
-
-
-      /// <summary>行間</summary>
-      int line_spacing_;
+      Style style_;
 
       Array<MessageText> text_;
 
