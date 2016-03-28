@@ -61,6 +61,7 @@ namespace kag {
 
     void CommandStyle(const CommandFunc<StyleCommandEditor>& f);
     void CommandDefStyle(const CommandFunc<DefaultStyleCommandEditor>&f);
+    void CommandResetStyle();
 
     void CommandFont(const CommandFunc<FontCommandEditor>& f);
     void CommandDefFont(const CommandFunc<DefFontCommandEditor>& f);

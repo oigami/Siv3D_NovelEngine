@@ -176,6 +176,11 @@ namespace kag {
     default_style_ = style;
   }
 
+  void MessageLayer::ResetStyle() {
+    SetLineSpacing(default_style_.line_spacing_);
+    SetLineSize(default_style_.line_size_);
+  }
+
   void MessageLayer::CheckByReturn() {
     assert(!IsLimitHeihgt());
     int line_spacing = text_line_.back().LineSpacing();

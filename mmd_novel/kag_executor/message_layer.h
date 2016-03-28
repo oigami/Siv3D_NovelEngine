@@ -288,6 +288,7 @@ namespace kag {
     void ResetLineSpacing();
 
     void SetDefaultStyle(const message::DefaultStyle& style);
+    void ResetStyle();
   private:
 
     /// <summary>

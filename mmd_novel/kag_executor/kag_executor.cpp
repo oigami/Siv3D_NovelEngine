@@ -127,6 +127,12 @@ namespace kag {
     });
   }
 
+  void Executor::CommandResetStyle() {
+    command_.push([this]() {
+      message_manager_.Current().ResetFont();
+    });
+  }
+
   void Executor::CommandFont(const CommandFunc<FontCommandEditor>& f) {
     command_.push([f, this]() {
       FontCommandEditor editor(message_manager_);
