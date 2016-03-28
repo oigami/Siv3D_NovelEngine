@@ -31,13 +31,13 @@ namespace kag {
 
       /// <summary>行間</summary>
       int line_size_;
-      
+
       //TODO: 未実装
       int pitch_;
     };
 
     struct Style : DefaultStyle {
-      
+
       //TODO: 未実装
       AlignType align_type_;
       bool auto_return_;
@@ -49,8 +49,8 @@ namespace kag {
       bool is_shadow_;
       //TODO: フォントのサイズに応じて可変にする
       Point shadow_pos = { 5,5 };
-      MessageTextFont() :color_(Palette::White), shadow_color_(Palette::Gray), is_shadow_(true) {}
-      MessageTextFont(const Font& font, Color color) :font_(font), color_(color), shadow_color_(Palette::Gray), is_shadow_(true) {
+      MessageTextFont() :MessageTextFont(Font(), Palette::White) {}
+      MessageTextFont(const Font& font, const Color& color) :font_(font), color_(color), shadow_color_(Palette::Gray), is_shadow_(true) {
       }
 
       RectF Draw(const String& str, int x, int y) const {
@@ -140,10 +140,21 @@ namespace kag {
 
     class MessageTextLine {
     public:
+      /// <summary>
+      /// コンストラクタ
+      /// </summary>
+      /// <param name="y">n行目のy座標</param>
+      /// <param name="text"></param>
       MessageTextLine(int y, const MessageText& text);
 
       void Clear();
 
+      /// <summary>
+      /// メッセージレイヤを基準として一行を描画する
+      /// </summary>
+      /// <param name="x">メッセージレイヤの左上（パディング等含）のx座標</param>
+      /// <param name="y">メッセージレイヤの左上（パディング等含）のy座標</param>
+      /// <returns></returns>
       int Draw(int x, int y) const;
 
       /// <summary>
@@ -179,25 +190,52 @@ namespace kag {
       void AppendNewFont(const MessageTextFont& font);
 
       void AppendNewFont(int x, const MessageTextFont & font);
+
       /// <summary>
       /// 最大の高さを返す
       /// </summary>
       /// <returns></returns>
       int Height() const;
 
+      /// <summary>
+      /// 現在の文字列の横幅を返す
+      /// </summary>
+      /// <returns></returns>
       int Width() const;
 
+      /// <summary>
+      /// 行間を設定する
+      /// </summary>
+      /// <param name="px"></param>
       void SetLineSize(int px);
 
+      /// <summary>
+      /// 行間をリセットする
+      /// </summary>
       void ResetLineSize();
 
+      /// <summary>
+      /// 一行全体の文字の縦幅を返す
+      /// </summary>
+      /// <returns></returns>
       int LineSpacing() const;
 
+      /// <summary>
+      /// 一行全体の文字の縦幅を返す
+      /// </summary>
+      /// <param name="px"></param>
       void SetLineSpacing(int px);
+
+      /// <summary>
+      /// 一行全体の文字の縦幅をリセットする
+      /// </summary>
       void ResetLineSpacing();
 
     private:
 
+      /// <summary>
+      /// 描画するy座標
+      /// </summary>
       int y_;
 
       /// <summary>一行の中で最大の高さを保持する</summary>
@@ -219,6 +257,9 @@ namespace kag {
     /// </summary>
     void Clear();
 
+    /// <summary>
+    /// 次のページに行く
+    /// </summary>
     void NextPage();
 
     /// <summary>
@@ -258,8 +299,15 @@ namespace kag {
     /// <param name="font"></param>
     void SetFont(const message::MessageTextFont& font);
 
+    /// <summary>
+    /// デフォルトフォントを変更する
+    /// </summary>
+    /// <param name="font">設定するフォント</param>
     void SetDefaultFont(const message::MessageTextFont& font);
 
+    /// <summary>
+    /// デフォルトのフォントに戻す
+    /// </summary>
     void ResetFont();
 
     void SetPositionTop(int top);
@@ -279,21 +327,71 @@ namespace kag {
     void SetBackgroundOpacity(int a);
     void SetBackgroundTex(Texture tex);
 
+    /// <summary>
+    /// 文字列の開始位置を変更する
+    /// </summary>
+    /// <param name="x">開始するx座標</param>
+    /// <param name="y">開始するy座標</param>
     void SetLocate(int x, int y);
+
+    /// <summary>
+    /// 文字列の開始位置を変更する
+    /// </summary>
+    /// <param name="x"></param>
     void SetLocateX(int x);
+
+    /// <summary>
+    /// 文字列の開始位置を変更する
+    /// </summary>
+    /// <param name="y"></param>
     void SetLocateY(int y);
 
+    /// <summary>
+    /// 現在の文字列を基準にインデントを開始する
+    /// </summary>
     void SetIndent();
+
+    /// <summary>
+    /// インデントを終了する
+    /// </summary>
     void SetEndIndent();
 
+    /// <summary>
+    /// 行間（文字を描画する縦幅）を設定する
+    /// <para>デフォルトでは文字の縦幅が一番大きい値になっている</para>
+    /// <para>ここで指定したサイズより大きい文字を描画すると収まらなくなる</para>
+    /// </summary>
+    /// <param name="px"></param>
     void SetLineSize(int px);
+
+    /// <summary>
+    /// 行間をリセットしデフォルト値に戻す
+    /// </summary>
     void ResetLineSize();
 
+    /// <summary>
+    /// 行と行の間のサイズ（字の大きさを無視した値）を設定する
+    /// <para>実際はここで指定した値とlinesizeが加算された値になる</para>
+    /// </summary>
+    /// <param name="px"></param>
     void SetLineSpacing(int px);
+
+    /// <summary>
+    /// 行と行の間のサイズをリセットする
+    /// </summary>
     void ResetLineSpacing();
 
+    /// <summary>
+    /// デフォルトのスタイルを設定する
+    /// </summary>
+    /// <param name="style"></param>
     void SetDefaultStyle(const message::DefaultStyle& style);
+
+    /// <summary>
+    /// 現在のスタイルをデフォルトのスタイルに変更する
+    /// </summary>
     void ResetStyle();
+
   private:
 
     /// <summary>
@@ -302,15 +400,19 @@ namespace kag {
     /// </summary>
     void CheckByReturn();
 
+    /// <summary>インデントが無効な時の値</summary>
     static constexpr int InvalidIndent = std::numeric_limits<int>::max();
 
     /// <summary>インデントの開始位置(InvalidIndentで無効)</summary>
     int indent_width_;
 
+    /// <summary>現在設定されているフォント</summary>
     message::MessageTextFont now_font_;
 
+    /// <summary>デフォルトに設定されているフォント</summary>
     message::MessageTextFont default_font_;
 
+    /// <summary>デフォルトに設定されているフォント</summary>
     message::DefaultStyle default_style_;
 
     /// <summary>メッセージレイヤのサイズ</summary>
