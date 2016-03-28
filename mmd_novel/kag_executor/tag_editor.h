@@ -11,6 +11,7 @@ namespace kag {
     FontStyle CreateStyle();
     virtual void commit(const message::MessageTextFont& font) {
       manager_.Current().SetFont(font);
+      
     }
 
     void Commit();
@@ -24,19 +25,23 @@ namespace kag {
     This& color(const Color& color) { color_ = color; return *this; }
     This& is_italic(bool is_italic) { is_italic_ = is_italic; return *this; }
     This& is_bold(bool is_bold) { is_bold_ = is_bold; return *this; }
+    This& is_shadow(bool is_shadow) { is_shadow_ = is_shadow; return *this; }
+    This& shadowcolor(const Color& shadow_color) { shadow_color_ = shadow_color; return *this; }
 
   protected:
+
     int size_;
     String face_;
     Color color_;
     bool is_italic_;
     bool is_bold_;
 
+    bool is_shadow_;
+    Color shadow_color_;
+
     //未実装
     int ruby_size_;
     int ruby_offset_;
-    bool is_shadow_;
-    Color shadow_color_;
     bool is_edge_;
     Color edge_color_;
 

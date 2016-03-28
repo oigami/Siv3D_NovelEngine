@@ -5,6 +5,8 @@ namespace kag {
     size_ = now_font.font_.size();
     face_ = now_font.font_.name();
     color_ = now_font.color_;
+    shadow_color_ = now_font.shadow_color_;
+    is_shadow_ = now_font.is_shadow_;
     StyleCheck(now_font.font_.style());
   }
   void FontCommandEditor::StyleCheck(FontStyle style) {
@@ -39,7 +41,10 @@ namespace kag {
     prop.name = std::move(face_);
     prop.size = size_;
     prop.style = CreateStyle();
-    commit({ Font(prop),color_ });
+    message::MessageTextFont new_font{ Font(prop),color_ };
+    new_font.is_shadow_ = is_shadow_;
+    new_font.shadow_color_ = shadow_color_;
+    commit(new_font);
   }
 
 

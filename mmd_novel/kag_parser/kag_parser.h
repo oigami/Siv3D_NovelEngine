@@ -88,6 +88,7 @@ namespace kag {
       ret.b = rgb & 0xff; rgb >>= 8;
       ret.g = rgb & 0xff; rgb >>= 8;
       ret.r = rgb & 0xff;
+      ret.a = 255;
       return ret;
     }
 

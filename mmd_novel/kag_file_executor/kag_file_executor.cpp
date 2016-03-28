@@ -216,6 +216,11 @@ namespace kag {
 
       args.AttributeValTo(L"bold", ToBool, [&](bool val) { editor.is_bold(val); });
 
+      args.AttributeValTo(L"color", ToColor, [&](const Color& val) {editor.color(val); });
+
+      args.AttributeValTo(L"shadow", ToBool, [&](bool val) {editor.is_shadow(val); });
+
+      args.AttributeValTo(L"shadowcolor", ToColor, [&](const Color& val) { editor.shadowcolor(val); });
     });
 
   }

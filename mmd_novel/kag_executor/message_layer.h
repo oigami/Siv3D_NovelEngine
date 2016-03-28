@@ -45,11 +45,16 @@ namespace kag {
     struct MessageTextFont {
       Font font_;
       Color color_;
-      MessageTextFont() :color_(Palette::White) {}
-      MessageTextFont(const Font& font, Color color) :font_(font), color_(color) {
+      Color shadow_color_;
+      bool is_shadow_;
+      //TODO: フォントのサイズに応じて可変にする
+      Point shadow_pos = { 5,5 };
+      MessageTextFont() :color_(Palette::White), shadow_color_(Palette::Gray), is_shadow_(true) {}
+      MessageTextFont(const Font& font, Color color) :font_(font), color_(color), shadow_color_(Palette::Gray), is_shadow_(true) {
       }
 
       RectF Draw(const String& str, int x, int y) const {
+        if (is_shadow_) font_.draw(str, x + shadow_pos.x, y - font_.height + shadow_pos.x, shadow_color_);
         return font_.draw(str, x, y - font_.height, color_);
       }
 
