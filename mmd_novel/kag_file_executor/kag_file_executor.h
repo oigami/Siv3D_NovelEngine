@@ -26,7 +26,7 @@ namespace kag {
     void CTTag(const Parser::CommandToken& token);
     void CurrentTag(const Parser::CommandToken& token);
     void DefFontTag(const Parser::CommandToken& token);
-    //void DefStyleTag(const Parser::CommandToken& token);
+    void DefStyleTag(const Parser::CommandToken& token);
     void DelayTag(const Parser::CommandToken& token);
     void EndIndentTag(const Parser::CommandToken& token);
     void EndNoWaitTag(const Parser::CommandToken& token);

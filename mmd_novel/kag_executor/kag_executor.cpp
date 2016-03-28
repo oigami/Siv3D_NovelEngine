@@ -119,6 +119,14 @@ namespace kag {
     });
   }
 
+  void Executor::CommandDefStyle(const CommandFunc<DefaultStyleCommandEditor>& f) {
+    command_.push([f, this]() {
+      DefaultStyleCommandEditor editor(message_manager_);
+      f(editor);
+      editor.Commit();
+    });
+  }
+
   void Executor::CommandFont(const CommandFunc<FontCommandEditor>& f) {
     command_.push([f, this]() {
       FontCommandEditor editor(message_manager_);

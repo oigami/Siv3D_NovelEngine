@@ -11,7 +11,7 @@ namespace kag {
     tag_func_[SnapShotSpan(L"ct")] = &FileExecutor::CTTag;
     tag_func_[SnapShotSpan(L"current")] = &FileExecutor::CurrentTag;
     tag_func_[SnapShotSpan(L"deffont")] = &FileExecutor::DefFontTag;
-    //tag_func_[SnapShotSpan(L"defstyle")] = &FileExecutor::DefStyleTag;
+    tag_func_[SnapShotSpan(L"defstyle")] = &FileExecutor::DefStyleTag;
     tag_func_[SnapShotSpan(L"delay")] = &FileExecutor::DelayTag;
     tag_func_[SnapShotSpan(L"endindent")] = &FileExecutor::EndIndentTag;
     tag_func_[SnapShotSpan(L"endnowait")] = &FileExecutor::EndNoWaitTag;
@@ -177,6 +177,24 @@ namespace kag {
       args.AttributeValTo(L"italic", ToBool, [&](bool val) { editor.is_italic(val); });
 
       args.AttributeValTo(L"bold", ToBool, [&](bool val) { editor.is_bold(val); });
+
+    });
+  }
+
+  void FileExecutor::DefStyleTag(const Parser::CommandToken & token) {
+    auto& args = token.arguments();
+    CommandDefStyle([=](DefaultStyleCommandEditor& editor) {
+      args.AttributeVal(L"linesize", [&](const SnapShotSpan& val) {
+        if (val == L"default") {
+          editor.linesize();
+        } else {
+          editor.linesize(converter::ToInt10(val));
+        }
+      });
+
+      args.AttributeValTo(L"linespacing", converter::ToInt10, [&](int val) {
+        editor.linespacing(val);
+      });
 
     });
   }
