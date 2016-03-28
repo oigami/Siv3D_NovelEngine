@@ -119,7 +119,29 @@ namespace kag {
     /// <returns></returns>
     int CurrentPageNum() const;
 
+    /// <summary>
+    /// クリックに対応するキーを設定する
+    /// </summary>
+    /// <param name="key">Input::MouseL | Input::KeyEnter 等</param>
+    void SetClickKey(const KeyCombination& key);
+
+    /// <summary>
+    /// キー入力を無効にする
+    /// <para>クリック待ちなどでも進まなくなる</para>
+    /// </summary>
+    void SetInvalidKeyInput();
+
+    /// <summary>
+    /// キー入力を有効にする
+    /// <para>クリック待ちなどでクリックすると進むようになる</para>
+    /// </summary>
+    void SetValidKeyInput();
+
     bool IsWait() const;
+  private:
+
+    bool CheckClicked() const;
+
   private:
 
     Stopwatch timer_;
@@ -160,6 +182,12 @@ namespace kag {
     bool is_click_skip;
 
     bool is_no_wait_;
+
+    /// <summary>クリックに対応するキー</summary>
+    KeyCombination click_key_;
+
+    /// <summary>キー入力が有効かどうか</summary>
+    bool is_active_key;
 
   };
 

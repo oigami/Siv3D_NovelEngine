@@ -1,6 +1,8 @@
 #include <kag_executor/message_manager.h>
 namespace kag {
   MessageManager::MessageManager() {
+    click_key_ = Input::MouseL | Input::KeyEnter;
+    is_active_key = true;
     resize(2);
     message_layer_[0][0].SetVisible(true);
     delay_time_ = 30;
@@ -75,7 +77,7 @@ namespace kag {
 
   bool MessageManager::Update() {
     if (is_wait_click_) {
-      if (Input::MouseL.clicked) {
+      if (CheckClicked()) {
         if (is_click_new_page)
           NextPage();
         is_click_new_page = false;
@@ -97,7 +99,7 @@ namespace kag {
     }
 
     if (IsFlush() == false) {
-      if (Input::MouseL.clicked)
+      if (CheckClicked())
         Flush();
       return false;
     }
@@ -138,6 +140,19 @@ namespace kag {
 
   int MessageManager::CurrentPageNum() const { return current_page_; }
 
+  void MessageManager::SetClickKey(const KeyCombination & key) {
+    click_key_ = key;
+  }
+
+  void MessageManager::SetInvalidKeyInput() { is_active_key = false; }
+
+  void MessageManager::SetValidKeyInput() { is_active_key = true; }
+
   bool MessageManager::IsWait() const { return is_wait_click_ || !IsFlush(); }
+
+  bool MessageManager::CheckClicked() const {
+    if (is_active_key) return click_key_.clicked;
+    return false;
+  }
 
 }
