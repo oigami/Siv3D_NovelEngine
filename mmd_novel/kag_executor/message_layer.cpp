@@ -172,6 +172,10 @@ namespace kag {
     text_line_.back().ResetLineSpacing();
   }
 
+  void MessageLayer::SetDefaultStyle(const message::DefaultStyle & style) {
+    default_style_ = style;
+  }
+
   void MessageLayer::CheckByReturn() {
     assert(!IsLimitHeihgt());
     int line_spacing = text_line_.back().LineSpacing();
@@ -197,7 +201,7 @@ namespace kag {
   namespace message {
 
     MessageTextLine::MessageTextLine(int y, const MessageText & text)
-      : max_height_(0),  y_(y) {
+      : max_height_(0), y_(y) {
       Append(text);
     }
 
@@ -239,7 +243,7 @@ namespace kag {
       max_height_ = std::max(max_height_, font.Height());
     }
 
-    inline void MessageTextLine::AppendNewFont(int x, const MessageTextFont & font) {
+    void MessageTextLine::AppendNewFont(int x, const MessageTextFont & font) {
       text_.emplace_back(x, font);
       max_height_ = std::max(max_height_, font.Height());
     }

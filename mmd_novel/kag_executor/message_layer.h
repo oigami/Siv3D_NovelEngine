@@ -8,9 +8,11 @@ namespace kag {
       Center,
       Right,
     };
+    struct DefaultStyle {
+      static constexpr int default_line_size = std::numeric_limits<int>::max();
+      static constexpr int default_line_spacing = 0;
 
-    struct Style {
-      Style() :line_spacing_(0), line_size_(default_line_size) {}
+      DefaultStyle() :line_spacing_(0), line_size_(default_line_size) {}
 
       bool IsDefaultLineSize() const { return line_size_ == default_line_size; }
 
@@ -23,17 +25,20 @@ namespace kag {
       void ResetLineSpacing() {
         line_spacing_ = default_line_spacing;
       }
-      static constexpr int default_line_size = std::numeric_limits<int>::max();
-      static constexpr int default_line_spacing = 0;
 
       /// <summary>行（文字）の幅</summary>
-      int line_size_;
-
-      /// <summary>行間</summary>
       int line_spacing_;
 
+      /// <summary>行間</summary>
+      int line_size_;
+      
       //TODO: 未実装
       int pitch_;
+    };
+
+    struct Style : DefaultStyle {
+      
+      //TODO: 未実装
       AlignType align_type_;
       bool auto_return_;
     };
@@ -282,6 +287,7 @@ namespace kag {
     void SetLineSpacing(int px);
     void ResetLineSpacing();
 
+    void SetDefaultStyle(const message::DefaultStyle& style);
   private:
 
     /// <summary>
@@ -298,6 +304,8 @@ namespace kag {
     message::MessageTextFont now_font_;
 
     message::MessageTextFont default_font_;
+
+    message::DefaultStyle default_style_;
 
     /// <summary>メッセージレイヤのサイズ</summary>
     Rect position_;

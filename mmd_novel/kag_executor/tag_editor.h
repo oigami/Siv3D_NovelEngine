@@ -87,7 +87,7 @@ namespace kag {
     friend Executor;
     using This = StyleCommandEditor;
   protected:
-    StyleCommandEditor(MessageManager& manager) : layer_(manager.Current()){
+    StyleCommandEditor(MessageManager& manager) : layer_(manager.Current()) {
     }
     void Commit() {}
   public:
@@ -102,6 +102,26 @@ namespace kag {
     //This& align(AlignType type) {}
     //This& pitch(int px) {}
 
+    MessageLayer& layer_;
+  };
+  class DefaultStyleCommandEditor {
+    friend Executor;
+    using This = DefaultStyleCommandEditor;
+  protected:
+
+    DefaultStyleCommandEditor(MessageManager& manager) :layer_(manager.Current()) {}
+    void Commit() {
+      layer_.SetDefaultStyle(style_);
+    }
+  public:
+
+    This& linespacing(int px) { style_.line_spacing_ = px; return *this; }
+    This& linesize(int px) { style_.line_size_ = px; return *this; }
+    This& linesize() { style_.ResetLineSize(); return *this; }
+
+  private:
+
+    message::DefaultStyle style_;
     MessageLayer& layer_;
   };
 }
