@@ -148,8 +148,17 @@ namespace kag {
       /// コンストラクタ
       /// </summary>
       /// <param name="y">n行目のy座標</param>
+      /// <param name="x">開始するx座標</param>
       /// <param name="text"></param>
-      TextLine(int y, const TextWithX& text);
+      TextLine(int y, int x, const Text& text);
+
+      /// <summary>
+      /// コンストラクタ
+      /// </summary>
+      /// <param name="y">n行目のy座標</param>
+      /// <param name="text"></param>
+      TextLine(int y, const Text& text);
+
 
       void Clear();
 
@@ -179,7 +188,7 @@ namespace kag {
       /// <param name="text"></param>
       void Append(const Text& text);
 
-      void Append(const TextWithX& text);
+      void Append(int x, const Text& text);
 
       /// <summary>
       /// 折り返し部分を新たに生成して返す

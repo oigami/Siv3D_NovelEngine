@@ -136,7 +136,7 @@ namespace kag {
   }
 
   void MessageLayer::SetLocate(int x, int y) {
-    text_line_.emplace_back(y, message::TextLine::TextWithX(now_font_, x));
+    text_line_.emplace_back(y, x, now_font_);
     sum_height_ = y;
   }
 
@@ -189,15 +189,12 @@ namespace kag {
       if (!opt)
         return;
 
-      message::TextLine::TextWithX text;
-      if (indent_width_ != InvalidIndent) {
-        text = { *opt, indent_width_ };
-      } else {
-        text = { *opt };
-      }
+      int indent = 0;
+      if (indent_width_ != InvalidIndent)
+        indent = indent_width_;
       sum_height_ += text_line_.back().Height();
       if (!IsLimitHeihgt()) {
-        text_line_.emplace_back(sum_height_, text);
+        text_line_.emplace_back(sum_height_, indent, *opt);
         text_line_.back().SetLineSpacing(line_spacing);
         limit_line_num = static_cast<int>(text_line_.size());
       } else {
@@ -209,9 +206,12 @@ namespace kag {
 
   namespace message {
 
-    TextLine::TextLine(int y, const TextWithX & text)
+    TextLine::TextLine(int y, int x, const Text & text)
       : max_height_(0), y_(y) {
-      Append(text);
+      Append(x, text);
+    }
+
+    TextLine::TextLine(int y, const Text & text) : TextLine(y, 0, text) {
     }
 
     void TextLine::Clear() {
@@ -238,12 +238,12 @@ namespace kag {
     }
 
     void TextLine::Append(const Text & text) {
-      Append({ text,text_.back().x });
+      Append(text_.back().x, text);
     }
 
-    void TextLine::Append(const TextWithX & text) {
-      max_height_ = std::max(max_height_, text.text_.Height());
-      text_.push_back(text);
+    void TextLine::Append(int x, const Text & text) {
+      max_height_ = std::max(max_height_, text.Height());
+      text_.push_back({ text,x });
     }
 
     Optional<Text> TextLine::ByReturn(int width) {
@@ -258,7 +258,7 @@ namespace kag {
     }
 
     void TextLine::AppendNewFont(int x, const TextFont & font) {
-      Append({ font, x });
+      Append(x, font);
     }
 
     int TextLine::Height() const {
