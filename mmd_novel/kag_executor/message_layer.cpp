@@ -67,14 +67,14 @@ namespace kag {
     }
   }
 
-  const message::MessageTextFont & MessageLayer::NowFont() const { return now_font_; }
+  const message::TextFont & MessageLayer::NowFont() const { return now_font_; }
 
-  void MessageLayer::SetFont(const message::MessageTextFont & font) {
+  void MessageLayer::SetFont(const message::TextFont & font) {
     text_line_.back().AppendNewFont(font);
     now_font_ = font;
   }
 
-  void MessageLayer::SetDefaultFont(const message::MessageTextFont & font) {
+  void MessageLayer::SetDefaultFont(const message::TextFont & font) {
     default_font_ = font;
   }
 
@@ -251,13 +251,13 @@ namespace kag {
       return{ res };
     }
 
-    void TextLine::AppendNewFont(const MessageTextFont & font) {
+    void TextLine::AppendNewFont(const TextFont & font) {
       auto& pre_text = text_.back();
       int x = pre_text.x + pre_text.text_.GetWidth();
       AppendNewFont(x, font);
     }
 
-    void TextLine::AppendNewFont(int x, const MessageTextFont & font) {
+    void TextLine::AppendNewFont(int x, const TextFont & font) {
       Append({ font, x });
     }
 
@@ -285,11 +285,11 @@ namespace kag {
       style_.ResetLineSpacing();
     }
 
-    Text::Text(const MessageTextFont & font, String && text)
+    Text::Text(const TextFont & font, String && text)
       : font_(font), text_(std::move(text)) {
     }
 
-    Text::Text(const MessageTextFont & font)
+    Text::Text(const TextFont & font)
       : font_(font) {
     }
 
@@ -322,6 +322,6 @@ namespace kag {
     int Text::Height() const {
       return font_.Height();
     }
-    const MessageTextFont & Text::Font() const { return font_; }
+    const TextFont & Text::Font() const { return font_; }
   }
 }

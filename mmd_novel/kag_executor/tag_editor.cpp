@@ -41,7 +41,7 @@ namespace kag {
     prop.name = std::move(face_);
     prop.size = size_;
     prop.style = CreateStyle();
-    message::MessageTextFont new_font{ Font(prop),color_ };
+    message::TextFont new_font{ Font(prop),color_ };
     new_font.is_shadow_ = is_shadow_;
     new_font.shadow_color_ = shadow_color_;
     commit(new_font);

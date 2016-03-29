@@ -42,15 +42,15 @@ namespace kag {
       AlignType align_type_;
       bool auto_return_;
     };
-    struct MessageTextFont {
+    struct TextFont {
       Font font_;
       Color color_;
       Color shadow_color_;
       bool is_shadow_;
       //TODO: フォントのサイズに応じて可変にする
       Point shadow_pos = { 5,5 };
-      MessageTextFont() :MessageTextFont(Font(), Palette::White) {}
-      MessageTextFont(const Font& font, const Color& color) :font_(font), color_(color), shadow_color_(Palette::Gray), is_shadow_(true) {
+      TextFont() :TextFont(Font(), Palette::White) {}
+      TextFont(const Font& font, const Color& color) :font_(font), color_(color), shadow_color_(Palette::Gray), is_shadow_(true) {
       }
 
       RectF Draw(const String& str, int x, int y) const {
@@ -77,9 +77,9 @@ namespace kag {
     public:
       Text() = default;
 
-      Text(const MessageTextFont& font, String&& text);
+      Text(const TextFont& font, String&& text);
 
-      Text(const MessageTextFont& font);
+      Text(const TextFont& font);
 
       /// <summary>
       /// 文字列を描画する
@@ -126,11 +126,11 @@ namespace kag {
       /// フォントを返す
       /// </summary>
       /// <returns></returns>
-      const MessageTextFont& Font() const;
+      const TextFont& Font() const;
 
     private:
 
-      MessageTextFont font_;
+      TextFont font_;
       String text_;
     };
 
@@ -193,9 +193,9 @@ namespace kag {
       /// <para>ここで指定したフォントがAppend(wchar),Append(String)で使用される</para>
       /// </summary>
       /// <param name="font"></param>
-      void AppendNewFont(const MessageTextFont& font);
+      void AppendNewFont(const TextFont& font);
 
-      void AppendNewFont(int x, const MessageTextFont & font);
+      void AppendNewFont(int x, const TextFont & font);
 
       /// <summary>
       /// 最大の高さを返す
@@ -297,19 +297,19 @@ namespace kag {
     /// 現在指定されているフォントを返す
     /// </summary>
     /// <returns></returns>
-    const message::MessageTextFont& NowFont() const;
+    const message::TextFont& NowFont() const;
 
     /// <summary>
     /// フォントを設定する
     /// </summary>
     /// <param name="font"></param>
-    void SetFont(const message::MessageTextFont& font);
+    void SetFont(const message::TextFont& font);
 
     /// <summary>
     /// デフォルトフォントを変更する
     /// </summary>
     /// <param name="font">設定するフォント</param>
-    void SetDefaultFont(const message::MessageTextFont& font);
+    void SetDefaultFont(const message::TextFont& font);
 
     /// <summary>
     /// デフォルトのフォントに戻す
@@ -413,10 +413,10 @@ namespace kag {
     int indent_width_;
 
     /// <summary>現在設定されているフォント</summary>
-    message::MessageTextFont now_font_;
+    message::TextFont now_font_;
 
     /// <summary>デフォルトに設定されているフォント</summary>
-    message::MessageTextFont default_font_;
+    message::TextFont default_font_;
 
     /// <summary>デフォルトに設定されているフォント</summary>
     message::DefaultStyle default_style_;
