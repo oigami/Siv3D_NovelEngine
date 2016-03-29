@@ -134,11 +134,11 @@ namespace kag {
       String text_;
     };
 
-    class MessageTextLine {
+    class TextLine {
     public:
-      struct MessageTextWithX {
-        MessageTextWithX() {}
-        MessageTextWithX(const Text& text, int x = 0) :text_(text), x(x) {}
+      struct TextWithX {
+        TextWithX() {}
+        TextWithX(const Text& text, int x = 0) :text_(text), x(x) {}
         int x;
         Text text_;
       };
@@ -149,7 +149,7 @@ namespace kag {
       /// </summary>
       /// <param name="y">n行目のy座標</param>
       /// <param name="text"></param>
-      MessageTextLine(int y, const MessageTextWithX& text);
+      TextLine(int y, const TextWithX& text);
 
       void Clear();
 
@@ -179,7 +179,7 @@ namespace kag {
       /// <param name="text"></param>
       void Append(const Text& text);
 
-      void Append(const MessageTextWithX& text);
+      void Append(const TextWithX& text);
 
       /// <summary>
       /// 折り返し部分を新たに生成して返す
@@ -249,7 +249,7 @@ namespace kag {
 
       Style style_;
 
-      Array<MessageTextWithX> text_;
+      Array<TextWithX> text_;
 
     };
   }
@@ -450,7 +450,7 @@ namespace kag {
     int limit_line_num;
 
     /// <summary>テキスト一行ごとの配列</summary>
-    Array<message::MessageTextLine> text_line_;
+    Array<message::TextLine> text_line_;
 
     /// <summary>高さに収まらなくなった場合に飛び出した部分が入る</summary>
     Optional<message::Text> overflow_text;

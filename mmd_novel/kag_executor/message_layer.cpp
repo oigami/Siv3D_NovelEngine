@@ -136,7 +136,7 @@ namespace kag {
   }
 
   void MessageLayer::SetLocate(int x, int y) {
-    text_line_.emplace_back(y, message::MessageTextLine::MessageTextWithX(now_font_, x));
+    text_line_.emplace_back(y, message::TextLine::TextWithX(now_font_, x));
     sum_height_ = y;
   }
 
@@ -189,7 +189,7 @@ namespace kag {
       if (!opt)
         return;
 
-      message::MessageTextLine::MessageTextWithX text;
+      message::TextLine::TextWithX text;
       if (indent_width_ != InvalidIndent) {
         text = { *opt, indent_width_ };
       } else {
@@ -209,19 +209,19 @@ namespace kag {
 
   namespace message {
 
-    MessageTextLine::MessageTextLine(int y, const MessageTextWithX & text)
+    TextLine::TextLine(int y, const TextWithX & text)
       : max_height_(0), y_(y) {
       Append(text);
     }
 
-    void MessageTextLine::Clear() {
+    void TextLine::Clear() {
       const auto font = text_.back().text_.Font();
       text_.clear();
       max_height_ = 0;
       Append(Text{ font });
     }
 
-    int MessageTextLine::Draw(int x, int y) const {
+    int TextLine::Draw(int x, int y) const {
       const int new_y = y_ + y + Height();
       for (auto& i : text_) {
         i.text_.Draw(x + i.x, new_y);
@@ -229,59 +229,59 @@ namespace kag {
       return new_y;
     }
 
-    void MessageTextLine::Append(const String & str) {
+    void TextLine::Append(const String & str) {
       text_.back().text_.Append(str);
     }
 
-    void MessageTextLine::Append(const wchar & str) {
+    void TextLine::Append(const wchar & str) {
       text_.back().text_.Append(str);
     }
 
-    void MessageTextLine::Append(const Text & text) {
+    void TextLine::Append(const Text & text) {
       Append({ text,text_.back().x });
     }
 
-    void MessageTextLine::Append(const MessageTextWithX & text) {
+    void TextLine::Append(const TextWithX & text) {
       max_height_ = std::max(max_height_, text.text_.Height());
       text_.push_back(text);
     }
 
-    Optional<Text> MessageTextLine::ByReturn(int width) {
+    Optional<Text> TextLine::ByReturn(int width) {
       auto res = text_.back().text_.ByReturn(width - text_.back().x);
       return{ res };
     }
 
-    void MessageTextLine::AppendNewFont(const MessageTextFont & font) {
+    void TextLine::AppendNewFont(const MessageTextFont & font) {
       auto& pre_text = text_.back();
       int x = pre_text.x + pre_text.text_.GetWidth();
       AppendNewFont(x, font);
     }
 
-    void MessageTextLine::AppendNewFont(int x, const MessageTextFont & font) {
+    void TextLine::AppendNewFont(int x, const MessageTextFont & font) {
       Append({ font, x });
     }
 
-    int MessageTextLine::Height() const {
+    int TextLine::Height() const {
       return style_.line_spacing_ + style_.LineSize(max_height_);
     }
 
-    int MessageTextLine::Width() const { return text_.back().text_.GetWidth(); }
+    int TextLine::Width() const { return text_.back().text_.GetWidth(); }
 
-    void MessageTextLine::SetLineSize(int px) {
+    void TextLine::SetLineSize(int px) {
       style_.line_size_ = px;
     }
 
-    void MessageTextLine::ResetLineSize() {
+    void TextLine::ResetLineSize() {
       style_.ResetLineSize();
     }
 
-    int MessageTextLine::LineSpacing() const { return style_.line_spacing_; }
+    int TextLine::LineSpacing() const { return style_.line_spacing_; }
 
-    void MessageTextLine::SetLineSpacing(int px) {
+    void TextLine::SetLineSpacing(int px) {
       style_.line_spacing_ = px;
     }
 
-    void MessageTextLine::ResetLineSpacing() {
+    void TextLine::ResetLineSpacing() {
       style_.ResetLineSpacing();
     }
 
