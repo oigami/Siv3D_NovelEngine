@@ -25,7 +25,7 @@ namespace kag {
       overflow_text = none;
       CheckByReturn();
     } else {
-      text_line_.emplace_back(0, message::MessageText(now_font_));
+      text_line_.emplace_back(0, message::Text(now_font_));
     }
     limit_line_num = 1;
   }
@@ -49,7 +49,7 @@ namespace kag {
 
   void MessageLayer::AppenNewLine() {
     sum_height_ += text_line_.back().Height();
-    text_line_.emplace_back(sum_height_, message::MessageText(now_font_));
+    text_line_.emplace_back(sum_height_, message::Text(now_font_));
     if (!IsLimitHeihgt()) {
       limit_line_num = static_cast<int>(text_line_.size());
     }
@@ -218,7 +218,7 @@ namespace kag {
       const auto font = text_.back().text_.Font();
       text_.clear();
       max_height_ = 0;
-      Append(MessageText{ font });
+      Append(Text{ font });
     }
 
     int MessageTextLine::Draw(int x, int y) const {
@@ -237,7 +237,7 @@ namespace kag {
       text_.back().text_.Append(str);
     }
 
-    void MessageTextLine::Append(const MessageText & text) {
+    void MessageTextLine::Append(const Text & text) {
       Append({ text,text_.back().x });
     }
 
@@ -246,7 +246,7 @@ namespace kag {
       text_.push_back(text);
     }
 
-    Optional<MessageText> MessageTextLine::ByReturn(int width) {
+    Optional<Text> MessageTextLine::ByReturn(int width) {
       auto res = text_.back().text_.ByReturn(width - text_.back().x);
       return{ res };
     }
@@ -285,43 +285,43 @@ namespace kag {
       style_.ResetLineSpacing();
     }
 
-    MessageText::MessageText(const MessageTextFont & font, String && text)
+    Text::Text(const MessageTextFont & font, String && text)
       : font_(font), text_(std::move(text)) {
     }
 
-    MessageText::MessageText(const MessageTextFont & font)
+    Text::Text(const MessageTextFont & font)
       : font_(font) {
     }
 
-    RectF MessageText::Draw(int x, int y_add_fontheight) const {
+    RectF Text::Draw(int x, int y_add_fontheight) const {
       return font_.Draw(text_, x, y_add_fontheight);
     }
 
-    MessageText & MessageText::Append(const String & s) {
+    Text & Text::Append(const String & s) {
       text_.append(s);
       return *this;
     }
 
-    MessageText & MessageText::Append(const wchar & s) {
+    Text & Text::Append(const wchar & s) {
       text_ += s;
       return *this;
     }
 
-    Optional<MessageText> MessageText::ByReturn(int width) {
+    Optional<Text> Text::ByReturn(int width) {
 
       // すでに使用している分を引いて使える部分の幅のみで計算する
       size_t index = font_.drawableCharacters(text_, width);
       if (text_.length == index) return none;
       String s = text_.substr(index);
       text_.resize(index);
-      return MessageText(font_, std::move(s));
+      return Text(font_, std::move(s));
     }
-    int MessageText::GetWidth() const {
+    int Text::GetWidth() const {
       return font_.region(text_).w;
     }
-    int MessageText::Height() const {
+    int Text::Height() const {
       return font_.Height();
     }
-    const MessageTextFont & MessageText::Font() const { return font_; }
+    const MessageTextFont & Text::Font() const { return font_; }
   }
 }

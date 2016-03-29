@@ -73,13 +73,13 @@ namespace kag {
     /// <summary>
     /// フォント付き修飾テキスト
     /// </summary>
-    class MessageText {
+    class Text {
     public:
-      MessageText() = default;
+      Text() = default;
 
-      MessageText(const MessageTextFont& font, String&& text);
+      Text(const MessageTextFont& font, String&& text);
 
-      MessageText(const MessageTextFont& font);
+      Text(const MessageTextFont& font);
 
       /// <summary>
       /// 文字列を描画する
@@ -94,21 +94,21 @@ namespace kag {
       /// </summary>
       /// <param name="s">文字列</param>
       /// <returns></returns>
-      MessageText& Append(const String& s);
+      Text& Append(const String& s);
 
       /// <summary>
       /// 文字を末尾に追加する
       /// </summary>
       /// <param name="s">文字</param>
       /// <returns></returns>
-      MessageText& Append(const wchar& s);
+      Text& Append(const wchar& s);
 
       /// <summary>
       /// 折り返し他部分を新しく生成して返す
       /// </summary>
       /// <param name="width">折り返す時の幅</param>
       /// <returns></returns>
-      Optional<MessageText> ByReturn(int width);
+      Optional<Text> ByReturn(int width);
 
       /// <summary>
       /// 指定したインデントx+文字列の幅を返す
@@ -138,9 +138,9 @@ namespace kag {
     public:
       struct MessageTextWithX {
         MessageTextWithX() {}
-        MessageTextWithX(const MessageText& text, int x = 0) :text_(text), x(x) {}
+        MessageTextWithX(const Text& text, int x = 0) :text_(text), x(x) {}
         int x;
-        MessageText text_;
+        Text text_;
       };
     public:
 
@@ -177,7 +177,7 @@ namespace kag {
       /// 文字列をフォント付きで末尾に追加する
       /// </summary>
       /// <param name="text"></param>
-      void Append(const MessageText& text);
+      void Append(const Text& text);
 
       void Append(const MessageTextWithX& text);
 
@@ -186,7 +186,7 @@ namespace kag {
       /// </summary>
       /// <param name="width">折り返す幅</param>
       /// <returns></returns>
-      Optional<MessageText> ByReturn(int width);
+      Optional<Text> ByReturn(int width);
 
       /// <summary>
       /// フォントを末尾に追加する
@@ -453,7 +453,7 @@ namespace kag {
     Array<message::MessageTextLine> text_line_;
 
     /// <summary>高さに収まらなくなった場合に飛び出した部分が入る</summary>
-    Optional<message::MessageText> overflow_text;
+    Optional<message::Text> overflow_text;
   };
 
 }
