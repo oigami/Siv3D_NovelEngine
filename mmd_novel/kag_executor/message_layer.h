@@ -70,19 +70,16 @@ namespace kag {
 
     };
 
+    /// <summary>
+    /// フォント付き修飾テキスト
+    /// </summary>
     class MessageText {
     public:
       MessageText() = default;
 
-      MessageText(int x, const MessageTextFont& font, String&& text);
+      MessageText(const MessageTextFont& font, String&& text);
 
-      MessageText(int x, const MessageTextFont& font);
-
-      /// <summary>
-      /// インデントをセットする
-      /// </summary>
-      /// <param name="x"></param>
-      void Indent(int x);
+      MessageText(const MessageTextFont& font);
 
       /// <summary>
       /// 文字列を描画する
@@ -135,17 +132,24 @@ namespace kag {
 
       MessageTextFont font_;
       String text_;
-      int start_x_;
     };
 
     class MessageTextLine {
     public:
+      struct MessageTextWithX {
+        MessageTextWithX() {}
+        MessageTextWithX(const MessageText& text, int x = 0) :text_(text), x(x) {}
+        int x;
+        MessageText text_;
+      };
+    public:
+
       /// <summary>
       /// コンストラクタ
       /// </summary>
       /// <param name="y">n行目のy座標</param>
       /// <param name="text"></param>
-      MessageTextLine(int y, const MessageText& text);
+      MessageTextLine(int y, const MessageTextWithX& text);
 
       void Clear();
 
@@ -174,6 +178,8 @@ namespace kag {
       /// </summary>
       /// <param name="text"></param>
       void Append(const MessageText& text);
+
+      void Append(const MessageTextWithX& text);
 
       /// <summary>
       /// 折り返し部分を新たに生成して返す
@@ -243,7 +249,7 @@ namespace kag {
 
       Style style_;
 
-      Array<MessageText> text_;
+      Array<MessageTextWithX> text_;
 
     };
   }
