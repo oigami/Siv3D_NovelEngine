@@ -128,7 +128,7 @@ namespace kag {
   }
 
   void MessageLayer::SetBackgroundOpacity(int a) {
-    background_color_ = a;
+    background_color_.a = a;
   }
 
   void MessageLayer::SetBackgroundTex(Texture tex) {
