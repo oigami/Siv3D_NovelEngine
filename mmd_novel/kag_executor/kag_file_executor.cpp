@@ -48,7 +48,7 @@ namespace kag {
       switch (parser_.nextType()) {
       case  kag::Parser::Type::Text:
         CommandText(parser_.readText());
-        return;
+        break;
 
       case  kag::Parser::Type::Command:
       {
