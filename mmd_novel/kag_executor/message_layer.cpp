@@ -148,11 +148,11 @@ namespace kag {
     SetLocate(0, y);
   }
 
-  void MessageLayer::SetIndent() {
+  void MessageLayer::BeginIndent() {
     indent_width_ = text_line_.back().Width();
   }
 
-  void MessageLayer::SetEndIndent() {
+  void MessageLayer::EndIndent() {
     indent_width_ = InvalidIndent;
   }
 
@@ -247,6 +247,7 @@ namespace kag {
     }
 
     Optional<Text> TextLine::ByReturn(int width) {
+      // すでに使用している分を引いて使える部分の幅のみで計算する
       auto res = text_.back().text_.ByReturn(width - text_.back().x);
       return{ res };
     }
@@ -308,8 +309,6 @@ namespace kag {
     }
 
     Optional<Text> Text::ByReturn(int width) {
-
-      // すでに使用している分を引いて使える部分の幅のみで計算する
       size_t index = font_.drawableCharacters(text_, width);
       if (text_.length == index) return none;
       String s = text_.substr(index);

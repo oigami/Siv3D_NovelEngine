@@ -89,13 +89,13 @@ namespace kag {
 
   void Executor::CommandIndent() {
     command_.push([this]() {
-      this->message_manager_.Current().SetIndent();
+      this->message_manager_.Current().BeginIndent();
     });
   }
 
   void Executor::CommandEndIndent() {
     command_.push([this]() {
-      this->message_manager_.Current().SetEndIndent();
+      this->message_manager_.Current().EndIndent();
     });
   }
 

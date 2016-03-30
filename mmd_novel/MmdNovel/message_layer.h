@@ -359,12 +359,12 @@ namespace kag {
     /// <summary>
     /// 現在の文字列を基準にインデントを開始する
     /// </summary>
-    void SetIndent();
+    void BeginIndent();
 
     /// <summary>
     /// インデントを終了する
     /// </summary>
-    void SetEndIndent();
+    void EndIndent();
 
     /// <summary>
     /// 行間（文字を描画する縦幅）を設定する
