@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include <kag_executor/message_manager.h>
+#include <MmdNovel/message_manager.h>
 namespace kag {
 
   class Executor;

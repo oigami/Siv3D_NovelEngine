@@ -1,6 +1,6 @@
 ﻿#pragma once
-#include <kag_tokenizer/tokenizer.h>
-#include <kag_executor/message_layer.h>
+#include <MmdNovel/tokenizer.h>
+#include <MmdNovel/message_layer.h>
 namespace kag {
   enum LayerPage {
     Fore,

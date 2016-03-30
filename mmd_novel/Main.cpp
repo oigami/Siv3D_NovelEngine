@@ -1,6 +1,6 @@
 ﻿# include <Siv3D.hpp>
 # include <HamFramework.hpp>
-#include <kag_file_executor/kag_file_executor.h>
+#include <MmdNovel/kag_file_executor.h>
 void Main() {
   kag::FileExecutor executor(L"test.txt");
 

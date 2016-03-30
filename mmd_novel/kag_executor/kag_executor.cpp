@@ -1,5 +1,5 @@
-﻿#include "kag_executor.h"
-#include <kag_executor/tag_editor.h>
+﻿#include <MmdNovel/kag_executor.h>
+#include <MmdNovel/tag_editor.h>
 namespace kag {
   Executor::Executor() {
 

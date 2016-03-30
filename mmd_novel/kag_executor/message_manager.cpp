@@ -1,4 +1,4 @@
-#include <kag_executor/message_manager.h>
+#include <MmdNovel/message_manager.h>
 namespace kag {
   MessageManager::MessageManager() {
     click_key_ = Input::MouseL | Input::KeyEnter;

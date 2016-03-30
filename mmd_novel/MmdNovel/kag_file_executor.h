@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include <kag_executor/kag_executor.h>
+#include <MmdNovel/kag_executor.h>
 namespace kag {
   class FileExecutor : public Executor {
   public:

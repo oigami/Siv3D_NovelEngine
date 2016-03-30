@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include <Siv3D.hpp>
-#include <kag_tokenizer/tokenizer.h>
+#include <MmdNovel/tokenizer.h>
 namespace kag {
   enum class FindAttributeResult {
     NotName,

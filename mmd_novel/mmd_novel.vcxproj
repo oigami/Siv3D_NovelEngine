@@ -92,10 +92,10 @@
     <ClCompile Include="kag_executor\message_layer.cpp" />
     <ClCompile Include="kag_executor\message_manager.cpp" />
     <ClCompile Include="kag_executor\tag_editor.cpp" />
-    <ClCompile Include="kag_file_executor\kag_file_executor.cpp" />
+    <ClCompile Include="kag_executor\kag_file_executor.cpp" />
     <ClCompile Include="kag_parser\kag_parser.cpp" />
     <ClCompile Include="Main.cpp" />
-    <ClCompile Include="kag_tokenizer\tokenizer.cpp" />
+    <ClCompile Include="kag_parser\kag_tokenizer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Engine\Splash.png" />
@@ -164,13 +164,13 @@
     <Text Include="Engine\LogMessages.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="kag_executor\kag_executor.h" />
-    <ClInclude Include="kag_executor\message_layer.h" />
-    <ClInclude Include="kag_executor\message_manager.h" />
-    <ClInclude Include="kag_executor\tag_editor.h" />
-    <ClInclude Include="kag_file_executor\kag_file_executor.h" />
-    <ClInclude Include="kag_parser\kag_parser.h" />
-    <ClInclude Include="kag_tokenizer\tokenizer.h" />
+    <ClInclude Include="MmdNovel\kag_executor.h" />
+    <ClInclude Include="MmdNovel\message_layer.h" />
+    <ClInclude Include="MmdNovel\message_manager.h" />
+    <ClInclude Include="MmdNovel\tag_editor.h" />
+    <ClInclude Include="MmdNovel\kag_file_executor.h" />
+    <ClInclude Include="MmdNovel\kag_parser.h" />
+    <ClInclude Include="MmdNovel\tokenizer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

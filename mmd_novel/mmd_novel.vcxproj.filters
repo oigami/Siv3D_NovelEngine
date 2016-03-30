@@ -63,9 +63,6 @@
     <ClCompile Include="Main.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="kag_tokenizer\tokenizer.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="kag_parser\kag_parser.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
@@ -81,7 +78,10 @@
     <ClCompile Include="kag_executor\tag_editor.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="kag_file_executor\kag_file_executor.cpp">
+    <ClCompile Include="kag_parser\kag_tokenizer.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="kag_executor\kag_file_executor.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
@@ -268,25 +268,25 @@
     </Text>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="kag_tokenizer\tokenizer.h">
+    <ClInclude Include="MmdNovel\kag_file_executor.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="kag_parser\kag_parser.h">
+    <ClInclude Include="MmdNovel\kag_executor.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="kag_executor\kag_executor.h">
+    <ClInclude Include="MmdNovel\message_layer.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="kag_executor\message_layer.h">
+    <ClInclude Include="MmdNovel\message_manager.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="kag_executor\message_manager.h">
+    <ClInclude Include="MmdNovel\tag_editor.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="kag_executor\tag_editor.h">
+    <ClInclude Include="MmdNovel\kag_parser.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="kag_file_executor\kag_file_executor.h">
+    <ClInclude Include="MmdNovel\tokenizer.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>

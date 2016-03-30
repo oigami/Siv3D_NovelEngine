@@ -1,9 +1,9 @@
 ﻿#pragma once
 #include <queue>
-#include <kag_parser/kag_parser.h>
-#include <kag_executor/message_layer.h>
-#include <kag_executor/message_manager.h>
-#include <kag_executor/tag_editor.h>
+#include <MmdNovel/kag_parser.h>
+#include <MmdNovel/message_layer.h>
+#include <MmdNovel/message_manager.h>
+#include <MmdNovel/tag_editor.h>
 namespace kag {
 
   class Executor {
