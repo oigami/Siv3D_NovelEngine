@@ -135,7 +135,7 @@ namespace kag {
     };
 
     class TextLine {
-    public:
+    private:
       struct TextWithX {
         TextWithX() {}
         TextWithX(const Text& text, int x = 0) :text_(text), x(x) {}
@@ -150,14 +150,14 @@ namespace kag {
       /// <param name="y">n行目のy座標</param>
       /// <param name="x">開始するx座標</param>
       /// <param name="text"></param>
-      TextLine(int y, int x, const Text& text);
+      TextLine(int x, const Text& text);
 
       /// <summary>
       /// コンストラクタ
       /// </summary>
       /// <param name="y">n行目のy座標</param>
       /// <param name="text"></param>
-      TextLine(int y, const Text& text);
+      TextLine(const Text& text);
 
 
       void Clear();
@@ -247,11 +247,6 @@ namespace kag {
       void ResetLineSpacing();
 
     private:
-
-      /// <summary>
-      /// 描画するy座標
-      /// </summary>
-      int y_;
 
       /// <summary>一行の中で最大の高さを保持する</summary>
       int max_height_;
@@ -458,8 +453,13 @@ namespace kag {
     /// <summary>表示できた限界の行数</summary>
     int limit_line_num;
 
+    struct TextLineWithY : message::TextLine {
+      TextLineWithY(int y, const message::TextLine &line) : y_(y) ,message::TextLine(line){}
+      int y_;
+    };
+
     /// <summary>テキスト一行ごとの配列</summary>
-    Array<message::TextLine> text_line_;
+    Array<TextLineWithY> text_line_;
 
     /// <summary>高さに収まらなくなった場合に飛び出した部分が入る</summary>
     Optional<message::Text> overflow_text;

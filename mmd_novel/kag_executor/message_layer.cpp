@@ -63,7 +63,7 @@ namespace kag {
 
     int y = position_.y + margin_.y;
     for (auto& i : step(limit_line_num)) {
-      text_line_[i].Draw(position_.x + margin_.x, y);
+      text_line_[i].Draw(position_.x + margin_.x, y + text_line_[i].y_);
     }
   }
 
@@ -136,7 +136,7 @@ namespace kag {
   }
 
   void MessageLayer::SetLocate(int x, int y) {
-    text_line_.emplace_back(y, x, now_font_);
+    text_line_.emplace_back(y, message::TextLine(x, now_font_));
     sum_height_ = y;
   }
 
@@ -194,7 +194,7 @@ namespace kag {
         indent = indent_width_;
       sum_height_ += text_line_.back().Height();
       if (!IsLimitHeihgt()) {
-        text_line_.emplace_back(sum_height_, indent, *opt);
+        text_line_.emplace_back(sum_height_, message::TextLine(indent, *opt));
         text_line_.back().SetLineSpacing(line_spacing);
         limit_line_num = static_cast<int>(text_line_.size());
       } else {
@@ -206,12 +206,12 @@ namespace kag {
 
   namespace message {
 
-    TextLine::TextLine(int y, int x, const Text & text)
-      : max_height_(0), y_(y) {
+    TextLine::TextLine(int x, const Text & text)
+      : max_height_(0) {
       Append(x, text);
     }
 
-    TextLine::TextLine(int y, const Text & text) : TextLine(y, 0, text) {
+    TextLine::TextLine(const Text & text) : TextLine(0, text) {
     }
 
     void TextLine::Clear() {
@@ -222,7 +222,7 @@ namespace kag {
     }
 
     int TextLine::Draw(int x, int y) const {
-      const int new_y = y_ + y + Height();
+      const int new_y = y + Height();
       for (auto& i : text_) {
         i.text_.Draw(x + i.x, new_y);
       }
