@@ -168,6 +168,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="kag_executor\impl\kag_executor_impl.h" />
+    <ClInclude Include="kag_executor\impl\kag_file_executor_impl.h" />
     <ClInclude Include="kag_executor\impl\message_layer_impl.h" />
     <ClInclude Include="kag_executor\impl\message_manager_impl.h" />
     <ClInclude Include="MmdNovel\default_value.h" />
@@ -177,8 +178,8 @@
     <ClInclude Include="MmdNovel\snapshotspan.h" />
     <ClInclude Include="MmdNovel\tag_editor.h" />
     <ClInclude Include="MmdNovel\kag_file_executor.h" />
-    <ClInclude Include="MmdNovel\kag_parser.h" />
-    <ClInclude Include="MmdNovel\tokenizer.h" />
+    <ClInclude Include="kag_parser\kag_parser.h" />
+    <ClInclude Include="kag_parser\tokenizer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

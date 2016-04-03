@@ -1,5 +1,5 @@
 ﻿#include<string>
-#include <MmdNovel/tokenizer.h>
+#include <kag_parser/tokenizer.h>
 namespace kag {
 
   Tokenizer::Tokenizer() {

@@ -1,4 +1,4 @@
-﻿#include <MmdNovel/kag_parser.h>
+﻿#include "kag_parser.h"
 
 namespace kag {
 
