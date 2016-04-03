@@ -6,6 +6,10 @@
 #include <MmdNovel/tag_editor.h>
 namespace kag {
 
+  /// <summary>
+  /// kagの実行クラス
+  /// <para>シャローコピーされるのでコピーをしてもデータが共有される</para>
+  /// </summary>
   class Executor {
   public:
 
@@ -74,9 +78,8 @@ namespace kag {
     void ShowErrorMsg(const String& str) const;
 
   protected:
-
-    std::queue<std::function<void()>> command_;
-    MessageManager message_manager_;
+    class Pimpl;
+    std::shared_ptr<Pimpl> pimpl_;
 
   };
 }

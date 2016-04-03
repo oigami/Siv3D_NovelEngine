@@ -1,168 +1,103 @@
 ﻿#include <MmdNovel/kag_executor.h>
 #include <MmdNovel/tag_editor.h>
+#include <kag_executor/impl/kag_executor_impl.h>
 namespace kag {
-  Executor::Executor() {
-
-    Clear();
+  Executor::Executor() :pimpl_(std::make_shared<Pimpl>()) {
   }
   void Executor::Clear() {
-    message_manager_.Clear();
+    pimpl_->Clear();
   }
 
   bool Executor::IsWait() const {
-    if (message_manager_.IsWait())return true;
-    return false;
+    return pimpl_->IsWait();
   }
 
   void Executor::CommandL() {
-    command_.push([&]() {
-      message_manager_.SetWaitClick();
-    });
+    pimpl_->CommandL();
   }
 
   void Executor::CommandR() {
-    command_.push([&]() {
-      message_manager_.AppendNewLine();
-    });
+    pimpl_->CommandR();
   }
 
   void Executor::CommandP() {
-    command_.push([&]() {
-      message_manager_.SetWaitClick();
-    });
+    pimpl_->CommandP();
   }
 
   void Executor::CommandDelay(int delay_time) {
-    command_.push([&]() {
-      message_manager_.SetDelayTime(delay_time);
-    });
+    pimpl_->CommandDelay(delay_time);
   }
 
   void Executor::CommandNoWait() {
-    command_.push([&]() {
-      message_manager_.SetNoWaitText(true);
-    });
+    pimpl_->CommandNoWait();
   }
 
   void Executor::CommandEndNoWait() {
-    command_.push([&]() {
-      message_manager_.SetNoWaitText(false);
-    });
+    pimpl_->CommandEndNoWait();
   }
 
   void Executor::CommandER() {
-    command_.push([&]() {
-      message_manager_.Clear();
-    });
+    pimpl_->CommandER();
   }
 
   void Executor::CommandCM() {
-    command_.push([&]() {
-      message_manager_.AllClear();
-    });
+    pimpl_->CommandCM();
   }
 
   void Executor::CommandCT() {
-    command_.push([&]() {
-      CommandCM();
-      message_manager_.SetCurrent(0, LayerPage::Fore);
-    });
+    pimpl_->CommandCT();
   }
 
   void Executor::CommandText(const SnapShotSpan& str) {
-    command_.push([=]() {
-      message_manager_.Append(str);
-    });
+    pimpl_->CommandText(str);
   }
 
   void Executor::CommandTextNoDelay(const SnapShotSpan & str) {
-    command_.push([=]() {
-      message_manager_.Current().Append(str.ToStr());
-    });
+    pimpl_->CommandTextNoDelay(str);
   }
 
   void Executor::CommandCurrent(int index, int page) {
-    command_.push([=]() {
-      message_manager_.SetCurrent(index, page == 0 ? LayerPage::Fore : LayerPage::Back);
-    });
+    pimpl_->CommandCurrent(index, page);
   }
 
   void Executor::CommandIndent() {
-    command_.push([this]() {
-      this->message_manager_.Current().BeginIndent();
-    });
+    pimpl_->CommandIndent();
   }
 
   void Executor::CommandEndIndent() {
-    command_.push([this]() {
-      this->message_manager_.Current().EndIndent();
-    });
+    pimpl_->CommandEndIndent();
   }
 
   void Executor::CommandLocate(Value<int> x, Value<int> y) {
-    command_.push([=]() {
-      if (x == kag::default) {
-        message_manager_.Current().SetLocateY(y);
-      } else if (y == kag::default) {
-        message_manager_.Current().SetLocateX(x);
-      } else {
-        message_manager_.Current().SetLocate(x, y);
-      }
-    });
+    pimpl_->CommandLocate(x, y);
   }
 
   void Executor::CommandStyle(const CommandFunc<StyleCommandEditor>& f) {
-    command_.push([f, this]() {
-      StyleCommandEditor editor(message_manager_);
-      f(editor);
-      editor.Commit();
-    });
+    pimpl_->CommandStyle(f);
   }
 
   void Executor::CommandDefStyle(const CommandFunc<DefaultStyleCommandEditor>& f) {
-    command_.push([f, this]() {
-      DefaultStyleCommandEditor editor(message_manager_);
-      f(editor);
-      editor.Commit();
-    });
+    pimpl_->CommandDefStyle(f);
   }
 
   void Executor::CommandResetStyle() {
-    command_.push([this]() {
-      message_manager_.Current().ResetFont();
-    });
+    pimpl_->CommandResetStyle();
   }
 
   void Executor::CommandFont(const CommandFunc<FontCommandEditor>& f) {
-    command_.push([f, this]() {
-      FontCommandEditor editor(message_manager_);
-      f(editor);
-      editor.Commit();
-    });
+    pimpl_->CommandFont(f);
   }
 
   void Executor::CommandDefFont(const CommandFunc<DefFontCommandEditor>& f) {
-    command_.push([f, this]() {
-      DefFontCommandEditor editor(message_manager_);
-      f(editor);
-      editor.Commit();
-    });
+    pimpl_->CommandDefFont(f);
   }
 
   void Executor::CommandResetFont() {
-    command_.push([=]() {
-      message_manager_.Current().ResetFont();
-    });
+    pimpl_->CommandResetFont();
   }
 
   void Executor::CommandPosition(Value<int> layer, Value<int> page, const CommandFunc<PositionCommandEditor>& f) {
-    command_.push([=]()mutable {
-      if (layer == kag::default) layer = message_manager_.CurrentLayerNum();
-      if (page == kag::default) page = message_manager_.CurrentPageNum();
-      PositionCommandEditor editor(message_manager_.GetLayer(layer, page));
-      f(editor);
-      editor.Commit();
-    });
+    pimpl_->CommandPosition(layer, page, f);
   }
 
   void Executor::ShowErrorMsg(const String & str) const {
@@ -170,21 +105,15 @@ namespace kag {
   }
 
   bool Executor::Update() {
-    message_manager_.Update();
-    return CommandUpdate();
+    return pimpl_->Update();
   }
 
   bool Executor::CommandUpdate() {
-    while (!command_.empty()) {
-      if (IsWait()) return false;
-      command_.front()();
-      command_.pop();
-    }
-    return true;
+    return pimpl_->CommandUpdate();
   }
 
   void Executor::Draw() {
-    message_manager_.Draw();
+    pimpl_->Draw();
   }
 
 
