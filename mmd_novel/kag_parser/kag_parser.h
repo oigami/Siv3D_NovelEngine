@@ -93,7 +93,7 @@ namespace kag {
       if (7 <= len) {
         if (span.substr(0, 7) == L"message") {
           if (len == 7) {
-            return{ LayerType::Message, default };
+            return{ LayerType::Message, Define::default };
           }
           return{ LayerType::Message, ToInt10(span.substr(7,len - 7)) };
         }

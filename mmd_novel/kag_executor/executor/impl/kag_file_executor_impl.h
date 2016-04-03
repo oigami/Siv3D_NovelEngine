@@ -125,8 +125,7 @@ namespace kag {
   }
 
   void FileExecutor::Pimpl::LocateTag(const Parser::CommandToken & token) {
-    int x = kag::default;
-    int y = kag::default;
+    Value<int> x, y;
     auto& args = token.arguments();
     using namespace converter;
     args.AttributeValTo(L"x", ToInt10, [&](int val) { x = val; });
@@ -210,8 +209,8 @@ namespace kag {
   }
 
   void FileExecutor::Pimpl::CurrentTag(const Parser::CommandToken & token) {
-    int layer = kag::default;
-    int page = 0;
+    Value<int> layer;
+    int page = Define::fore_page;
     auto& args = token.arguments();
     using namespace converter;
     args.AttributeValTo(L"layer", ToMessageLayerNum, [&](int val) { layer = val; });
@@ -280,8 +279,7 @@ namespace kag {
 
   void FileExecutor::Pimpl::PositionTTag(const Parser::CommandToken & token) {
     using namespace converter;
-    int index = kag::default;
-    int page = kag::default;
+    Value<int> index, page;
     auto& args = token.arguments();
     args.AttributeValTo(L"layer", ToMessageLayerNum, [&](int val) { index = val; });
 

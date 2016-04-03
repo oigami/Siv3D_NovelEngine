@@ -101,9 +101,9 @@ namespace kag {
 
   void Executor::Pimpl::CommandLocate(Value<int> x, Value<int> y) {
     command_.push([x, y, this]() {
-      if (x == kag::default) {
+      if (x == Define::default) {
         message_manager_.Current().SetLocateY(y);
-      } else if (y == kag::default) {
+      } else if (y == Define::default) {
         message_manager_.Current().SetLocateX(x);
       } else {
         message_manager_.Current().SetLocate(x, y);
@@ -157,8 +157,8 @@ namespace kag {
 
   void Executor::Pimpl::CommandPosition(Value<int> layer, Value<int> page, const CommandFunc<PositionCommandEditor>& f) {
     command_.push([layer, page, f, this]()mutable {
-      if (layer == kag::default) layer = message_manager_.CurrentLayerNum();
-      if (page == kag::default) page = message_manager_.CurrentPageNum();
+      if (layer == Define::default) layer = message_manager_.CurrentLayerNum();
+      if (page == Define::default) page = message_manager_.CurrentPageNum();
       PositionCommandEditor editor(message_manager_.GetLayer(layer, page));
       f(editor);
       editor.Commit();
