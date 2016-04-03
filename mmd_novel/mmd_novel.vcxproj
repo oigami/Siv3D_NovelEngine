@@ -90,13 +90,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="kag_executor\impl\message_layer_impl.cpp" />
-    <ClCompile Include="kag_executor\kag_executor.cpp" />
-    <ClCompile Include="kag_executor\impl\kag_executor_impl.cpp" />
-    <ClCompile Include="kag_executor\message_layer.cpp" />
-    <ClCompile Include="kag_executor\message_manager.cpp" />
-    <ClCompile Include="kag_executor\tag_editor.cpp" />
-    <ClCompile Include="kag_executor\kag_file_executor.cpp" />
+    <ClCompile Include="kag_executor\message\impl\message_layer_impl.cpp" />
+    <ClCompile Include="kag_executor\executor\kag_executor.cpp" />
+    <ClCompile Include="kag_executor\executor\impl\kag_executor_impl.cpp" />
+    <ClCompile Include="kag_executor\message\message_layer.cpp" />
+    <ClCompile Include="kag_executor\message\message_manager.cpp" />
+    <ClCompile Include="kag_executor\executor\tag_editor.cpp" />
+    <ClCompile Include="kag_executor\executor\kag_file_executor.cpp" />
     <ClCompile Include="kag_parser\kag_parser.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="kag_parser\kag_tokenizer.cpp" />
@@ -168,15 +168,16 @@
     <Text Include="Engine\LogMessages.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="kag_executor\impl\kag_executor_impl.h" />
-    <ClInclude Include="kag_executor\impl\kag_file_executor_impl.h" />
-    <ClInclude Include="kag_executor\impl\message_layer_impl.h" />
-    <ClInclude Include="kag_executor\impl\message_manager_impl.h" />
+    <ClInclude Include="kag_executor\executor\impl\kag_executor_impl.h" />
+    <ClInclude Include="kag_executor\executor\impl\kag_file_executor_impl.h" />
+    <ClInclude Include="MmdNovel.h" />
+    <ClInclude Include="kag_executor\message\impl\message_layer_impl.h" />
+    <ClInclude Include="kag_executor\message\impl\message_manager_impl.h" />
     <ClInclude Include="MmdNovel\default_value.h" />
     <ClInclude Include="MmdNovel\kag_executor.h" />
-    <ClInclude Include="MmdNovel\message_layer.h" />
-    <ClInclude Include="MmdNovel\message_manager.h" />
-    <ClInclude Include="MmdNovel\snapshotspan.h" />
+    <ClInclude Include="MmdNovel\message\message_layer.h" />
+    <ClInclude Include="MmdNovel\message\message_manager.h" />
+    <ClInclude Include="MmdNovel\message\snapshotspan.h" />
     <ClInclude Include="MmdNovel\tag_editor.h" />
     <ClInclude Include="MmdNovel\kag_file_executor.h" />
     <ClInclude Include="kag_parser\kag_parser.h" />

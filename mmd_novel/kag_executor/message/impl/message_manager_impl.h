@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include <MmdNovel/message_manager.h>
+#include <MmdNovel/message/message_manager.h>
 namespace kag {
   class MessageManager::Pimpl {
   public:

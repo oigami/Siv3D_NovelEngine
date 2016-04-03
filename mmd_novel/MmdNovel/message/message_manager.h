@@ -1,6 +1,6 @@
 ﻿#pragma once
-#include <MmdNovel/snapshotspan.h>
-#include <MmdNovel/message_layer.h>
+#include <MmdNovel/message/snapshotspan.h>
+#include <MmdNovel/message/message_layer.h>
 namespace kag {
   enum LayerPage {
     Fore,

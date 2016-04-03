@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include <MmdNovel/message_manager.h>
+#include <MmdNovel/message/message_manager.h>
 namespace kag {
 
   class Executor;
@@ -11,7 +11,7 @@ namespace kag {
     FontStyle CreateStyle();
     virtual void commit(const message::TextFont& font) {
       manager_.Current().SetFont(font);
-      
+
     }
 
     void Commit();

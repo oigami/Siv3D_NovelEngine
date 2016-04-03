@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include <MmdNovel/message_layer.h>
+#include <MmdNovel/message/message_layer.h>
 namespace kag {
   namespace message {
 

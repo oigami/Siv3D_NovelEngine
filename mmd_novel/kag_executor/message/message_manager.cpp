@@ -1,4 +1,4 @@
-#include <MmdNovel/message_manager.h>
+#include <MmdNovel/message/message_manager.h>
 #include "impl/message_manager_impl.h"
 namespace kag {
   MessageManager::MessageManager() :pimpl_(std::make_shared<Pimpl>()) {

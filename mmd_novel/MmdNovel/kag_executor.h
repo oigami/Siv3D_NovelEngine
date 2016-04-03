@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include <MmdNovel/message_manager.h>
+#include <MmdNovel/message/message_manager.h>
 #include <MmdNovel/tag_editor.h>
 #include <MmdNovel/default_value.h>
 namespace kag {

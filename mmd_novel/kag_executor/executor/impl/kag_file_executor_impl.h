@@ -139,11 +139,11 @@ namespace kag {
     executor_.CommandR();
   }
 
-  void FileExecutor::Pimpl::ResetFontTag(const Parser::CommandToken & token) {
+  void FileExecutor::Pimpl::ResetFontTag(const Parser::CommandToken &) {
     executor_.CommandResetFont();
   }
 
-  void FileExecutor::Pimpl::ResetStyleTag(const Parser::CommandToken & token) {
+  void FileExecutor::Pimpl::ResetStyleTag(const Parser::CommandToken &) {
     executor_.CommandResetStyle();
   }
 
@@ -165,7 +165,7 @@ namespace kag {
     });
   }
 
-  void FileExecutor::Pimpl::NoWaitTag(const Parser::CommandToken & token) {
+  void FileExecutor::Pimpl::NoWaitTag(const Parser::CommandToken &) {
     executor_.CommandNoWait();
   }
 
@@ -189,11 +189,11 @@ namespace kag {
 
   }
 
-  void FileExecutor::Pimpl::EndIndentTag(const Parser::CommandToken & token) {
+  void FileExecutor::Pimpl::EndIndentTag(const Parser::CommandToken &) {
     executor_.CommandEndIndent();
   }
 
-  void FileExecutor::Pimpl::EndNoWaitTag(const Parser::CommandToken & token) {
+  void FileExecutor::Pimpl::EndNoWaitTag(const Parser::CommandToken &) {
     executor_.CommandEndNoWait();
   }
 
@@ -274,7 +274,7 @@ namespace kag {
 
   }
 
-  void FileExecutor::Pimpl::IndentTag(const Parser::CommandToken & token) {
+  void FileExecutor::Pimpl::IndentTag(const Parser::CommandToken &) {
     executor_.CommandIndent();
   }
 
