@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include <MmdNovel/tokenizer.h>
+#include <MmdNovel/snapshotspan.h>
 #include <MmdNovel/message_layer.h>
 namespace kag {
   enum LayerPage {

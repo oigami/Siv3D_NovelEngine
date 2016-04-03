@@ -295,5 +295,8 @@
     <ClInclude Include="kag_executor\impl\kag_executor_impl.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="MmdNovel\snapshotspan.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

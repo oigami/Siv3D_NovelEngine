@@ -171,6 +171,7 @@
     <ClInclude Include="MmdNovel\kag_executor.h" />
     <ClInclude Include="MmdNovel\message_layer.h" />
     <ClInclude Include="MmdNovel\message_manager.h" />
+    <ClInclude Include="MmdNovel\snapshotspan.h" />
     <ClInclude Include="MmdNovel\tag_editor.h" />
     <ClInclude Include="MmdNovel\kag_file_executor.h" />
     <ClInclude Include="MmdNovel\kag_parser.h" />
