@@ -1,207 +1,147 @@
 ﻿#include <MmdNovel/message_layer.h>
+#include "impl/message_layer_impl.h"
 namespace kag {
 
-  MessageLayer::MessageLayer() {
-    position_.set(Point(16, 16), Point(Window::Size().x - 32, Window::Size().y - 32));
-    margin_.set({ 8,8 }, { 8,8 });
-    is_visible_ = false;
-    background_color_ = Palette::Gray;
-    background_color_.a = 128;
-    indent_width_ = InvalidIndent;
-    Clear();
+  MessageLayer::MessageLayer() :pimpl_(std::make_shared<Pimpl>()) {
+
   }
 
   void MessageLayer::Clear() {
-    limit_line_num = 0;
-    NextPage();
+    pimpl_->Clear();
   }
 
   void MessageLayer::NextPage() {
-    text_line_.clear();
-    limit_line_num = 0;
-    sum_height_ = 0;
-    if (overflow_text) {
-      text_line_.emplace_back(0, *overflow_text);
-      overflow_text = none;
-      CheckByReturn();
-    } else {
-      text_line_.emplace_back(0, message::Text(now_font_));
-    }
-    limit_line_num = 1;
+    pimpl_->NextPage();
   }
 
   void MessageLayer::Append(const String & str) {
-    text_line_.back().Append(str);
-    CheckByReturn();
-    return;
+    pimpl_->Append(str);
   }
 
   void MessageLayer::Append(const wchar & str) {
-    text_line_.back().Append(str);
-
-    //Print(str);
-    CheckByReturn();
+    pimpl_->Append(str);
   }
 
   bool MessageLayer::IsLimitHeihgt() {
-    return position_.h - margin_.h - margin_.y <= sum_height_ + text_line_.back().Height();
+    return pimpl_->IsLimitHeihgt();
   }
 
   void MessageLayer::AppenNewLine() {
-    sum_height_ += text_line_.back().Height();
-    text_line_.emplace_back(sum_height_, message::Text(now_font_));
-    if (!IsLimitHeihgt()) {
-      limit_line_num = static_cast<int>(text_line_.size());
-    }
+    pimpl_->AppenNewLine();
   }
 
   void MessageLayer::Draw() const {
-    if (!is_visible_) return;
-    position_.draw(background_color_);
-    if (!background_tex_.isEmpty())
-      position_(background_tex_).draw();
-
-    int y = position_.y + margin_.y;
-    for (auto& i : step(limit_line_num)) {
-      text_line_[i].Draw(position_.x + margin_.x, y + text_line_[i].y_);
-    }
+    pimpl_->Draw();
   }
 
-  const message::TextFont & MessageLayer::NowFont() const { return now_font_; }
+  const message::TextFont & MessageLayer::NowFont() const { return pimpl_->NowFont(); }
 
   void MessageLayer::SetFont(const message::TextFont & font) {
-    text_line_.back().AppendNewFont(font);
-    now_font_ = font;
+    pimpl_->SetFont(font);
   }
 
   void MessageLayer::SetDefaultFont(const message::TextFont & font) {
-    default_font_ = font;
+    pimpl_->SetDefaultFont(font);
   }
 
   void MessageLayer::ResetFont() {
-    SetFont(default_font_);
+    pimpl_->ResetFont();
   }
 
   void MessageLayer::SetPositionTop(int top) {
-    position_.y = top;
+    pimpl_->SetPositionTop(top);
   }
 
   void MessageLayer::SetPositionLeft(int left) {
-    position_.x = left;
+    pimpl_->SetPositionLeft(left);
   }
 
   void MessageLayer::SetPositionWidth(int width) {
-    position_.w = width;
+    pimpl_->SetPositionWidth(width);
   }
 
   void MessageLayer::SetPositionHeight(int height) {
-    position_.h = height;
+    pimpl_->SetPositionHeight(height);
   }
 
   void MessageLayer::SetMarginTop(int top) {
-    margin_.y = top;
+    pimpl_->SetMarginTop(top);
   }
 
   void MessageLayer::SetMarginLeft(int left) {
-    margin_.x = left;
+    pimpl_->SetMarginLeft(left);
   }
 
   void MessageLayer::SetMarginRight(int width) {
-    margin_.w = width;
+    pimpl_->SetMarginRight(width);
   }
 
   void MessageLayer::SetMarginBottom(int height) {
-    margin_.h = height;
+    pimpl_->SetMarginBottom(height);
   }
 
   void MessageLayer::SetVisible(bool is_visible) {
-    is_visible_ = is_visible;
+    pimpl_->SetVisible(is_visible);
   }
 
   void MessageLayer::SetBackgroundColor(Color argb) {
-    background_color_ = argb;
+    pimpl_->SetBackgroundColor(argb);
   }
 
   void MessageLayer::SetBackgroundRGB(int r, int g, int b) {
-    const int a = background_color_.a;
-    background_color_ = Color(r, g, b, a);
+    pimpl_->SetBackgroundRGB(r, g, b);
   }
 
   void MessageLayer::SetBackgroundOpacity(int a) {
-    background_color_.a = a;
+    pimpl_->SetBackgroundOpacity(a);
   }
 
   void MessageLayer::SetBackgroundTex(Texture tex) {
-    background_tex_ = tex;
+    pimpl_->SetBackgroundTex(tex);
   }
 
   void MessageLayer::SetLocate(int x, int y) {
-    text_line_.emplace_back(y, message::TextLine(x, now_font_));
-    sum_height_ = y;
+    pimpl_->SetLocate(x, y);
   }
 
   void MessageLayer::SetLocateX(int x) {
-    text_line_.back().AppendNewFont(x, now_font_);
+    pimpl_->SetLocateX(x);
   }
 
   void MessageLayer::SetLocateY(int y) {
-    SetLocate(0, y);
+    pimpl_->SetLocateY(y);
   }
 
   void MessageLayer::BeginIndent() {
-    indent_width_ = text_line_.back().Width();
+    pimpl_->BeginIndent();
   }
 
   void MessageLayer::EndIndent() {
-    indent_width_ = InvalidIndent;
+    pimpl_->EndIndent();
   }
 
   void MessageLayer::SetLineSize(int px) {
-    text_line_.back().SetLineSize(px);
+    pimpl_->SetLineSize(px);
   }
 
   void MessageLayer::ResetLineSize() {
-    text_line_.back().ResetLineSize();
+    pimpl_->ResetLineSize();
   }
 
   void MessageLayer::SetLineSpacing(int px) {
-    text_line_.back().SetLineSpacing(px);
+    pimpl_->SetLineSpacing(px);
   }
 
   void MessageLayer::ResetLineSpacing() {
-    text_line_.back().ResetLineSpacing();
+    pimpl_->ResetLineSpacing();
   }
 
   void MessageLayer::SetDefaultStyle(const message::DefaultStyle & style) {
-    default_style_ = style;
+    pimpl_->SetDefaultStyle(style);
   }
 
   void MessageLayer::ResetStyle() {
-    SetLineSpacing(default_style_.line_spacing_);
-    SetLineSize(default_style_.line_size_);
-  }
-
-  void MessageLayer::CheckByReturn() {
-    assert(!IsLimitHeihgt());
-    int line_spacing = text_line_.back().LineSpacing();
-    for (;;) {
-      auto opt = text_line_.back().ByReturn(position_.w - margin_.x - margin_.w);
-      if (!opt)
-        return;
-
-      int indent = 0;
-      if (indent_width_ != InvalidIndent)
-        indent = indent_width_;
-      sum_height_ += text_line_.back().Height();
-      if (!IsLimitHeihgt()) {
-        text_line_.emplace_back(sum_height_, message::TextLine(indent, *opt));
-        text_line_.back().SetLineSpacing(line_spacing);
-        limit_line_num = static_cast<int>(text_line_.size());
-      } else {
-        overflow_text = std::move(opt);
-        return;
-      }
-    }
+    pimpl_->ResetStyle();
   }
 
   namespace message {

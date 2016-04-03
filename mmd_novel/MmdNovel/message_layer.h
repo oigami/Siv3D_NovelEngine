@@ -404,65 +404,9 @@ namespace kag {
 
   private:
 
-    /// <summary>
-    /// 折り返しのチェックをする
-    /// <para>もし折り返して高さに収まらなくなった場合はoverflow_textに入れる</para>
-    /// </summary>
-    void CheckByReturn();
+    class Pimpl;
+    std::shared_ptr<Pimpl> pimpl_;
 
-    /// <summary>インデントが無効な時の値</summary>
-    static constexpr int InvalidIndent = std::numeric_limits<int>::max();
-
-    /// <summary>インデントの開始位置(InvalidIndentで無効)</summary>
-    int indent_width_;
-
-    /// <summary>現在設定されているフォント</summary>
-    message::TextFont now_font_;
-
-    /// <summary>デフォルトに設定されているフォント</summary>
-    message::TextFont default_font_;
-
-    /// <summary>デフォルトに設定されているフォント</summary>
-    message::DefaultStyle default_style_;
-
-    /// <summary>メッセージレイヤのサイズ</summary>
-    Rect position_;
-
-    /// <summary>
-    /// メッセージを表示する部分のマージン
-    /// <para>rect型だがposition_からの相対位置(内側が正)になっている</para>
-    /// </summary>
-    Rect margin_;
-
-    /// <summary>背景テクスチャ</summary>
-    Texture background_tex_;
-
-    /// <summary>背景色</summary>
-    Color background_color_;
-
-    // TODO: 全体に反映させるための処理を追加する
-    /// <summary>レイヤ全体の透明度</summary>
-    int opacity_;
-
-    /// <summary>表示するかどうか</summary>
-    bool is_visible_;
-
-    /// <summary>描画してる文字列の高さの合計</summary>
-    int sum_height_;
-
-    /// <summary>表示できた限界の行数</summary>
-    int limit_line_num;
-
-    struct TextLineWithY : message::TextLine {
-      TextLineWithY(int y, const message::TextLine &line) : y_(y) ,message::TextLine(line){}
-      int y_;
-    };
-
-    /// <summary>テキスト一行ごとの配列</summary>
-    Array<TextLineWithY> text_line_;
-
-    /// <summary>高さに収まらなくなった場合に飛び出した部分が入る</summary>
-    Optional<message::Text> overflow_text;
   };
 
 }
