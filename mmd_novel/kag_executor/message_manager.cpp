@@ -1,158 +1,87 @@
 #include <MmdNovel/message_manager.h>
+#include "impl/message_manager_impl.h"
 namespace kag {
-  MessageManager::MessageManager() {
-    click_key_ = Input::MouseL | Input::KeyEnter;
-    is_active_key = true;
-    resize(2);
-    message_layer_[0][0].SetVisible(true);
-    delay_time_ = 30;
-    delay_index_ = 0;
-    current_page_ = 0;
-    current_layer_ = 0;
+  MessageManager::MessageManager() :pimpl_(std::make_shared<Pimpl>()) {
   }
 
   void MessageManager::resize(size_t size) {
-    message_layer_.resize(size);
+    pimpl_->resize(size);
   }
 
   void MessageManager::Clear() {
-    is_wait_click_ = false;
-    is_click_new_page = false;
-    message_layer_[current_layer_][current_page_].Clear();
+    pimpl_->Clear();
   }
 
   void MessageManager::AllClear() {
-    for (auto& i : message_layer_) {
-      for (auto& j : i) {
-        j.Clear();
-      }
-    }
+    pimpl_->AllClear();
   }
 
   bool MessageManager::IsFlush() const {
-    return delay_text.Length() == delay_index_;
+    return pimpl_->IsFlush();
   }
 
   void MessageManager::Flush() {
-    auto& current = Current();
-    for (int i = 0, len = delay_text.Length() - delay_index_; i < len; i++) {
-      current.Append(delay_text[delay_index_++]);
-      if (current.IsLimitHeihgt()) {
-        is_click_new_page = true;
-        is_wait_click_ = true;
-        return;
-      }
-    }
+    pimpl_->Flush();
   }
 
   void MessageManager::Append(const SnapShotSpan & text) {
-    assert(IsFlush());
-    if (is_no_wait_) {
-      auto& current = Current();
-      current.Append(text.ToStr());
-      if (current.IsLimitHeihgt()) {
-        is_click_new_page = true;
-        is_wait_click_ = true;
-        return;
-      }
-    } else {
-      delay_text = text;
-      timer_.restart();
-      delay_index_ = 0;
-    }
+    pimpl_->Append(text);
   }
 
   void MessageManager::AppendNewLine() {
-    Current().AppenNewLine();
+    pimpl_->AppendNewLine();
   }
 
   void MessageManager::NextPage() {
-    Current().NextPage();
-    timer_.set(MillisecondsF(delay_time_ * delay_index_));
+    pimpl_->NextPage();
   }
 
-  void MessageManager::SetWaitClick() { is_wait_click_ = true; }
+  void MessageManager::SetWaitClick() { pimpl_->SetWaitClick(); }
 
-  void MessageManager::SetClickNextPage() { is_click_new_page = true; }
+  void MessageManager::SetClickNextPage() { pimpl_->SetClickNextPage(); }
 
   bool MessageManager::Update() {
-    if (is_wait_click_) {
-      if (CheckClicked()) {
-        if (is_click_new_page)
-          NextPage();
-        is_click_new_page = false;
-        is_wait_click_ = false;
-      }
-      return false;
-    }
-    auto& current = Current();
-    int ms = timer_.ms();
-    int loop = ms / delay_time_ - delay_index_;
-    loop = std::min(loop, delay_text.Length() - delay_index_);
-    for (int i = 0; i < loop; i++) {
-      current.Append(delay_text[delay_index_++]);
-      if (current.IsLimitHeihgt()) {
-        is_click_new_page = true;
-        is_wait_click_ = true;
-        return false;
-      }
-    }
-
-    if (IsFlush() == false) {
-      if (CheckClicked())
-        Flush();
-      return false;
-    }
-
-    return true;
+    return pimpl_->Update();
   }
 
   void MessageManager::Draw() const {
-    for (auto& i : message_layer_) {
-      i[message_fore_layer].Draw();
-    }
+    pimpl_->Draw();
   }
 
   void MessageManager::SetCurrentLayer(int layer_index) {
-    current_layer_ = layer_index;
+    pimpl_->SetCurrentLayer(layer_index);
   }
 
   void MessageManager::SetCurrent(int layer_index, LayerPage type) {
-    current_layer_ = layer_index;
-    current_page_ = type == LayerPage::Fore;
+    pimpl_->SetCurrent(layer_index, type);
   }
 
   void MessageManager::SetDelayTime(int delay_time) {
-    delay_time_ = delay_time;
+    pimpl_->SetDelayTime(delay_time);
   }
 
   void MessageManager::SetNoWaitText(bool is_no_wait) {
-    is_no_wait_ = is_no_wait;
+    pimpl_->SetNoWaitText(is_no_wait);
   }
 
   MessageLayer & MessageManager::GetLayer(int index, int page) {
-    return message_layer_[index][page];
+    return pimpl_->GetLayer(index, page);
   }
 
-  MessageLayer & MessageManager::Current() { return GetLayer(current_layer_, current_page_); }
+  MessageLayer & MessageManager::Current() { return pimpl_->Current(); }
 
-  int MessageManager::CurrentLayerNum() const { return current_layer_; }
+  int MessageManager::CurrentLayerNum() const { return pimpl_->CurrentLayerNum(); }
 
-  int MessageManager::CurrentPageNum() const { return current_page_; }
+  int MessageManager::CurrentPageNum() const { return pimpl_->CurrentPageNum(); }
 
   void MessageManager::SetClickKey(const KeyCombination & key) {
-    click_key_ = key;
+    pimpl_->SetClickKey(key);
   }
 
-  void MessageManager::SetInvalidKeyInput() { is_active_key = false; }
+  void MessageManager::SetInvalidKeyInput() { pimpl_->SetInvalidKeyInput(); }
 
-  void MessageManager::SetValidKeyInput() { is_active_key = true; }
+  void MessageManager::SetValidKeyInput() { pimpl_->SetValidKeyInput(); }
 
-  bool MessageManager::IsWait() const { return is_wait_click_ || !IsFlush(); }
-
-  bool MessageManager::CheckClicked() const {
-    if (is_active_key) return click_key_.clicked;
-    return false;
-  }
+  bool MessageManager::IsWait() const { return pimpl_->IsWait(); }
 
 }

@@ -7,7 +7,6 @@ namespace kag {
     Back
   };
 
-
   class MessageManager {
   public:
 
@@ -138,56 +137,10 @@ namespace kag {
     void SetValidKeyInput();
 
     bool IsWait() const;
-  private:
-
-    bool CheckClicked() const;
 
   private:
-
-    Stopwatch timer_;
-
-    /// <summary>
-    /// 表が0、裏が1の配列の配列
-    /// </summary>
-    Array<std::array<MessageLayer, 2>> message_layer_;
-    static constexpr int message_fore_layer = 0;
-    static constexpr int message_back_layer = 1;
-
-    /// <summary>
-    /// 現在のレイヤ番号を表す
-    /// </summary>
-    int current_layer_;
-
-    /// <summary>
-    /// 現在のページを表す 表が0、裏が1
-    /// </summary>
-    int current_page_;
-
-    /// <summary>遅延表示してるテキスト</summary>
-    SnapShotSpan delay_text;
-
-    /// <summary>次に表示する遅延テキストの添字</summary>
-    int delay_index_;
-
-    /// <summary>一文字あたりに遅延する時間</summary>
-    int delay_time_;
-
-    /// <summary>クリック待ちするかどうか</summary>
-    bool is_wait_click_;
-
-    /// <summary>クリックした時に改ページに行くかどうか</summary>
-    bool is_click_new_page;
-
-    /// <summary>クリックによるスキップをするかどうか</summary>
-    bool is_click_skip;
-
-    bool is_no_wait_;
-
-    /// <summary>クリックに対応するキー</summary>
-    KeyCombination click_key_;
-
-    /// <summary>キー入力が有効かどうか</summary>
-    bool is_active_key;
+    class Pimpl;
+    std::shared_ptr<Pimpl> pimpl_;
 
   };
 
