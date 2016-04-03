@@ -90,6 +90,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="kag_executor\impl\message_layer_impl.cpp" />
     <ClCompile Include="kag_executor\kag_executor.cpp" />
     <ClCompile Include="kag_executor\impl\kag_executor_impl.cpp" />
     <ClCompile Include="kag_executor\message_layer.cpp" />
