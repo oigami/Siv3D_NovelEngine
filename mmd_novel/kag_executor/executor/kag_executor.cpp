@@ -100,6 +100,10 @@ namespace kag {
     pimpl_->CommandPosition(layer, page, f);
   }
 
+  void Executor::CommandImage(int layer, const Value<int>& page, const Texture & tex) {
+    pimpl_->CommandImage(layer, page, tex);
+  }
+
   void Executor::ShowErrorMsg(const String & str) const {
     MessageBox::Show(str);
   }

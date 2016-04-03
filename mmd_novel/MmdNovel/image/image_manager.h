@@ -1,5 +1,5 @@
 #pragma once
-#include <kag_executor/image/image_layer.h>
+#include <MmdNovel/image/image_layer.h>
 #include <MmdNovel/default_value.h>
 namespace kag {
   class Imagemanager {
@@ -10,7 +10,7 @@ namespace kag {
       }
     }
 
-    void SetTex(Texture &tex, int layer, Value<int> page) {
+    void SetTex(const Texture &tex, int layer, Value<int> page) {
       layer_[layer][page(Define::fore_page)].SetTex(tex);
     }
 

@@ -170,12 +170,12 @@
   <ItemGroup>
     <ClInclude Include="kag_executor\executor\impl\kag_executor_impl.h" />
     <ClInclude Include="kag_executor\executor\impl\kag_file_executor_impl.h" />
-    <ClInclude Include="kag_executor\image\image_layer.h" />
-    <ClInclude Include="kag_executor\image\image_manager.h" />
     <ClInclude Include="MmdNovel.h" />
     <ClInclude Include="kag_executor\message\impl\message_layer_impl.h" />
     <ClInclude Include="kag_executor\message\impl\message_manager_impl.h" />
     <ClInclude Include="MmdNovel\default_value.h" />
+    <ClInclude Include="MmdNovel\image\image_layer.h" />
+    <ClInclude Include="MmdNovel\image\image_manager.h" />
     <ClInclude Include="MmdNovel\kag_executor.h" />
     <ClInclude Include="MmdNovel\message\message_layer.h" />
     <ClInclude Include="MmdNovel\message\message_manager.h" />
