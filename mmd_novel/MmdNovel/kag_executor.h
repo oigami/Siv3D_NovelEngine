@@ -1,9 +1,7 @@
 ﻿#pragma once
-#include <queue>
-#include <MmdNovel/kag_parser.h>
-#include <MmdNovel/message_layer.h>
 #include <MmdNovel/message_manager.h>
 #include <MmdNovel/tag_editor.h>
+#include <MmdNovel/default_value.h>
 namespace kag {
 
   /// <summary>

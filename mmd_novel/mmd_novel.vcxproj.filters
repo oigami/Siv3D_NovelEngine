@@ -304,5 +304,8 @@
     <ClInclude Include="kag_executor\impl\message_layer_impl.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="MmdNovel\default_value.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

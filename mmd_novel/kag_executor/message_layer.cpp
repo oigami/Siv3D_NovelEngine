@@ -1,5 +1,4 @@
-﻿#include <MmdNovel/message_layer.h>
-#include "impl/message_layer_impl.h"
+﻿#include "impl/message_layer_impl.h"
 namespace kag {
 
   MessageLayer::MessageLayer() :pimpl_(std::make_shared<Pimpl>()) {

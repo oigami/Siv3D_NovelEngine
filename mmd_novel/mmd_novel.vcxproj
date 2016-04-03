@@ -170,6 +170,7 @@
     <ClInclude Include="kag_executor\impl\kag_executor_impl.h" />
     <ClInclude Include="kag_executor\impl\message_layer_impl.h" />
     <ClInclude Include="kag_executor\impl\message_manager_impl.h" />
+    <ClInclude Include="MmdNovel\default_value.h" />
     <ClInclude Include="MmdNovel\kag_executor.h" />
     <ClInclude Include="MmdNovel\message_layer.h" />
     <ClInclude Include="MmdNovel\message_manager.h" />

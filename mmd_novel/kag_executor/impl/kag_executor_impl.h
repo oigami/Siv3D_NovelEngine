@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include <queue>
 #include <MmdNovel/kag_executor.h>
 
 namespace kag {
