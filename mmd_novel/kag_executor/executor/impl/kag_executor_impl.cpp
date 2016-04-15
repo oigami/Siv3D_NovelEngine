@@ -165,8 +165,10 @@ namespace kag {
     });
   }
 
-  void Executor::Pimpl::CommandImage(int layer, const Value<int>& page, const Texture & tex) {
-    image_manager_.SetTex(tex, layer, page);
+  void Executor::Pimpl::CommandImage(int layer, const Value<LayerPage>& page, const Texture & tex) {
+    command_.push([tex, layer, page, this] {
+      image_manager_.SetTex(tex, layer, page);
+    });
   }
 
   bool Executor::Pimpl::Update() {

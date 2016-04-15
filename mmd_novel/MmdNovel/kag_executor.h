@@ -75,7 +75,7 @@ namespace kag {
 
     /* 画像関係 */
 
-    void CommandImage(int layer, const Value<int>& page, const Texture& tex);
+    void CommandImage(int layer, const Value<LayerPage>& page, const Texture& tex);
 
   protected:
 

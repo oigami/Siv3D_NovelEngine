@@ -10,8 +10,8 @@ namespace kag {
       }
     }
 
-    void SetTex(const Texture &tex, int layer, Value<int> page) {
-      layer_[layer][page(Define::fore_page)].SetTex(tex);
+    void SetTex(const Texture &tex, int layer, Value<LayerPage> page) {
+      layer_[layer][page(LayerPage::Fore)].SetTex(tex);
     }
 
   private:

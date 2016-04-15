@@ -67,7 +67,7 @@ namespace kag {
 
     void CommandPosition(Value<int> layer, const Value<LayerPage>& page, const CommandFunc<PositionCommandEditor>& f);
 
-    void CommandImage(int layer, const Value<int>& page, const Texture& tex);
+    void CommandImage(int layer, const Value<LayerPage>& page, const Texture& tex);
 
     bool Update();
 
