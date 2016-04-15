@@ -1,40 +1,18 @@
 ﻿#pragma once
 namespace kag {
+  template<class Type> class Value;
   namespace detail {
     struct Default {
-      constexpr operator int() const { return std::numeric_limits<int>::min() + 10000000; }
+      constexpr Default() = default;
+      constexpr operator int() const { return std::numeric_limits<int>::min() / 4; }
       template<class Type> constexpr bool operator==(const Type& t) const {
         return t == static_cast<Type>(Define::default);
       }
     };
-    template<class Type> constexpr bool operator==(const Type& t, const Default&) {
+    template<class Type> constexpr bool operator==(const Value<Type>& t, const Default&) {
       return Define::default == t;
     }
   }
-
-  template<class Type> class Value {
-  public:
-    constexpr Value(const Type& v) :t(v) {}
-    constexpr Value() : t(Define::default) {}
-    constexpr operator const Type&() const { return t; }
-    Type& operator=(const Type& v) {
-      t = v;
-      return t;
-    }
-    constexpr bool operator==(const detail::Default&) const {
-      return t == Define::default;
-    }
-    /// <summary>
-    /// 現在の値がデフォルト値の場合は引数を返す
-    /// </summary>
-    /// <param name="def"></param>
-    /// <returns></returns>
-    constexpr Type operator()(Type def) const { return t == Define::default ? def : t; }
-  private:
-
-    Type t;
-  };
-
   /// <summary>
   /// kagで使用する各種定数値
   /// </summary>
@@ -54,4 +32,52 @@ namespace kag {
     constexpr kag::detail::Default default;
   }
 
+  template<class Type> class Value {
+  public:
+    constexpr Value(const Type& v) :t(v) {}
+    constexpr Value() : t(detail::Default()) {}
+
+    Type& operator=(const Type& v) {
+      t = v;
+      return t;
+    }
+    constexpr bool operator==(const detail::Default&) const {
+      return t == Value().t;
+    }
+
+    constexpr const Type& operator()() const { return t; }
+
+    constexpr const Type& get_or_throw() const {
+      if (t == Define::default)
+        throw std::runtime_error("Value is empty");
+      return t;
+    }
+
+    /// <summary>
+    /// 現在の値がデフォルト値の場合は引数を返す
+    /// </summary>
+    /// <param name="def"></param>
+    /// <returns></returns>
+    constexpr Type operator()(Type def) const { return t == Define::default ? def : t; }
+  private:
+
+    Type t;
+  };
+
+
+  class LayerPage {
+    friend Value<LayerPage>;
+    constexpr LayerPage(detail::Default) :page(-1) {
+    }
+  public:
+    enum Type {
+      Fore,
+      Back
+    };
+    constexpr LayerPage(Type type) :page(type == Fore ? Define::fore_page : Define::back_page) {
+    }
+
+    constexpr operator int() const { return page; }
+    int page;
+  };
 }

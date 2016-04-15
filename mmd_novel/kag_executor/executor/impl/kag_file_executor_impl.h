@@ -210,12 +210,13 @@ namespace kag {
 
   void FileExecutor::Pimpl::CurrentTag(const Parser::CommandToken & token) {
     Value<int> layer;
-    int page = Define::fore_page;
+    LayerPage page = LayerPage::Fore;
+
     auto& args = token.arguments();
     using namespace converter;
     args.AttributeValTo(L"layer", ToMessageLayerNum, [&](int val) { layer = val; });
-    args.AttributeValTo(L"page", ToPageNum, [&](int val) { page = val; });
-    executor_.CommandCurrent(layer, page);
+    args.AttributeValTo(L"page", ToPage, [&](LayerPage val) { page = val; });
+    executor_.CommandCurrent(layer(), page);
   }
 
   void FileExecutor::Pimpl::DefFontTag(const Parser::CommandToken & token) {
@@ -279,11 +280,12 @@ namespace kag {
 
   void FileExecutor::Pimpl::PositionTTag(const Parser::CommandToken & token) {
     using namespace converter;
-    Value<int> index, page;
+    Value<int> index;
+    Value<LayerPage> page;
     auto& args = token.arguments();
     args.AttributeValTo(L"layer", ToMessageLayerNum, [&](int val) { index = val; });
 
-    args.AttributeValTo(L"page", ToPageNum, [&](int val) { page = val; });
+    args.AttributeValTo(L"page", ToPage, [&](LayerPage val) { page = val; });
 
     executor_.CommandPosition(index, page, [args](PositionCommandEditor& editor) {
       args.AttributeValTo(L"left", ToInt10, [&](int val) { editor.position_left(val); });

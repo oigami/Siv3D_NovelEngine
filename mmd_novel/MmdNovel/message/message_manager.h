@@ -1,11 +1,8 @@
 ﻿#pragma once
 #include <MmdNovel/message/snapshotspan.h>
 #include <MmdNovel/message/message_layer.h>
+#include <MmdNovel/default_value.h>
 namespace kag {
-  enum LayerPage {
-    Fore,
-    Back
-  };
 
   class MessageManager {
   public:

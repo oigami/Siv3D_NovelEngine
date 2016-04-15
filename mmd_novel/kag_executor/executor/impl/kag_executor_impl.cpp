@@ -81,9 +81,9 @@ namespace kag {
     });
   }
 
-  void Executor::Pimpl::CommandCurrent(int index, int page) {
+  void Executor::Pimpl::CommandCurrent(int index, const LayerPage& page) {
     command_.push([index, page, this]() {
-      message_manager_.SetCurrent(index, page == 0 ? LayerPage::Fore : LayerPage::Back);
+      message_manager_.SetCurrent(index, page);
     });
   }
 
@@ -102,11 +102,11 @@ namespace kag {
   void Executor::Pimpl::CommandLocate(Value<int> x, Value<int> y) {
     command_.push([x, y, this]() {
       if (x == Define::default) {
-        message_manager_.Current().SetLocateY(y);
+        message_manager_.Current().SetLocateY(y());
       } else if (y == Define::default) {
-        message_manager_.Current().SetLocateX(x);
+        message_manager_.Current().SetLocateX(x());
       } else {
-        message_manager_.Current().SetLocate(x, y);
+        message_manager_.Current().SetLocate(x(), y());
       }
     });
   }
@@ -155,11 +155,11 @@ namespace kag {
     });
   }
 
-  void Executor::Pimpl::CommandPosition(Value<int> layer, Value<int> page, const CommandFunc<PositionCommandEditor>& f) {
-    command_.push([layer, page, f, this]()mutable {
-      if (layer == Define::default) layer = message_manager_.CurrentLayerNum();
-      if (page == Define::default) page = message_manager_.CurrentPageNum();
-      PositionCommandEditor editor(message_manager_.GetLayer(layer, page));
+  void Executor::Pimpl::CommandPosition(Value<int> layer, const Value<LayerPage>& page, const CommandFunc<PositionCommandEditor>& f) {
+    command_.push([layer, page, f, this]() {
+      const int new_layer = (layer == Define::default ? message_manager_.CurrentLayerNum() : layer());
+      const int l_page = (page == Define::default ? message_manager_.CurrentPageNum() : page());
+      PositionCommandEditor editor(message_manager_.GetLayer(new_layer, l_page));
       f(editor);
       editor.Commit();
     });

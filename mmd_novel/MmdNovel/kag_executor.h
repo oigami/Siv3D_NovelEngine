@@ -51,7 +51,7 @@ namespace kag {
 
     void CommandTextNoDelay(const SnapShotSpan& str);
 
-    void CommandCurrent(int index, int page);
+    void CommandCurrent(int index, const LayerPage& page);
 
     void CommandIndent();
     void CommandEndIndent();
@@ -70,7 +70,7 @@ namespace kag {
 
     void CommandResetFont();
 
-    void CommandPosition(Value<int> layer, Value<int> page, const CommandFunc<PositionCommandEditor>& f);
+    void CommandPosition(Value<int> layer, const Value<LayerPage>& page, const CommandFunc<PositionCommandEditor>& f);
 
   protected:
     void ShowErrorMsg(const String& str) const;
