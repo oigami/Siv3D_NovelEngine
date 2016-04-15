@@ -71,11 +71,14 @@ namespace kag {
     }
 
     inline int ToPageNum(const SnapShotSpan& span) {
-      if (span == L"fore") return 0;
-      if (span == L"back") return 1;
+      if (span == L"fore") return Define::fore_page;
+      if (span == L"back") return Define::back_page;
       throw std::runtime_error(span.ToNarrow());
     }
 
+    inline LayerPage ToPage(const SnapShotSpan& span) {
+      return ToPageNum(span) == Define::fore_page ? LayerPage::Fore : LayerPage::Back;
+    }
     enum class LayerType {
       Message,
       Foreground,

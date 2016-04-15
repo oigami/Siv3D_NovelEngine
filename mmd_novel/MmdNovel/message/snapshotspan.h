@@ -72,6 +72,10 @@ namespace kag {
       return c_[index];
     }
 
+    size_t hash() const {
+      return std::_Hash_seq(reinterpret_cast<const unsigned char*>(c_), Length() * sizeof(Char));
+    }
+
   private:
 
     static int StrCmp(const char* l, const char* r, size_t size) {

@@ -56,7 +56,7 @@ namespace kag {
     pimpl_->CommandTextNoDelay(str);
   }
 
-  void Executor::CommandCurrent(int index, int page) {
+  void Executor::CommandCurrent(int index, const LayerPage& page) {
     pimpl_->CommandCurrent(index, page);
   }
 
@@ -96,7 +96,7 @@ namespace kag {
     pimpl_->CommandResetFont();
   }
 
-  void Executor::CommandPosition(Value<int> layer, Value<int> page, const CommandFunc<PositionCommandEditor>& f) {
+  void Executor::CommandPosition(Value<int> layer, const Value<LayerPage>& page, const CommandFunc<PositionCommandEditor>& f) {
     pimpl_->CommandPosition(layer, page, f);
   }
 
