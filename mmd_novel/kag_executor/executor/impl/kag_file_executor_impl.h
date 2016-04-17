@@ -51,7 +51,7 @@ namespace kag {
 
     /* 画像関連 */
 
-    void ImageTag(const Parser::CommandToken& token) {
+    void ImageTag(Parser::CommandToken& token) {
       Value<LayerPage> page;
       auto& args = token.arguments();
       auto layer = converter::ToLayerNum(args.find_or_throw(L"layer"));
