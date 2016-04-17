@@ -10,6 +10,7 @@ namespace kag {
     /// </summary>
     std::queue<std::function<void()>> command_;
     MessageManager message_manager_;
+    ImageManager image_manager_;
 
     Pimpl(const Pimpl&) = delete;
     void operator=(const Pimpl&) = delete;
@@ -65,6 +66,8 @@ namespace kag {
     void CommandResetFont();
 
     void CommandPosition(Value<int> layer, const Value<LayerPage>& page, const CommandFunc<PositionCommandEditor>& f);
+
+    void CommandImage(int layer, const Value<LayerPage>& page, const Texture& tex);
 
     bool Update();
 

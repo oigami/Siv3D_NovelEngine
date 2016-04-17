@@ -49,10 +49,24 @@ namespace kag {
     void StyleTag(Parser::CommandToken& token);
     //void UnlockLinkTag(Parser::CommandToken& token);
 
+    /* 画像関連 */
+
+    void ImageTag(const Parser::CommandToken& token) {
+      Value<LayerPage> page;
+      auto& args = token.arguments();
+      auto layer = converter::ToLayerNum(args.find_or_throw(L"layer"));
+      assert(layer.first == converter::LayerType::Foreground);
+      Texture tex(args.find_or_throw(L"storage").ToStr());
+      args.AttributeValTo(L"page", converter::ToPage, [&](LayerPage val) {
+        page = val;
+      });
+      executor_.CommandImage(layer.second, page, tex);
+    }
   };
 
 
   FileExecutor::Pimpl::Pimpl(const Executor& exe) :executor_(exe) {
+    /* メッセージ関連 */
     //tag_func_[SnapShotSpan(L"cancelautomode")] = &FileExecutor::CancelAutoModeTag;
     //tag_func_[SnapShotSpan(L"cancelskip")] = &FileExecutor::CancelSkipTag;
     tag_func_[SnapShotSpan(L"ch")] = &Pimpl::CHTag;
@@ -83,6 +97,8 @@ namespace kag {
     tag_func_[SnapShotSpan(L"style")] = &Pimpl::StyleTag;
     //tag_func_[SnapShotSpan(L"unlocklink")] = &Pimpl::UnlockLinkTag;
 
+    /* 画像関連 */
+    tag_func_[SnapShotSpan(L"image")] = &Pimpl::ImageTag;
 
   }
 

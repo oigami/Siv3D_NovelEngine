@@ -165,6 +165,12 @@ namespace kag {
     });
   }
 
+  void Executor::Pimpl::CommandImage(int layer, const Value<LayerPage>& page, const Texture & tex) {
+    command_.push([tex, layer, page, this] {
+      image_manager_.SetTex(tex, layer, page);
+    });
+  }
+
   bool Executor::Pimpl::Update() {
     message_manager_.Update();
     return CommandUpdate();
@@ -181,5 +187,6 @@ namespace kag {
 
   void Executor::Pimpl::Draw() {
     message_manager_.Draw();
+    image_manager_.Draw();
   }
 }

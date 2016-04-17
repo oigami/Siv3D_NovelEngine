@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include <MmdNovel/message/message_manager.h>
+#include <MmdNovel/image/image_manager.h>
 #include <MmdNovel/tag_editor.h>
 #include <MmdNovel/default_value.h>
 namespace kag {
@@ -72,7 +73,12 @@ namespace kag {
 
     void CommandPosition(Value<int> layer, const Value<LayerPage>& page, const CommandFunc<PositionCommandEditor>& f);
 
+    /* 画像関係 */
+
+    void CommandImage(int layer, const Value<LayerPage>& page, const Texture& tex);
+
   protected:
+
     void ShowErrorMsg(const String& str) const;
 
   protected:
