@@ -2,8 +2,15 @@
 #include <MmdNovel/image/image_layer.h>
 #include <MmdNovel/default_value.h>
 namespace kag {
-  class Imagemanager {
+  class ImageManager {
   public:
+    ImageManager() :layer_(2) {
+      for (auto& i : step(layer_.size())) {
+        const short index = static_cast<short>((i + 1) * 10);
+        layer_[i][Define::fore_page].SetZIndex(index);
+        layer_[i][Define::back_page].SetZIndex(index);
+      }
+    }
     void Draw() {
       for (auto& i : layer_) {
         i[Define::fore_page].Draw();

@@ -1,3 +1,4 @@
+[image storage=Data/Siv3D-kun.png layer=0 page=fore]
 @font size=50 
 •¶[l]
 @font size=25  face="‚l‚r ƒSƒVƒbƒN"

@@ -10,7 +10,7 @@ namespace kag {
     /// </summary>
     std::queue<std::function<void()>> command_;
     MessageManager message_manager_;
-    Imagemanager image_manager_;
+    ImageManager image_manager_;
 
     Pimpl(const Pimpl&) = delete;
     void operator=(const Pimpl&) = delete;
