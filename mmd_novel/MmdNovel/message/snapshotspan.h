@@ -10,7 +10,7 @@ namespace kag {
     explicit SnapShotSpan(const Char* c, int start, int end) : c_(c), start_(start), end_(end) {
     }
   public:
-    SnapShotSpan() {}
+    SnapShotSpan() : SnapShotSpan(nullptr, 0, 0) {}
     SnapShotSpan(const std::shared_ptr<string> &str, int s, int e)
       :str_(str), start_(s), end_(e), c_(str->data() + s) {
     }

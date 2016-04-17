@@ -11,7 +11,7 @@ namespace kag {
     Executor executor_;
 
     Parser parser_;
-    using TagFunction = void(FileExecutor::Pimpl::*)(const kag::Parser::CommandToken&);
+    using TagFunction = void(FileExecutor::Pimpl::*)(Parser::CommandToken&);
     std::map<SnapShotSpan, TagFunction> tag_func_;
 
     //タグリファレンス
@@ -19,35 +19,35 @@ namespace kag {
 
     //メッセージ関連
 
-    //void CancelAutoModeTag(const Parser::CommandToken& token);
-    //void CancelSkipTag(const Parser::CommandToken& token);
-    void CHTag(const Parser::CommandToken& token);
-    void CMTag(const Parser::CommandToken& token);
-    void CTTag(const Parser::CommandToken& token);
-    void CurrentTag(const Parser::CommandToken& token);
-    void DefFontTag(const Parser::CommandToken& token);
-    void DefStyleTag(const Parser::CommandToken& token);
-    void DelayTag(const Parser::CommandToken& token);
-    void EndIndentTag(const Parser::CommandToken& token);
-    void EndNoWaitTag(const Parser::CommandToken& token);
-    void ERTag(const Parser::CommandToken& token);
-    void FontTTag(const Parser::CommandToken& token);
-    //void GlyphTag(const Parser::CommandToken& token);
-    //void GraphTag(const Parser::CommandToken& token);
-    //void HCHTag(const Parser::CommandToken& token);
-    void IndentTag(const Parser::CommandToken& token);
-    void LTag(const Parser::CommandToken& token);
-    void LocateTag(const Parser::CommandToken& token);
-    //void LockLinkTag(const Parser::CommandToken& token);
-    void NoWaitTag(const Parser::CommandToken& token);
-    void PTag(const Parser::CommandToken& token);
-    void PositionTTag(const Parser::CommandToken& token);
-    void RTag(const Parser::CommandToken& token);
-    void ResetFontTag(const Parser::CommandToken& token);
-    void ResetStyleTag(const Parser::CommandToken& token);
-    //void RubyTag(const Parser::CommandToken& token);
-    void StyleTag(const Parser::CommandToken& token);
-    //void UnlockLinkTag(const Parser::CommandToken& token);
+    //void CancelAutoModeTag(Parser::CommandToken& token);
+    //void CancelSkipTag(Parser::CommandToken& token);
+    void CHTag(Parser::CommandToken& token);
+    void CMTag(Parser::CommandToken& token);
+    void CTTag(Parser::CommandToken& token);
+    void CurrentTag(Parser::CommandToken& token);
+    void DefFontTag(Parser::CommandToken& token);
+    void DefStyleTag(Parser::CommandToken& token);
+    void DelayTag(Parser::CommandToken& token);
+    void EndIndentTag(Parser::CommandToken& token);
+    void EndNoWaitTag(Parser::CommandToken& token);
+    void ERTag(Parser::CommandToken& token);
+    void FontTTag(Parser::CommandToken& token);
+    //void GlyphTag(Parser::CommandToken& token);
+    //void GraphTag(Parser::CommandToken& token);
+    //void HCHTag(Parser::CommandToken& token);
+    void IndentTag(Parser::CommandToken& token);
+    void LTag(Parser::CommandToken& token);
+    void LocateTag(Parser::CommandToken& token);
+    //void LockLinkTag(Parser::CommandToken& token);
+    void NoWaitTag(Parser::CommandToken& token);
+    void PTag(Parser::CommandToken& token);
+    void PositionTTag(Parser::CommandToken& token);
+    void RTag(Parser::CommandToken& token);
+    void ResetFontTag(Parser::CommandToken& token);
+    void ResetStyleTag(Parser::CommandToken& token);
+    //void RubyTag(Parser::CommandToken& token);
+    void StyleTag(Parser::CommandToken& token);
+    //void UnlockLinkTag(Parser::CommandToken& token);
 
   };
 
@@ -120,35 +120,36 @@ namespace kag {
   /* - - - -  - - -  - - - - -  - - -  - - - - -  - - -  - - - - -  - - -  - - - - -  - - -  -
   タグの実装
   - - - -  - - -  - - - - -  - - -  - - - - -  - - -  - - - - -  - - -  - - - - -  - - -  - */
-  void FileExecutor::Pimpl::LTag(const Parser::CommandToken &) {
+  void FileExecutor::Pimpl::LTag(Parser::CommandToken &) {
     executor_.CommandL();
   }
 
-  void FileExecutor::Pimpl::LocateTag(const Parser::CommandToken & token) {
+  void FileExecutor::Pimpl::LocateTag(Parser::CommandToken & token) {
     Value<int> x, y;
     auto& args = token.arguments();
     using namespace converter;
     args.AttributeValTo(L"x", ToInt10, [&](int val) { x = val; });
     args.AttributeValTo(L"y", ToInt10, [&](int val) { y = val; });
 
+    args.IfNotEmptyException();
     executor_.CommandLocate(x, y);
   }
 
-  void FileExecutor::Pimpl::RTag(const Parser::CommandToken &) {
+  void FileExecutor::Pimpl::RTag(Parser::CommandToken &) {
     executor_.CommandR();
   }
 
-  void FileExecutor::Pimpl::ResetFontTag(const Parser::CommandToken &) {
+  void FileExecutor::Pimpl::ResetFontTag(Parser::CommandToken &) {
     executor_.CommandResetFont();
   }
 
-  void FileExecutor::Pimpl::ResetStyleTag(const Parser::CommandToken &) {
+  void FileExecutor::Pimpl::ResetStyleTag(Parser::CommandToken &) {
     executor_.CommandResetStyle();
   }
 
-  void FileExecutor::Pimpl::StyleTag(const Parser::CommandToken & token) {
+  void FileExecutor::Pimpl::StyleTag(Parser::CommandToken & token) {
     auto& args = token.arguments();
-    executor_.CommandStyle([=](StyleCommandEditor& editor) {
+    executor_.CommandStyle([=](StyleCommandEditor& editor) mutable {
       args.AttributeVal(L"linesize", [&](const SnapShotSpan& val) {
         if (val == L"default") {
           editor.linesize();
@@ -161,18 +162,19 @@ namespace kag {
         editor.linespacing(val);
       });
 
+      args.IfNotEmptyException();
     });
   }
 
-  void FileExecutor::Pimpl::NoWaitTag(const Parser::CommandToken &) {
+  void FileExecutor::Pimpl::NoWaitTag(Parser::CommandToken &) {
     executor_.CommandNoWait();
   }
 
-  void FileExecutor::Pimpl::PTag(const Parser::CommandToken &) {
+  void FileExecutor::Pimpl::PTag(Parser::CommandToken &) {
     executor_.CommandP();
   }
 
-  void FileExecutor::Pimpl::DelayTag(const Parser::CommandToken & token) {
+  void FileExecutor::Pimpl::DelayTag(Parser::CommandToken & token) {
     auto& args = token.arguments();
     args.AttributeVal(L"speed", [&](const SnapShotSpan& val) {
       if (val == L"user") {
@@ -186,29 +188,30 @@ namespace kag {
       throw std::runtime_error("[delay] にはspeed属性が必須");
     });
 
+    args.IfNotEmptyException();
   }
 
-  void FileExecutor::Pimpl::EndIndentTag(const Parser::CommandToken &) {
+  void FileExecutor::Pimpl::EndIndentTag(Parser::CommandToken &) {
     executor_.CommandEndIndent();
   }
 
-  void FileExecutor::Pimpl::EndNoWaitTag(const Parser::CommandToken &) {
+  void FileExecutor::Pimpl::EndNoWaitTag(Parser::CommandToken &) {
     executor_.CommandEndNoWait();
   }
 
-  void FileExecutor::Pimpl::ERTag(const Parser::CommandToken &) {
+  void FileExecutor::Pimpl::ERTag(Parser::CommandToken &) {
     executor_.CommandER();
   }
 
-  void FileExecutor::Pimpl::CMTag(const Parser::CommandToken &) {
+  void FileExecutor::Pimpl::CMTag(Parser::CommandToken &) {
     executor_.CommandCM();
   }
 
-  void FileExecutor::Pimpl::CTTag(const Parser::CommandToken &) {
+  void FileExecutor::Pimpl::CTTag(Parser::CommandToken &) {
     executor_.CommandCT();
   }
 
-  void FileExecutor::Pimpl::CurrentTag(const Parser::CommandToken & token) {
+  void FileExecutor::Pimpl::CurrentTag(Parser::CommandToken & token) {
     Value<int> layer;
     LayerPage page = LayerPage::Fore;
 
@@ -216,12 +219,13 @@ namespace kag {
     using namespace converter;
     args.AttributeValTo(L"layer", ToMessageLayerNum, [&](int val) { layer = val; });
     args.AttributeValTo(L"page", ToPage, [&](LayerPage val) { page = val; });
+    args.IfNotEmptyException();
     executor_.CommandCurrent(layer(), page);
   }
 
-  void FileExecutor::Pimpl::DefFontTag(const Parser::CommandToken & token) {
+  void FileExecutor::Pimpl::DefFontTag(Parser::CommandToken & token) {
     auto& args = token.arguments();
-    executor_.CommandDefFont([args](FontCommandEditor& editor) {
+    executor_.CommandDefFont([args](FontCommandEditor& editor) mutable {
       using namespace converter;
       args.AttributeVal(L"face", [&](const SnapShotSpan& val) { editor.face(val.ToStr()); });
 
@@ -231,12 +235,13 @@ namespace kag {
 
       args.AttributeValTo(L"bold", ToBool, [&](bool val) { editor.is_bold(val); });
 
+      args.IfNotEmptyException();
     });
   }
 
-  void FileExecutor::Pimpl::DefStyleTag(const Parser::CommandToken & token) {
+  void FileExecutor::Pimpl::DefStyleTag(Parser::CommandToken & token) {
     auto& args = token.arguments();
-    executor_.CommandDefStyle([=](DefaultStyleCommandEditor& editor) {
+    executor_.CommandDefStyle([args = std::move(args)](DefaultStyleCommandEditor& editor)mutable {
       args.AttributeVal(L"linesize", [&](const SnapShotSpan& val) {
         if (val == L"default") {
           editor.linesize();
@@ -249,13 +254,14 @@ namespace kag {
         editor.linespacing(val);
       });
 
+      args.IfNotEmptyException();
     });
   }
 
-  void FileExecutor::Pimpl::FontTTag(const Parser::CommandToken & token) {
+  void FileExecutor::Pimpl::FontTTag(Parser::CommandToken & token) {
 
     auto& args = token.arguments();
-    executor_.CommandFont([args](FontCommandEditor& editor) {
+    executor_.CommandFont([args = std::move(args)](FontCommandEditor& editor)mutable {
       using namespace converter;
       args.AttributeVal(L"face", [&](const SnapShotSpan& val) { editor.face(val.ToStr()); });
 
@@ -270,15 +276,17 @@ namespace kag {
       args.AttributeValTo(L"shadow", ToBool, [&](bool val) {editor.is_shadow(val); });
 
       args.AttributeValTo(L"shadowcolor", ToColor, [&](const Color& val) { editor.shadowcolor(val); });
+
+      args.IfNotEmptyException();
     });
 
   }
 
-  void FileExecutor::Pimpl::IndentTag(const Parser::CommandToken &) {
+  void FileExecutor::Pimpl::IndentTag(Parser::CommandToken &) {
     executor_.CommandIndent();
   }
 
-  void FileExecutor::Pimpl::PositionTTag(const Parser::CommandToken & token) {
+  void FileExecutor::Pimpl::PositionTTag(Parser::CommandToken & token) {
     using namespace converter;
     Value<int> index;
     Value<LayerPage> page;
@@ -287,7 +295,7 @@ namespace kag {
 
     args.AttributeValTo(L"page", ToPage, [&](LayerPage val) { page = val; });
 
-    executor_.CommandPosition(index, page, [args](PositionCommandEditor& editor) {
+    executor_.CommandPosition(index, page, [args = std::move(args)](PositionCommandEditor& editor) mutable {
       args.AttributeValTo(L"left", ToInt10, [&](int val) { editor.position_left(val); });
 
       args.AttributeValTo(L"top", ToInt10, [&](int val) { editor.position_top(val); });
@@ -320,10 +328,11 @@ namespace kag {
 
       args.AttributeValTo(L"visible", ToBool, [&](bool val) { editor.visible(val); });
 
+      args.IfNotEmptyException();
     });
   }
 
-  void FileExecutor::Pimpl::CHTag(const Parser::CommandToken & token) {
+  void FileExecutor::Pimpl::CHTag(Parser::CommandToken & token) {
     executor_.CommandTextNoDelay(token.arguments().find_or_throw(L"text"));
   }
 

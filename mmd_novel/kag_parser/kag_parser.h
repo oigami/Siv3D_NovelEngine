@@ -128,11 +128,18 @@ namespace kag {
         return args.insert(std::move(p));
       }
 
-      const SnapShotSpan& find_or_throw(const SnapShotSpan& name) const {
+      void IfNotEmptyException() const {
+        if (args.size()) throw std::runtime_error(args.begin()->first.ToNarrow());
+      }
+
+      SnapShotSpan find_or_throw(const SnapShotSpan& name) {
         auto it = args.find(name);
         if (it == args.end()) throw std::runtime_error(name.ToNarrow());
-        return it->second;
+        auto val = std::move(it->second);
+        args.erase(it);
+        return val;
       }
+
       /// <summary>
       /// 属性の値を関数に渡す
       /// <para>見つからなかった場合はふたつ目の関数を呼び出す</para>
@@ -140,23 +147,15 @@ namespace kag {
       /// <param name="name">属性の名前</param>
       /// <param name="find_f">見つかった場合に呼ばれる関数</param>
       /// <param name="not_found_f">見つからなかった時に呼ばれる関数</param>
-      template<class Func, class Func2>
-      void AttributeVal(const SnapShotSpan& name, Func find_f, Func2 not_found_f) const {
+      template<class Func, class Func2 = void(*)()>
+      void AttributeVal(const SnapShotSpan& name, Func find_f, Func2 not_found_f = []() {}) {
         auto it = args.find(name);
         if (it == args.end()) not_found_f();
-        else find_f(it->second);
-      }
-
-      /// <summary>
-      /// 属性の値を関数に渡す
-      /// <para>見つからなかった場合は何もしない</para>
-      /// </summary>
-      /// <param name="name"></param>
-      /// <param name="find_f"></param>
-      template<class Func> void AttributeVal(const SnapShotSpan& name, Func find_f) const {
-        auto it = args.find(name);
-        if (it == args.end()) return;
-        return find_f(it->second);
+        else {
+          auto val = std::move(it->second);
+          args.erase(it);
+          find_f(val);
+        }
       }
 
       /// <summary>
@@ -166,7 +165,7 @@ namespace kag {
       /// <param name="name"></param>
       /// <param name="find_f"></param>
       template<class Converter, class Func>
-      void AttributeValTo(const SnapShotSpan& name, Converter(*c)(const SnapShotSpan&), Func find_f) const {
+      void AttributeValTo(const SnapShotSpan& name, Converter(*c)(const SnapShotSpan&), Func find_f) {
         AttributeVal(name, [&](const SnapShotSpan& val) {
           find_f(c(val));
         });
@@ -179,7 +178,7 @@ namespace kag {
       /// <param name="name"></param>
       /// <param name="find_f"></param>
       template<class Converter, class Func>
-      void AttributeValTo(const SnapShotSpan& name, Converter c, Func find_f) const {
+      void AttributeValTo(const SnapShotSpan& name, Converter c, Func find_f) {
         AttributeVal(name, [&](const SnapShotSpan& val) {
           find_f(c(val));
         });
@@ -196,7 +195,7 @@ namespace kag {
       }
 
       const SnapShotSpan& name() const { return name_; }
-      const Arguments& arguments() const { return arguments_; }
+      Arguments& arguments() { return arguments_; }
 
     private:
 
