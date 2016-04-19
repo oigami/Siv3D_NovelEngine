@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include <MmdNovel/message/message_layer.h>
+#include <MmdNovel/layer.h>
 namespace kag {
   namespace message {
 
@@ -192,7 +193,7 @@ namespace kag {
 
   }
 
-  class MessageLayer::Pimpl {
+  class MessageLayer::Pimpl : public Layer {
   public:
 
     Pimpl() {
@@ -248,7 +249,7 @@ namespace kag {
       }
     }
 
-    void Draw() const {
+    void draw() const {
       if (!is_visible_) return;
       position_.draw(background_color_);
       if (!background_tex_.isEmpty())
@@ -417,9 +418,7 @@ namespace kag {
     /// <summary>デフォルトに設定されているフォント</summary>
     message::DefaultStyle default_style_;
 
-    /// <summary>メッセージレイヤのサイズ</summary>
     Rect position_;
-
     /// <summary>
     /// メッセージを表示する部分のマージン
     /// <para>rect型だがposition_からの相対位置(内側が正)になっている</para>
