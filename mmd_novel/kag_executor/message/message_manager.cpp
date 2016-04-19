@@ -1,5 +1,6 @@
 #include <MmdNovel/message/message_manager.h>
 #include "impl/message_manager_impl.h"
+
 namespace kag {
   MessageManager::MessageManager() :pimpl_(std::make_shared<Pimpl>()) {
   }
@@ -68,6 +69,10 @@ namespace kag {
     return pimpl_->GetLayer(index, page);
   }
 
+  void MessageManager::ChangeDrawableLayerCallBack(const std::function<void()>& func) {
+    pimpl_->ChangeDrawableLayerCallBack(func);
+  }
+
   MessageLayer & MessageManager::Current() { return pimpl_->Current(); }
 
   int MessageManager::CurrentLayerNum() const { return pimpl_->CurrentLayerNum(); }
@@ -81,6 +86,10 @@ namespace kag {
   void MessageManager::SetInvalidKeyInput() { pimpl_->SetInvalidKeyInput(); }
 
   void MessageManager::SetValidKeyInput() { pimpl_->SetValidKeyInput(); }
+
+  void MessageManager::SetDrawableList(Array<std::shared_ptr<Layer>>& list) {
+    pimpl_->SetDrawableList(list);
+  }
 
   bool MessageManager::IsWait() const { return pimpl_->IsWait(); }
 

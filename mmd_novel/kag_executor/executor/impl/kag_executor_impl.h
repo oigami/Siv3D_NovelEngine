@@ -12,9 +12,14 @@ namespace kag {
     MessageManager message_manager_;
     ImageManager image_manager_;
 
+    bool change_drable_flag_;
+
+    Array<std::shared_ptr<Layer>> drawable_list_;
+
     Pimpl(const Pimpl&) = delete;
     void operator=(const Pimpl&) = delete;
 
+    void DrawableListUpdate();
   public:
 
     Pimpl();

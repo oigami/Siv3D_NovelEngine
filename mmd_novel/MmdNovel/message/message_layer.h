@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include <Siv3D.hpp>
-
+#include <MmdNovel/layer.h>
 namespace kag {
   namespace message {
     enum AlignType {
@@ -219,6 +219,7 @@ namespace kag {
     /// </summary>
     void ResetStyle();
 
+    operator std::shared_ptr<Layer>() const;
   private:
 
     class Pimpl;

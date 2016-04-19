@@ -143,4 +143,6 @@ namespace kag {
     pimpl_->ResetStyle();
   }
 
+  MessageLayer::operator std::shared_ptr<Layer>() const { return pimpl_; }
+
 }

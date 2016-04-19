@@ -2,6 +2,8 @@
 #include <MmdNovel/message/snapshotspan.h>
 #include <MmdNovel/message/message_layer.h>
 #include <MmdNovel/default_value.h>
+#include <MmdNovel/layer.h>
+
 namespace kag {
 
   class MessageManager {
@@ -97,6 +99,8 @@ namespace kag {
     /// <returns></returns>
     MessageLayer& GetLayer(int index, int page);
 
+    void ChangeDrawableLayerCallBack(const std::function<void()> &list);
+
     /// <summary>
     /// カレントレイヤを返す
     /// </summary>
@@ -132,6 +136,8 @@ namespace kag {
     /// <para>クリック待ちなどでクリックすると進むようになる</para>
     /// </summary>
     void SetValidKeyInput();
+
+    void SetDrawableList(Array<std::shared_ptr<Layer>>& list);
 
     bool IsWait() const;
 

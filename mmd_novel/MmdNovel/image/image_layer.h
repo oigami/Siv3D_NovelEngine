@@ -3,23 +3,18 @@
 #include <MmdNovel/layer.h>
 namespace kag {
 
-  class ImageLayer : public Layer {
-    void draw() const {
-      //TODO
-      //if (!visible_) return;
-      if (!texture_) return;
-      position_(texture_).draw(Color(0xff, 0xff, 0xff, opacity_));
-    }
+  class ImageLayer {
   public:
+    ImageLayer();
+    operator std::shared_ptr<Layer>() const;
 
-    void SetTex(const Texture& tex) {
-      texture_ = tex;
-      position_.w = tex.width;
-      position_.h = tex.height;
-    }
+    void SetTex(const Texture& tex);
+
+    void SetZIndex(uint16 z);
 
   private:
 
-    Texture texture_;
+    class Pimpl;
+    std::shared_ptr<Pimpl> pimpl_;
   };
 }
