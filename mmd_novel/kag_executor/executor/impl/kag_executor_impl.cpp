@@ -1,19 +1,10 @@
 #include "kag_executor_impl.h"
 namespace kag {
-  void Executor::Pimpl::DrawableListUpdate() {
-    drawable_list_.clear();
-    message_manager_.SetDrawableList(drawable_list_);
-    image_manager_.SetDrawableList(drawable_list_);
-
-    std::sort(drawable_list_.begin(), drawable_list_.end());
-    change_drable_flag_ = false;
-  }
 
   Executor::Pimpl::Pimpl() {
-    change_drable_flag_ = true;
-    auto f = [this]() { change_drable_flag_ = true; };
-    message_manager_.ChangeDrawableLayerCallBack(f);
-    image_manager_.ChangeDrawbleLayerCallBack(f);
+    layer_manager_ = std::make_shared<LayerManagerImpl>();
+    message_manager_.SetLayerManager(layer_manager_);
+    image_manager_.SetLayerManager(layer_manager_);
     Clear();
   }
 
@@ -198,10 +189,6 @@ namespace kag {
   }
 
   void Executor::Pimpl::Draw() {
-    if (change_drable_flag_)
-      DrawableListUpdate();
-    for (auto& i : drawable_list_) {
-      i->Draw();
-    }
+    layer_manager_->Draw();
   }
 }

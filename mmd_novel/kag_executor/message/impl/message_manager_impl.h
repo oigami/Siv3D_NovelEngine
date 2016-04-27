@@ -139,7 +139,7 @@ namespace kag {
 
     MessageLayer & Current() { return GetLayer(current_layer_, current_page_); }
 
-    Array<std::array<MessageLayer,2>>& Layers() { return message_layer_; }
+    Array<std::array<MessageLayer, 2>>& Layers() { return message_layer_; }
 
     int CurrentLayerNum() const { return current_layer_; }
 
@@ -153,6 +153,13 @@ namespace kag {
 
     void SetValidKeyInput() { is_active_key = true; }
 
+    void SetLayerManager(LayerManager& manager) {
+      layer_manager_ = manager;
+      for (auto& i : message_layer_) {
+        layer_manager_->Set(i[Define::fore_page]);
+      }
+    }
+
     bool IsWait() const { return is_wait_click_ || !IsFlush(); }
 
     bool CheckClicked() const {
@@ -160,15 +167,6 @@ namespace kag {
       return false;
     }
 
-    void ChangeDrawableLayerCallBack(const std::function<void()> &func) {
-      change_drawable_list_func_ = func;
-    }
-
-    void SetDrawableList(Array<std::shared_ptr<Layer>>& list) {
-      for (auto& i : message_layer_) {
-        list.push_back(i[Define::fore_page]);
-      }
-    }
   private:
 
     Stopwatch timer_;
@@ -216,7 +214,7 @@ namespace kag {
     /// <summary>キー入力が有効かどうか</summary>
     bool is_active_key;
 
-    std::function<void()> change_drawable_list_func_;
+    LayerManager layer_manager_;
   };
 
 }

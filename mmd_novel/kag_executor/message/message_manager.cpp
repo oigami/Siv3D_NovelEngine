@@ -69,9 +69,6 @@ namespace kag {
     return pimpl_->GetLayer(index, page);
   }
 
-  void MessageManager::ChangeDrawableLayerCallBack(const std::function<void()>& func) {
-    pimpl_->ChangeDrawableLayerCallBack(func);
-  }
 
   MessageLayer & MessageManager::Current() { return pimpl_->Current(); }
 
@@ -87,8 +84,8 @@ namespace kag {
 
   void MessageManager::SetValidKeyInput() { pimpl_->SetValidKeyInput(); }
 
-  void MessageManager::SetDrawableList(Array<std::shared_ptr<Layer>>& list) {
-    pimpl_->SetDrawableList(list);
+  void MessageManager::SetLayerManager(LayerManager & manager) {
+    pimpl_->SetLayerManager(manager);
   }
 
   bool MessageManager::IsWait() const { return pimpl_->IsWait(); }

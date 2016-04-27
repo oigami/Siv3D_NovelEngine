@@ -99,8 +99,6 @@ namespace kag {
     /// <returns></returns>
     MessageLayer& GetLayer(int index, int page);
 
-    void ChangeDrawableLayerCallBack(const std::function<void()> &list);
-
     /// <summary>
     /// カレントレイヤを返す
     /// </summary>
@@ -137,7 +135,7 @@ namespace kag {
     /// </summary>
     void SetValidKeyInput();
 
-    void SetDrawableList(Array<std::shared_ptr<Layer>>& list);
+    void SetLayerManager(LayerManager& manager);
 
     bool IsWait() const;
 

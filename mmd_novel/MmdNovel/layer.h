@@ -21,12 +21,57 @@ namespace kag {
     void SetZIndex(uint16 index) { z_index_ = index; }
 
     bool operator<(const Layer& layer) const { return z_index_ < layer.z_index_; }
+    bool operator<=(const Layer& layer) const { return z_index_ <= layer.z_index_; }
 
   protected:
 
     Rect position_;
-    bool visible_;
-    int opacity_;
     uint16 z_index_;
+    uint8 opacity_;
+    bool visible_;
   };
+  using LayerPtr = std::shared_ptr<Layer>;
+
+  class LayerManagerImpl {
+    Array<LayerPtr> list_;
+  private:
+    class DummyLayer : public Layer {
+      virtual void draw() {}
+    };
+
+  public:
+
+    void Draw() const {
+      for (auto& i : list_) {
+        i->Draw();
+      }
+    }
+
+    void Set(const LayerPtr& layer) {
+      auto b = list_.begin();
+      auto it = std::lower_bound(b, list_.end(), layer);
+      if (b != it) --it;
+      list_.insert(it, layer);
+    }
+
+    void Remove(const LayerPtr& layer) {
+      auto e = list_.end();
+      auto it = std::equal_range(list_.begin(), e, layer);
+
+      while (it.first < it.second) {
+        if (*it.first == layer) {
+          list_.erase(it.first);
+          break;
+        }
+        ++it.first;
+      }
+    }
+
+    void Update(const LayerPtr& layer) {
+      Remove(layer);
+      Set(layer);
+    }
+  };
+
+  using LayerManager = std::shared_ptr<LayerManagerImpl>;
 }

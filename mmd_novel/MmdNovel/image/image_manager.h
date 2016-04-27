@@ -10,24 +10,19 @@ namespace kag {
         layer_[i][Define::fore_page].SetZIndex(index);
         layer_[i][Define::back_page].SetZIndex(index);
       }
-      if (cange_drawble_func_) cange_drawble_func_();
-    }
-
-    void SetDrawableList(Array<std::shared_ptr<Layer>>& list) {
-      for (auto& i : layer_) {
-        list.push_back(i[0]);
-      }
     }
 
     ImageLayer& GetLayer(int layer, LayerPage page) { return layer_[layer][page]; }
-    
-    void ChangeDrawbleLayerCallBack(const std::function<void()>& list) {
-      cange_drawble_func_ = list;
-    }
 
+    void SetLayerManager(LayerManager& manager) {
+      layer_manager_ = manager;
+      for (auto& i : layer_) {
+        layer_manager_->Set(i[0]);
+      }
+    }
   private:
 
-    std::function<void()> cange_drawble_func_;
+    LayerManager layer_manager_;
     Array<std::array<ImageLayer, 2>> layer_;
   };
 }
