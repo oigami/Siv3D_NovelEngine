@@ -12,6 +12,7 @@ namespace kag {
       delay_index_ = 0;
       current_page_ = 0;
       current_layer_ = 0;
+      is_no_wait_ = false;
     }
 
     void resize(size_t size) {

@@ -202,6 +202,7 @@ namespace kag {
       SetPositionTop(16);
       SetPositionWidth(Window::Size().x - 32);
       SetPositionHeight(Window::Size().y - 32);
+      IsVisible(false);
       margin_.set({ 8,8 }, { 8,8 });
       background_color_ = Palette::Gray;
       background_color_.a = 128;
