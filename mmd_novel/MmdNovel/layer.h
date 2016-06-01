@@ -4,39 +4,74 @@ namespace kag {
   class Layer;
   using LayerPtr = std::shared_ptr<Layer>;
 
-  struct MoveEffect : IEffect {
+  struct EasingType {
+    enum class Type {
+      In, Out, InOut,
+    };
+    template<class T>
+    using EaseInOutFunc = T(*)(const T& s, const T& e, std::function<double(double)>, double t);
+    using EaseFunc = double(*)(double t);
+
+    template<class T>
     struct Data {
-      Array<EasingController<Vec2>> easing;
+      Data() = default;
+      Data(T s, T e, EaseFunc f, Type t, int time)
+        :start(s), end(e), ease_func(f), type(t), timeMillisec(time) {
+      }
+
+      T start, end;
+      EaseFunc ease_func = Easing::Linear;
+      EasingType::Type type = EasingType::Type::In;
+      int timeMillisec = 1000;
     };
 
-    Data data_;
-    Layer* layer_;
-    int now_easing_index_;
-    MoveEffect(Layer* layer, Data data)
-      :layer_(layer), data_(data), now_easing_index_(0) {
-      assert(layer);
-      data_.easing[0].start();
+    template<class T>
+    static T func(Type type, T start, T end, std::function<double(double)> f, double now_timeMillisec) {
+      static const EaseInOutFunc<T> func[3] = {
+        (EaseInOutFunc<T>)EaseIn<T>,
+        (EaseInOutFunc<T>)EaseOut<T>,
+        (EaseInOutFunc<T>)EaseInOut<T>
+      };
+      int t = static_cast<int>(type);
+      return func[t](start, end, f, now_timeMillisec);
     }
 
+    template<class T>
+    static T func(const Data<T>& d, double now_timeMillisec) {
+      return func(d.type, d.start, d.end, d.ease_func, now_timeMillisec);
+    }
+  };
+
+  struct MoveEffect : IEffect {
+    using Data = EasingType::Data<Vec2>;
+    using DataArray = Array<Data>;
+    MoveEffect(Layer* layer, const Array<Data>& data);
+    MoveEffect(Layer* layer, const Data& d);
+  private:
+    Array<Data> data_;
+    Layer* layer_;
+    int now_easing_index_;
+    int pre_ease_time_ = 0;
+
+    Vec2 GetMovePos(double t, const Data& d) const;
+    double elapsed(double t, double timeMillisec) const;
     bool update(double t) override;
   };
 
   struct ScaleEffect : IEffect {
-    struct Data {
-      Array<EasingController<double>> easing;
-    };
+    using Data = EasingType::Data<double>;
+    ScaleEffect(Layer* layer, const Array<Data>& data);
 
-    Data data_;
+  private:
+    double GetScale(double t, const Data& d) const;
+    double elapsed(double t, double timeMillisec) const;
+
+    Array<Data> data_;
     // 親のメモリとEffectの寿命が同じなので生ポインタにする
     // しないとプログラム終了時にSiv3DがEffectを強制解放した時に2重解放が起きてエラーが出る
     Layer* layer_;
     int now_easing_index_;
-    int pre_scale = 1;
-    ScaleEffect(Layer* layer, Data data)
-      :layer_(layer), data_(data), now_easing_index_(0) {
-      assert(layer);
-      data_.easing[0].start();
-    }
+    double pre_ease_time = 0;
 
     bool update(double t) override;
   };
@@ -72,8 +107,11 @@ namespace kag {
 
     void SetZIndex(uint16 index) { z_index_ = index; }
 
-    void MoveEffect(MoveEffect::Data data) { effect.add<kag::MoveEffect>(this, data); }
-    void ScaleEffect(ScaleEffect::Data data) { effect.add<kag::ScaleEffect>(this, data); }
+    void MoveEffect(const MoveEffect::Data& data) { effect.add<kag::MoveEffect>(this, data); }
+    void MoveEffect(const MoveEffect::DataArray& data) { effect.add<kag::MoveEffect>(this, data); }
+
+    void ScaleEffect(ScaleEffect::Data data) { ScaleEffect(Array<ScaleEffect::Data>(1, data)); }
+    void ScaleEffect(const Array<ScaleEffect::Data>& data) { effect.add<kag::ScaleEffect>(this, data); }
 
     bool operator<(const Layer& layer) const { return z_index_ < layer.z_index_; }
     bool operator<=(const Layer& layer) const { return z_index_ <= layer.z_index_; }
