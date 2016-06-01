@@ -138,7 +138,10 @@ namespace kag {
       args.ValTo(L"top", ToInt10, img_layer.bind(&Layer::SetPositionTop));
       args.ValTo(L"opacity", ToInt10, img_layer.bind(&Layer::SetOpacity));
       args.ValTo(L"visible", ToBool, img_layer.bind(&Layer::IsVisible));
-      args.ValTo(L"index", ToInt10, img_layer.bind(&Layer::SetZIndex));
+      args.ValTo(L"index", ToInt10, [&img_layer](int z_index) {
+        uint8 z = static_cast<uint8>(Max(0, Min(z_index, 255)));
+        img_layer->SetZIndex(z);
+      });
     });
   }
 
