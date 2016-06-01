@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include <limits>
 namespace kag {
   template<class Type> class Value;
   namespace detail {
@@ -70,14 +71,16 @@ namespace kag {
     constexpr LayerPage(detail::Default) :page(-1) {
     }
   public:
-    enum Type {
+    enum class Type {
       Fore,
       Back
     };
-    constexpr LayerPage(Type type) :page(type == Fore ? Define::fore_page : Define::back_page) {
+    constexpr LayerPage(Type type) :page(type == Type::Fore ? Define::fore_page : Define::back_page) {
     }
 
     constexpr operator int() const { return page; }
     int page;
+    static const LayerPage Fore;
+    static const LayerPage Back;
   };
 }

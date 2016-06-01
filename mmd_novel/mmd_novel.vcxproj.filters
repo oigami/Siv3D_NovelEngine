@@ -93,6 +93,12 @@
     <ClCompile Include="MmdNovel\image\image_layer.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="kag_executor\default_value.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="MmdNovel\layer.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Icon.ico">
@@ -328,7 +334,7 @@
     <ClInclude Include="MmdNovel\layer.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="kag_executor\image\impl\imaqe_layer_impl.h">
+    <ClInclude Include="kag_executor\image\impl\image_layer_impl.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>

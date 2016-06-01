@@ -4,12 +4,22 @@
 namespace kag {
   Executor::Executor() :pimpl_(std::make_shared<Pimpl>()) {
   }
+  MessageManager Executor::messageManager() {
+    return pimpl_->messageManager();
+  }
+  ImageManager Executor::imageManager() {
+    return pimpl_->imageManager();
+  }
   void Executor::Clear() {
     pimpl_->Clear();
   }
 
   bool Executor::IsWait() const {
     return pimpl_->IsWait();
+  }
+
+  void Executor::Command(const std::function<void()>& f) {
+    pimpl_->Command(f);
   }
 
   void Executor::CommandL() {

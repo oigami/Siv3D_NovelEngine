@@ -1,6 +1,6 @@
 #include "kag_executor_impl.h"
+#pragma comment(lib,"d3d11.lib")
 namespace kag {
-
   Executor::Pimpl::Pimpl() {
     layer_manager_ = std::make_shared<LayerManagerImpl>();
     message_manager_.SetLayerManager(layer_manager_);
@@ -15,6 +15,10 @@ namespace kag {
   bool Executor::Pimpl::IsWait() const {
     if (message_manager_.IsWait())return true;
     return false;
+  }
+
+  void Executor::Pimpl::Command(const std::function<void()>& f) {
+    command_.push(f);
   }
 
   void Executor::Pimpl::CommandL() {
@@ -170,11 +174,12 @@ namespace kag {
 
   void Executor::Pimpl::CommandImage(int layer, const Value<LayerPage>& page, const Texture & tex) {
     command_.push([tex, layer, page, this] {
-      image_manager_.GetLayer(layer, page(LayerPage::Fore)).SetTex(tex);
+      image_manager_.GetLayer(layer, page(LayerPage::Fore))->SetTex(tex);
     });
   }
 
   bool Executor::Pimpl::Update() {
+    layer_manager_->Update();
     message_manager_.Update();
     return CommandUpdate();
   }

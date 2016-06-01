@@ -7,8 +7,8 @@ namespace kag {
     ImageManager() :layer_(2) {
       for (auto& i : step(layer_.size())) {
         const short index = static_cast<short>((i + 1) * 10);
-        layer_[i][Define::fore_page].SetZIndex(index);
-        layer_[i][Define::back_page].SetZIndex(index);
+        layer_[i][Define::fore_page]->SetZIndex(index);
+        layer_[i][Define::back_page]->SetZIndex(index);
       }
     }
 

@@ -1,17 +1,18 @@
-[image storage=Data/Siv3D-kun.png layer=0 page=fore]
+ï»¿[image storage=Data/Siv3D-kun.png layer=0 page=fore left=400]
+[move layer=0 time=500 path="(100,100,255)(0,0,0)"]
 @font size=50 
-•¶[l]
-@font size=25  face="‚l‚r ƒSƒVƒbƒN"
-š‚ÌƒTƒCƒY‚ğ•ÏX‚µ‚Ü‚·B
+æ–‡[l]
+@font size=25  face="ï¼­ï¼³ ã‚´ã‚·ãƒƒã‚¯"
+å­—ã®ã‚µã‚¤ã‚ºã‚’å¤‰æ›´ã—ã¾ã™ã€‚
 [r]
-@font face="‚l‚r ƒSƒVƒbƒN"
-ƒtƒHƒ“ƒg‚ğ "‚l‚r ƒSƒVƒbƒN" ‚Éİ’è‚µ‚Ü‚µ‚½B[r]
+@font face="ï¼­ï¼³ ã‚´ã‚·ãƒƒã‚¯"
+ãƒ•ã‚©ãƒ³ãƒˆã‚’ "ï¼­ï¼³ ã‚´ã‚·ãƒƒã‚¯" ã«è¨­å®šã—ã¾ã—ãŸã€‚[r]
 [nowait]
-@deffont face=HGs‘‘Ì size=30
+@deffont face=HGè¡Œæ›¸ä½“ size=30
 [style linespacing=40]
-ƒtƒHƒ“ƒg‚ğ[locate x=0] "HGs‘‘Ì" ‚Éİ’è‚µ‚Ü‚µ‚½B[l][er]
+ãƒ•ã‚©ãƒ³ãƒˆã‚’[locate x=0] "HGè¡Œæ›¸ä½“" ã«è¨­å®šã—ã¾ã—ãŸã€‚[l][er]
 [endnowait][resetfont]
-HHHu[indent]‚ ‚¢‚¤‚¦‚¨‚©‚«‚­‚¯‚±‚³‚µ‚·‚¹‚»‚½‚¿‚Â‚Ä‚Æ‚È‚É‚Ê‚Ë‚Ì‚Í‚Ğ‚Ó‚Ö‚Ù‚Ü‚İ‚Ş‚ß‚à‚â‚ä‚æ‚ç‚è‚é‚ê‚ë‚í‚ğ‚ñv[endindent][l]
+ï¼Ÿï¼Ÿï¼Ÿã€Œ[indent]ã‚ã„ã†ãˆãŠã‹ããã‘ã“ã•ã—ã™ã›ããŸã¡ã¤ã¦ã¨ãªã«ã¬ã­ã®ã¯ã²ãµã¸ã»ã¾ã¿ã‚€ã‚ã‚‚ã‚„ã‚†ã‚ˆã‚‰ã‚Šã‚‹ã‚Œã‚ã‚ã‚’ã‚“ã€[endindent][l]
 [position layer=message0 page=fore left=30 top=15 width=400 height=400 frame="" color="0xff1122" marginl=20 margint=40 marginr=20 marginb=40 visible=true]
 
 aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa

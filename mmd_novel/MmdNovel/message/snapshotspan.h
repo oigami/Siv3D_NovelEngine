@@ -40,7 +40,8 @@ namespace kag {
     /// <returns></returns>
     const Char *Str() const { return c_; }
     string ToStr() const { return string(c_, Length()); }
-    std::string ToNarrow() const { return Narrow(StringView(c_, Length())); }
+    StringView StrView()const { return StringView(c_, Length()); }
+    std::string ToNarrow() const { return Narrow(StrView()); }
 
     int Length() const { return end_ - start_; }
     int End() const { return end_; }

@@ -52,15 +52,53 @@ namespace kag {
     /* 画像関連 */
 
     void ImageTag(Parser::CommandToken& token) {
-      Value<LayerPage> page;
       auto& args = token.arguments();
-      auto layer = converter::ToLayerNum(args.find_or_throw(L"layer"));
-      assert(layer.first == converter::LayerType::Foreground);
-      Texture tex(args.find_or_throw(L"storage").ToStr());
-      args.AttributeValTo(L"page", converter::ToPage, [&](LayerPage val) {
-        page = val;
+      //executor_.CommandImage(layer.second, page, tex);
+      executor_.Command([args = std::move(args), executor = executor_]() mutable{
+        using namespace converter;
+        auto layer = ToLayerNum(args.find_or_throw(L"layer"));
+        assert(layer.first == LayerType::Foreground);
+
+        LayerPage page = args.ValOrDefaultTo(L"page", ToPage, LayerPage::Fore);
+        auto img_layer = executor.imageManager().GetLayer(layer.second, page);
+        img_layer->SetTex(Texture(args.find_or_throw(L"storage").ToStr()));
+
+        args.ValTo(L"left", ToInt10, img_layer.bind(&Layer::SetPositionLeft));
+        args.ValTo(L"top", ToInt10, img_layer.bind(&Layer::SetPositionTop));
+        args.ValTo(L"opacity", ToInt10, img_layer.bind(&Layer::SetOpacity));
+        args.ValTo(L"visible", ToBool, img_layer.bind(&Layer::IsVisible));
+        args.ValTo(L"index", ToInt10, img_layer.bind(&Layer::SetZIndex));
       });
-      executor_.CommandImage(layer.second, page, tex);
+    }
+
+    /* レイヤ関連 */
+    void MoveTag(Parser::CommandToken& token) {
+      executor_.Command([executor = executor_, args = std::move(token.arguments())]() mutable {
+        using namespace converter;
+        auto layer_num = ToLayerNum(args.find_or_throw(L"layer"));
+        auto page = args.ValOrDefaultTo(L"page", ToPage, LayerPage::Fore);
+        int time = ToInt10(args.find_or_throw(L"time"));
+        LayerPtr layer = executor.GetLayer(layer_num, page);
+
+        auto path = args.find_or_throw(L"path");
+        auto buf = path.Str();
+        auto len = path.Length();
+        int n = static_cast<int>(std::count(buf, buf + len, L'('));
+        Vec2 s, e;
+        s = layer->position().pos;
+        int n_pos = 0;
+        MoveEffect::Data data;
+
+        for (int i = 0; i < n; i++) {
+          int opacity;
+          if (swscanf(buf + n_pos, L"(%lf,%lf,%d)%n", &e.x, &e.y, &opacity, &n_pos) != 3) {
+            throw std::runtime_error(path.ToNarrow());
+          }
+          data.easing.push_back(EasingController<Vec2>(s, e, Easing::Linear, time));
+          std::swap(s, e);
+        }
+        layer->MoveEffect(data);
+      });
     }
   };
 
@@ -100,6 +138,8 @@ namespace kag {
     /* 画像関連 */
     tag_func_[SnapShotSpan(L"image")] = &Pimpl::ImageTag;
 
+    /* レイヤ関連 */
+    tag_func_[L"move"] = &Pimpl::MoveTag;
   }
 
   void FileExecutor::Pimpl::Load(const FilePath & path) {
@@ -111,24 +151,24 @@ namespace kag {
 
     while (executor_.CommandUpdate()) {
       switch (parser_.nextType()) {
-      case  kag::Parser::Type::Text:
-        executor_.CommandText(parser_.readText());
-        break;
+        case  kag::Parser::Type::Text:
+          executor_.CommandText(parser_.readText());
+          break;
 
-      case  kag::Parser::Type::Command:
-      {
-        auto token = parser_.readCommand();
-        auto func = tag_func_[token.name()];
-        if (func) {
-          (this->*func)(token);
-        } else {
-          throw std::runtime_error(token.name().ToNarrow());
+        case  kag::Parser::Type::Command:
+        {
+          auto token = parser_.readCommand();
+          auto func = tag_func_[token.name()];
+          if (func) {
+            (this->*func)(token);
+          } else {
+            throw std::runtime_error(token.name().ToNarrow());
+          }
+          break;
         }
-        break;
-      }
 
-      case  kag::Parser::Type::EndOfStream:
-        return;
+        case  kag::Parser::Type::EndOfStream:
+          return;
       }
     }
   }
@@ -144,8 +184,8 @@ namespace kag {
     Value<int> x, y;
     auto& args = token.arguments();
     using namespace converter;
-    args.AttributeValTo(L"x", ToInt10, [&](int val) { x = val; });
-    args.AttributeValTo(L"y", ToInt10, [&](int val) { y = val; });
+    args.ValTo(L"x", ToInt10, [&](int val) { x = val; });
+    args.ValTo(L"y", ToInt10, [&](int val) { y = val; });
 
     args.IfNotEmptyException();
     executor_.CommandLocate(x, y);
@@ -166,7 +206,7 @@ namespace kag {
   void FileExecutor::Pimpl::StyleTag(Parser::CommandToken & token) {
     auto& args = token.arguments();
     executor_.CommandStyle([=](StyleCommandEditor& editor) mutable {
-      args.AttributeVal(L"linesize", [&](const SnapShotSpan& val) {
+      args.Val(L"linesize", [&](const SnapShotSpan& val) {
         if (val == L"default") {
           editor.linesize();
         } else {
@@ -174,7 +214,7 @@ namespace kag {
         }
       });
 
-      args.AttributeValTo(L"linespacing", converter::ToInt10, [&](int val) {
+      args.ValTo(L"linespacing", converter::ToInt10, [&](int val) {
         editor.linespacing(val);
       });
 
@@ -192,7 +232,7 @@ namespace kag {
 
   void FileExecutor::Pimpl::DelayTag(Parser::CommandToken & token) {
     auto& args = token.arguments();
-    args.AttributeVal(L"speed", [&](const SnapShotSpan& val) {
+    args.Val(L"speed", [&](const SnapShotSpan& val) {
       if (val == L"user") {
         executor_.CommandDelay(30);
       } else if (val == L"nowait") {
@@ -233,8 +273,8 @@ namespace kag {
 
     auto& args = token.arguments();
     using namespace converter;
-    args.AttributeValTo(L"layer", ToMessageLayerNum, [&](int val) { layer = val; });
-    args.AttributeValTo(L"page", ToPage, [&](LayerPage val) { page = val; });
+    args.ValTo(L"layer", ToMessageLayerNum, [&](int val) { layer = val; });
+    args.ValTo(L"page", ToPage, [&](LayerPage val) { page = val; });
     args.IfNotEmptyException();
     executor_.CommandCurrent(layer(), page);
   }
@@ -243,13 +283,13 @@ namespace kag {
     auto& args = token.arguments();
     executor_.CommandDefFont([args](FontCommandEditor& editor) mutable {
       using namespace converter;
-      args.AttributeVal(L"face", [&](const SnapShotSpan& val) { editor.face(val.ToStr()); });
+      args.Val(L"face", [&](const SnapShotSpan& val) { editor.face(val.ToStr()); });
 
-      args.AttributeValTo(L"size", ToInt10, [&](int val) { editor.size(val); });
+      args.ValTo(L"size", ToInt10, [&](int val) { editor.size(val); });
 
-      args.AttributeValTo(L"italic", ToBool, [&](bool val) { editor.is_italic(val); });
+      args.ValTo(L"italic", ToBool, [&](bool val) { editor.is_italic(val); });
 
-      args.AttributeValTo(L"bold", ToBool, [&](bool val) { editor.is_bold(val); });
+      args.ValTo(L"bold", ToBool, [&](bool val) { editor.is_bold(val); });
 
       args.IfNotEmptyException();
     });
@@ -258,7 +298,7 @@ namespace kag {
   void FileExecutor::Pimpl::DefStyleTag(Parser::CommandToken & token) {
     auto& args = token.arguments();
     executor_.CommandDefStyle([args = std::move(args)](DefaultStyleCommandEditor& editor)mutable {
-      args.AttributeVal(L"linesize", [&](const SnapShotSpan& val) {
+      args.Val(L"linesize", [&](const SnapShotSpan& val) {
         if (val == L"default") {
           editor.linesize();
         } else {
@@ -266,7 +306,7 @@ namespace kag {
         }
       });
 
-      args.AttributeValTo(L"linespacing", converter::ToInt10, [&](int val) {
+      args.ValTo(L"linespacing", converter::ToInt10, [&](int val) {
         editor.linespacing(val);
       });
 
@@ -279,19 +319,19 @@ namespace kag {
     auto& args = token.arguments();
     executor_.CommandFont([args = std::move(args)](FontCommandEditor& editor)mutable {
       using namespace converter;
-      args.AttributeVal(L"face", [&](const SnapShotSpan& val) { editor.face(val.ToStr()); });
+      args.Val(L"face", [&](const SnapShotSpan& val) { editor.face(val.ToStr()); });
 
-      args.AttributeValTo(L"size", ToInt10, [&](int val) { editor.size(val); });
+      args.ValTo(L"size", ToInt10, [&](int val) { editor.size(val); });
 
-      args.AttributeValTo(L"italic", ToBool, [&](bool val) { editor.is_italic(val); });
+      args.ValTo(L"italic", ToBool, [&](bool val) { editor.is_italic(val); });
 
-      args.AttributeValTo(L"bold", ToBool, [&](bool val) { editor.is_bold(val); });
+      args.ValTo(L"bold", ToBool, [&](bool val) { editor.is_bold(val); });
 
-      args.AttributeValTo(L"color", ToColor, [&](const Color& val) {editor.color(val); });
+      args.ValTo(L"color", ToColor, [&](const Color& val) {editor.color(val); });
 
-      args.AttributeValTo(L"shadow", ToBool, [&](bool val) {editor.is_shadow(val); });
+      args.ValTo(L"shadow", ToBool, [&](bool val) {editor.is_shadow(val); });
 
-      args.AttributeValTo(L"shadowcolor", ToColor, [&](const Color& val) { editor.shadowcolor(val); });
+      args.ValTo(L"shadowcolor", ToColor, [&](const Color& val) { editor.shadowcolor(val); });
 
       args.IfNotEmptyException();
     });
@@ -307,32 +347,32 @@ namespace kag {
     Value<int> index;
     Value<LayerPage> page;
     auto& args = token.arguments();
-    args.AttributeValTo(L"layer", ToMessageLayerNum, [&](int val) { index = val; });
+    args.ValTo(L"layer", ToMessageLayerNum, [&](int val) { index = val; });
 
-    args.AttributeValTo(L"page", ToPage, [&](LayerPage val) { page = val; });
+    args.ValTo(L"page", ToPage, [&](LayerPage val) { page = val; });
 
     executor_.CommandPosition(index, page, [args = std::move(args)](PositionCommandEditor& editor) mutable {
-      args.AttributeValTo(L"left", ToInt10, [&](int val) { editor.position_left(val); });
+      args.ValTo(L"left", ToInt10, [&](int val) { editor.position_left(val); });
 
-      args.AttributeValTo(L"top", ToInt10, [&](int val) { editor.position_top(val); });
+      args.ValTo(L"top", ToInt10, [&](int val) { editor.position_top(val); });
 
-      args.AttributeValTo(L"width", ToInt10, [&](int val) { editor.position_width(val); });
+      args.ValTo(L"width", ToInt10, [&](int val) { editor.position_width(val); });
 
-      args.AttributeValTo(L"height", ToInt10, [&](int val) { editor.position_height(val); });
+      args.ValTo(L"height", ToInt10, [&](int val) { editor.position_height(val); });
 
-      args.AttributeValTo(L"marginl", ToInt10, [&](int val) { editor.margin_left(val); });
+      args.ValTo(L"marginl", ToInt10, [&](int val) { editor.margin_left(val); });
 
-      args.AttributeValTo(L"margint", ToInt10, [&](int val) { editor.margin_top(val); });
+      args.ValTo(L"margint", ToInt10, [&](int val) { editor.margin_top(val); });
 
-      args.AttributeValTo(L"marginr", ToInt10, [&](int val) { editor.margin_right(val); });
+      args.ValTo(L"marginr", ToInt10, [&](int val) { editor.margin_right(val); });
 
-      args.AttributeValTo(L"marginb", ToInt10, [&](int val) { editor.margin_bottom(val); });
+      args.ValTo(L"marginb", ToInt10, [&](int val) { editor.margin_bottom(val); });
 
-      args.AttributeValTo(L"color", ToColor, [&](const Color& col) {
+      args.ValTo(L"color", ToColor, [&](const Color& col) {
         editor.color(col.r, col.g, col.b);
       });
 
-      args.AttributeVal(L"frame", [&](const SnapShotSpan& val) {
+      args.Val(L"frame", [&](const SnapShotSpan& val) {
         if (val.Length() != 0) {
           editor.frame(Texture(val.ToStr()));
         } else {
@@ -340,9 +380,9 @@ namespace kag {
         }
       });
 
-      args.AttributeValTo(L"opacity", ToInt10, [&](int val) { editor.opacity(val); });
+      args.ValTo(L"opacity", ToInt10, [&](int val) { editor.opacity(val); });
 
-      args.AttributeValTo(L"visible", ToBool, [&](bool val) { editor.visible(val); });
+      args.ValTo(L"visible", ToBool, [&](bool val) { editor.visible(val); });
 
       args.IfNotEmptyException();
     });

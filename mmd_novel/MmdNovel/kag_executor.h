@@ -3,6 +3,7 @@
 #include <MmdNovel/image/image_manager.h>
 #include <MmdNovel/tag_editor.h>
 #include <MmdNovel/default_value.h>
+#include <kag_parser/kag_parser.h>
 namespace kag {
 
   /// <summary>
@@ -13,6 +14,17 @@ namespace kag {
   public:
 
     Executor();
+
+    LayerPtr GetLayer(std::pair<kag::converter::LayerType, int> layer_num, LayerPage page) {
+      using namespace converter;
+      if (layer_num.first == LayerType::Message) {
+        return messageManager().GetLayer(layer_num.second, page);
+      } else {
+        return imageManager().GetLayer(layer_num.second, page);
+      }
+    }
+    MessageManager messageManager();
+    ImageManager imageManager();
 
     /// <summary>
     /// 次のコマンドに進める時にtrueを返す
@@ -27,6 +39,8 @@ namespace kag {
     bool IsWait() const;
 
     /* コマンド */
+
+    void Command(const std::function<void()>& f);
 
     void CommandL();
 

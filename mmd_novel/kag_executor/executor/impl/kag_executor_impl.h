@@ -20,9 +20,14 @@ namespace kag {
 
     Pimpl();
 
+    ImageManager imageManager() { return image_manager_; }
+    MessageManager messageManager() { return message_manager_; }
+
     void Clear();
 
     bool IsWait() const;
+
+    void Command(const std::function<void()>& f);
 
     void CommandL();
 
