@@ -116,42 +116,15 @@ namespace kag {
     };
 
   public:
-    void Update() {
-      for (auto& i : list_) {
-        i->Update();
-      }
-    }
+    void Update();
 
-    void Draw() const {
-      for (auto& i : list_) {
-        i->Draw();
-      }
-    }
+    void Draw() const;
 
-    void Set(const LayerPtr& layer) {
-      auto b = list_.begin();
-      auto it = std::lower_bound(b, list_.end(), layer);
-      if (b != it) --it;
-      list_.insert(it, layer);
-    }
+    void Set(const LayerPtr& layer);
 
-    void Remove(const LayerPtr& layer) {
-      auto e = list_.end();
-      auto it = std::equal_range(list_.begin(), e, layer);
+    void Remove(const LayerPtr& layer);
 
-      while (it.first < it.second) {
-        if (*it.first == layer) {
-          list_.erase(it.first);
-          break;
-        }
-        ++it.first;
-      }
-    }
-
-    void Update(const LayerPtr& layer) {
-      Remove(layer);
-      Set(layer);
-    }
+    void Update(const LayerPtr& layer);
   };
 
   using LayerManager = std::shared_ptr<LayerManagerImpl>;
