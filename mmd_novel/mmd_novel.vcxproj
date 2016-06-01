@@ -91,6 +91,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="kag_executor\default_value.cpp" />
+    <ClCompile Include="kag_executor\executor\impl\kag_file_executor_impl.cpp" />
     <ClCompile Include="kag_executor\message\impl\message_layer_impl.cpp" />
     <ClCompile Include="kag_executor\executor\kag_executor.cpp" />
     <ClCompile Include="kag_executor\executor\impl\kag_executor_impl.cpp" />
@@ -101,7 +102,7 @@
     <ClCompile Include="kag_parser\kag_parser.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="kag_parser\kag_tokenizer.cpp" />
-    <ClCompile Include="MmdNovel\image\image_layer.cpp" />
+    <ClCompile Include="kag_executor\image\image_layer.cpp" />
     <ClCompile Include="MmdNovel\layer.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -173,7 +174,6 @@
   <ItemGroup>
     <ClInclude Include="kag_executor\executor\impl\kag_executor_impl.h" />
     <ClInclude Include="kag_executor\executor\impl\kag_file_executor_impl.h" />
-    <ClInclude Include="kag_executor\image\impl\image_layer_impl.h" />
     <ClInclude Include="MmdNovel\layer.h" />
     <ClInclude Include="MmdNovel.h" />
     <ClInclude Include="kag_executor\message\impl\message_layer_impl.h" />

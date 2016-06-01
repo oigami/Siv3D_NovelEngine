@@ -10,7 +10,7 @@ namespace kag {
     Array<Data> data_;
     Layer* layer_;
     int now_easing_index_;
-    int pre_ease_time_ = 0;
+    double pre_ease_time_ = 0;
 
     Vec2 GetMovePos(double t, const Data& d) const;
     double elapsed(double t, double timeMillisec) const;
@@ -54,7 +54,7 @@ namespace kag {
 
   bool MoveEffect::update(double t) {
     t *= 1000;
-    auto pos = GetMovePos(t, data_[now_easing_index_]);
+    auto pos = GetMovePos(t, data_[now_easing_index_]).asPoint();
     layer_->SetPositionLeft(pos.x);
     layer_->SetPositionTop(pos.y);
     if (t - pre_ease_time_ >= data_[now_easing_index_].timeMillisec) {

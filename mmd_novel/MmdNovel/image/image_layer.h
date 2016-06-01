@@ -7,11 +7,7 @@ namespace kag {
     friend LayerHelper<ImageLayerPimpl>;
   public:
 
-    void SetTex(const Texture& tex) {
-      texture_ = tex;
-      SetPositionWidth(tex.width);
-      SetPositionHeight(tex.height);
-    }
+    void SetTex(const Texture& tex);
 
   private:
 
@@ -20,15 +16,9 @@ namespace kag {
   protected:
     ImageLayerPimpl() = default;
 
-    static std::shared_ptr<ImageLayerPimpl> create() {
-      struct i :ImageLayerPimpl {};
-      return std::make_shared<i>();
-    }
+    static std::shared_ptr<ImageLayerPimpl> create();
 
-    void draw() const {
-      if (!texture_) return;
-      position()(texture_).draw(Color(0xff, 0xff, 0xff, opacity()));
-    }
+    void draw() const;
   };
   using ImageLayer = LayerHelper<ImageLayerPimpl>;
 }
