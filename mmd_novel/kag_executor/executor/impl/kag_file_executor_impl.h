@@ -87,14 +87,14 @@ namespace kag {
         Vec2 s, e;
         s = layer->position().pos;
         int n_pos = 0;
-        MoveEffect::DataArray data;
+        MoveEffectData::Array data;
 
         for (int i = 0; i < n; i++) {
           int opacity;
           if (swscanf(buf + n_pos, L"(%lf,%lf,%d)%n", &e.x, &e.y, &opacity, &n_pos) != 3) {
             throw std::runtime_error(path.ToNarrow());
           }
-          data.push_back(MoveEffect::Data(s, e, Easing::Linear, EasingType::Type::In, time));
+          data.push_back(MoveEffectData(s, e, Easing::Linear, EasingType::Type::In, time));
           std::swap(s, e);
         }
         layer->MoveEffect(data);

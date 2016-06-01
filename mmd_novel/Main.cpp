@@ -4,8 +4,8 @@
 void Main() {
   kag::FileExecutor executor(L"test.txt");
   auto img = executor.imageManager().GetLayer(0, kag::LayerPage::Fore);
-  Array<kag::ScaleEffect::Data> data;
-  kag::ScaleEffect::Data tmp;
+  kag::ScaleEffectData::Array data;
+  kag::ScaleEffectData tmp;
   tmp.start = 1.0;
   tmp.end = 0.5;
   data.push_back(tmp);

@@ -1,5 +1,5 @@
 ﻿[image storage=Data/Siv3D-kun.png layer=0 page=fore left=400]
-[move layer=0 time=500 path="(100,100,255)(0,0,0)"]
+[move layer=0 time=1000 path="(100,100,255)(0,0,0)"]
 @font size=50 
 文[l]
 @font size=25  face="ＭＳ ゴシック"
