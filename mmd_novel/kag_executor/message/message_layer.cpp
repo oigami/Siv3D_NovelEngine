@@ -80,7 +80,7 @@ namespace kag {
   }
 
   void MessageLayer::SetVisible(bool is_visible) {
-    pimpl_->SetVisible(is_visible);
+    pimpl_->IsVisible(is_visible);
   }
 
   void MessageLayer::SetBackgroundColor(Color argb) {

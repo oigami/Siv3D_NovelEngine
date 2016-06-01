@@ -193,13 +193,16 @@ namespace kag {
 
   }
 
+  // TODO: opacityを全体に反映させるための処理を追加する
   class MessageLayer::Pimpl : public Layer {
   public:
 
     Pimpl() {
-      position_.set(Point(16, 16), Point(Window::Size().x - 32, Window::Size().y - 32));
+      SetPositionLeft(16);
+      SetPositionTop(16);
+      SetPositionWidth(Window::Size().x - 32);
+      SetPositionHeight(Window::Size().y - 32);
       margin_.set({ 8,8 }, { 8,8 });
-      is_visible_ = false;
       background_color_ = Palette::Gray;
       background_color_.a = 128;
       indent_width_ = InvalidIndent;
@@ -238,7 +241,7 @@ namespace kag {
     }
 
     bool IsLimitHeihgt() {
-      return position_.h - margin_.h - margin_.y <= sum_height_ + text_line_.back().Height();
+      return position().h - margin_.h - margin_.y <= sum_height_ + text_line_.back().Height();
     }
 
     void AppenNewLine() {
@@ -250,14 +253,14 @@ namespace kag {
     }
 
     void draw() const {
-      if (!is_visible_) return;
-      position_.draw(background_color_);
+      auto& pos = position();
+      pos.draw(background_color_);
       if (!background_tex_.isEmpty())
-        position_(background_tex_).draw();
+        pos(background_tex_).draw();
 
-      int y = position_.y + margin_.y;
+      int y = position().y + margin_.y;
       for (auto& i : step(limit_line_num)) {
-        text_line_[i].Draw(position_.x + margin_.x, y + text_line_[i].y_);
+        text_line_[i].Draw(pos.x + margin_.x, y + text_line_[i].y_);
       }
     }
 
@@ -276,22 +279,6 @@ namespace kag {
       SetFont(default_font_);
     }
 
-    void SetPositionTop(int top) {
-      position_.y = top;
-    }
-
-    void SetPositionLeft(int left) {
-      position_.x = left;
-    }
-
-    void SetPositionWidth(int width) {
-      position_.w = width;
-    }
-
-    void SetPositionHeight(int height) {
-      position_.h = height;
-    }
-
     void SetMarginTop(int top) {
       margin_.y = top;
     }
@@ -306,10 +293,6 @@ namespace kag {
 
     void SetMarginBottom(int height) {
       margin_.h = height;
-    }
-
-    void SetVisible(bool is_visible) {
-      is_visible_ = is_visible;
     }
 
     void SetBackgroundColor(Color argb) {
@@ -384,7 +367,7 @@ namespace kag {
       assert(!IsLimitHeihgt());
       int line_spacing = text_line_.back().LineSpacing();
       for (;;) {
-        auto opt = text_line_.back().ByReturn(position_.w - margin_.x - margin_.w);
+        auto opt = text_line_.back().ByReturn(position().w - margin_.x - margin_.w);
         if (!opt)
           return;
 
@@ -418,7 +401,6 @@ namespace kag {
     /// <summary>デフォルトに設定されているフォント</summary>
     message::DefaultStyle default_style_;
 
-    Rect position_;
     /// <summary>
     /// メッセージを表示する部分のマージン
     /// <para>rect型だがposition_からの相対位置(内側が正)になっている</para>
@@ -430,13 +412,6 @@ namespace kag {
 
     /// <summary>背景色</summary>
     Color background_color_;
-
-    // TODO: 全体に反映させるための処理を追加する
-    /// <summary>レイヤ全体の透明度</summary>
-    int opacity_;
-
-    /// <summary>表示するかどうか</summary>
-    bool is_visible_;
 
     /// <summary>描画してる文字列の高さの合計</summary>
     int sum_height_;
