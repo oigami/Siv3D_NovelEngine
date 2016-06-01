@@ -103,7 +103,7 @@
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="kag_parser\kag_tokenizer.cpp" />
     <ClCompile Include="kag_executor\image\image_layer.cpp" />
-    <ClCompile Include="MmdNovel\layer.cpp" />
+    <ClCompile Include="kag_executor\layer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Engine\Splash.png" />

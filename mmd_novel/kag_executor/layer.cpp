@@ -1,4 +1,5 @@
-﻿#include "layer.h"
+﻿#include <MmdNovel/layer.h>
+
 namespace kag {
 
   struct MoveEffect : IEffect {

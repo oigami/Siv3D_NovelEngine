@@ -100,7 +100,7 @@ namespace kag {
 
     template<class T, class ...Args>
     auto bind(T(Layer::* f)(Args...)) {
-      return [this, f](Args...args) { return (((LayerPtr&)pimpl_).get()->*f)(args...); };
+      return [this, f](Args...args) { return (static_cast<Layer*>(pimpl_.get())->*f)(std::forward<Args>(args)...); };
     }
 
   private:
