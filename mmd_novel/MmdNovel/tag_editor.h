@@ -10,7 +10,7 @@ namespace kag {
     void StyleCheck(FontStyle style);
     FontStyle CreateStyle();
     virtual void commit(const message::TextFont& font) {
-      manager_.Current().SetFont(font);
+      manager_.Current()->SetFont(font);
 
     }
 
@@ -51,7 +51,7 @@ namespace kag {
   class DefFontCommandEditor : public FontCommandEditor {
     friend Executor;
     void commit(const message::TextFont& font) override {
-      manager_.Current().SetDefaultFont(font);
+      manager_.Current()->SetDefaultFont(font);
     }
     using FontCommandEditor::FontCommandEditor;
   };
@@ -62,23 +62,23 @@ namespace kag {
     PositionCommandEditor(MessageLayer& layer) :layer_(layer) {
     }
     void Commit() {
-      layer_.Clear();
+      layer_->Clear();
     }
   public:
-    This& position_left(int val) { layer_.SetPositionLeft(val); return *this; }
-    This& position_top(int val) { layer_.SetPositionTop(val); return *this; }
-    This& position_width(int val) { layer_.SetPositionWidth(val); return *this; }
-    This& position_height(int val) { layer_.SetPositionHeight(val); return *this; }
+    This& position_left(int val) { layer_->SetPositionLeft(val); return *this; }
+    This& position_top(int val) { layer_->SetPositionTop(val); return *this; }
+    This& position_width(int val) { layer_->SetPositionWidth(val); return *this; }
+    This& position_height(int val) { layer_->SetPositionHeight(val); return *this; }
 
-    This& margin_left(int val) { layer_.SetMarginLeft(val); return *this; }
-    This& margin_top(int val) { layer_.SetMarginTop(val); return *this; }
-    This& margin_right(int val) { layer_.SetMarginRight(val); return *this; }
-    This& margin_bottom(int val) { layer_.SetMarginBottom(val); return *this; }
+    This& margin_left(int val) { layer_->SetMarginLeft(val); return *this; }
+    This& margin_top(int val) { layer_->SetMarginTop(val); return *this; }
+    This& margin_right(int val) { layer_->SetMarginRight(val); return *this; }
+    This& margin_bottom(int val) { layer_->SetMarginBottom(val); return *this; }
 
-    This& frame(Texture tex) { layer_.SetBackgroundTex(tex); return*this; }
-    This& color(int r, int g, int b) { layer_.SetBackgroundRGB(r, g, b); return*this; }
-    This& opacity(int a) { layer_.SetBackgroundOpacity(a); return*this; }
-    This& visible(bool visible) { layer_.SetVisible(visible); return *this; }
+    This& frame(Texture tex) { layer_->SetBackgroundTex(tex); return*this; }
+    This& color(int r, int g, int b) { layer_->SetBackgroundRGB(r, g, b); return*this; }
+    This& opacity(int a) { layer_->SetBackgroundOpacity(a); return*this; }
+    This& visible(bool visible) { layer_->IsVisible(visible); return *this; }
   private:
     //TODO: 未実装
     This& draggable() {}
@@ -97,9 +97,9 @@ namespace kag {
     void Commit() {}
   public:
 
-    This& linespacing(int px) { layer_.SetLineSpacing(px); return *this; }
-    This& linesize(int px) { layer_.SetLineSize(px); return *this; }
-    This& linesize() { layer_.ResetLineSize(); return *this; }
+    This& linespacing(int px) { layer_->SetLineSpacing(px); return *this; }
+    This& linesize(int px) { layer_->SetLineSize(px); return *this; }
+    This& linesize() { layer_->ResetLineSize(); return *this; }
   private:
 
     // 未実装
@@ -116,7 +116,7 @@ namespace kag {
 
     DefaultStyleCommandEditor(MessageManager& manager) :layer_(manager.Current()) {}
     void Commit() {
-      layer_.SetDefaultStyle(style_);
+      layer_->SetDefaultStyle(style_);
     }
   public:
 

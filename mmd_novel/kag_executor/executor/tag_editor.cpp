@@ -1,7 +1,7 @@
 #include <MmdNovel/tag_editor.h>
 namespace kag {
   FontCommandEditor::FontCommandEditor(MessageManager & manager) :manager_(manager) {
-    auto& now_font = manager.Current().NowFont();
+    auto& now_font = manager.Current()->NowFont();
     size_ = now_font.font_.size();
     face_ = now_font.font_.name();
     color_ = now_font.color_;

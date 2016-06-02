@@ -7,7 +7,7 @@ namespace kag {
       click_key_ = Input::MouseL | Input::KeyEnter;
       is_active_key_ = true;
       resize(2);
-      message_layer_[0][0].SetVisible(true);
+      message_layer_[0][0]->IsVisible(true);
       delay_time_ = 30;
       delay_index_ = 0;
       current_page_ = 0;
@@ -22,13 +22,13 @@ namespace kag {
     void Clear() {
       is_wait_click_ = false;
       is_click_new_page_ = false;
-      message_layer_[current_layer_][current_page_].Clear();
+      message_layer_[current_layer_][current_page_]->Clear();
     }
 
     void AllClear() {
       for (auto& i : message_layer_) {
         for (auto& j : i) {
-          j.Clear();
+          j->Clear();
         }
       }
     }
@@ -40,8 +40,8 @@ namespace kag {
     void Flush() {
       auto& current = Current();
       for (int i = 0, len = delay_text_.Length() - delay_index_; i < len; i++) {
-        current.Append(delay_text_[delay_index_++]);
-        if (current.IsLimitHeihgt()) {
+        current->Append(delay_text_[delay_index_++]);
+        if (current->IsLimitHeihgt()) {
           is_click_new_page_ = true;
           is_wait_click_ = true;
           return;
@@ -53,8 +53,8 @@ namespace kag {
       assert(IsFlush());
       if (is_no_wait_) {
         auto& current = Current();
-        current.Append(text.ToStr());
-        if (current.IsLimitHeihgt()) {
+        current->Append(text.ToStr());
+        if (current->IsLimitHeihgt()) {
           is_click_new_page_ = true;
           is_wait_click_ = true;
           return;
@@ -67,11 +67,11 @@ namespace kag {
     }
 
     void AppendNewLine() {
-      Current().AppenNewLine();
+      Current()->AppenNewLine();
     }
 
     void NextPage() {
-      Current().NextPage();
+      Current()->NextPage();
       timer_.set(MillisecondsF(delay_time_ * delay_index_));
     }
 
@@ -94,8 +94,8 @@ namespace kag {
       int loop = ms / delay_time_ - delay_index_;
       loop = std::min(loop, delay_text_.Length() - delay_index_);
       for (int i = 0; i < loop; i++) {
-        current.Append(delay_text_[delay_index_++]);
-        if (current.IsLimitHeihgt()) {
+        current->Append(delay_text_[delay_index_++]);
+        if (current->IsLimitHeihgt()) {
           is_click_new_page_ = true;
           is_wait_click_ = true;
           return false;
@@ -113,7 +113,7 @@ namespace kag {
 
     void Draw() const {
       for (auto& i : message_layer_) {
-        i[message_fore_layer].Draw();
+        i[message_fore_layer]->Draw();
       }
     }
 

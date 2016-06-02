@@ -72,9 +72,6 @@
     <ClCompile Include="kag_executor\message\message_manager.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="kag_executor\message\message_layer.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="kag_executor\message\impl\message_layer_impl.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
@@ -313,9 +310,6 @@
     <ClInclude Include="MmdNovel\message\snapshotspan.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="kag_executor\message\impl\message_layer_impl.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="kag_executor\message\impl\message_manager_impl.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
@@ -335,6 +329,9 @@
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="MmdNovel\layer.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="MmdNovel\message\message_layer_impl.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>

@@ -1,230 +1,313 @@
 ﻿#pragma once
 #include <Siv3D.hpp>
 #include <MmdNovel/layer.h>
+#include <MmdNovel/message/message_layer_impl.h>
 namespace kag {
   namespace message {
-    enum AlignType {
-      Left,
-      Center,
-      Right,
-    };
-    struct DefaultStyle {
-      static constexpr int default_line_size = std::numeric_limits<int>::max();
-      static constexpr int default_line_spacing = 0;
+    namespace pimpl {
+      // TODO: opacityを全体に反映させるための処理を追加する
+      class MessageLayerPimpl : public Layer {
+      public:
+        static std::shared_ptr<MessageLayerPimpl> create() {
+          return std::make_shared<MessageLayerPimpl>();
+        }
+        MessageLayerPimpl() {
+          SetPositionLeft(16);
+          SetPositionTop(16);
+          SetPositionWidth(Window::Size().x - 32);
+          SetPositionHeight(Window::Size().y - 32);
+          IsVisible(false);
+          margin_.set({ 8,8 }, { 8,8 });
+          background_color_ = Palette::Gray;
+          background_color_.a = 128;
+          indent_width_ = InvalidIndent;
+          Clear();
+        }
+        /// <summary>
+        /// メッセージボックスをクリアする
+        /// </summary>
+        void Clear() {
+          limit_line_num = 0;
+          NextPage();
+        }
+        /// <summary>
+        /// 次のページに行く
+        /// </summary>
+        void NextPage() {
+          text_line_.clear();
+          limit_line_num = 0;
+          sum_height_ = 0;
+          if (overflow_text) {
+            text_line_.emplace_back(0, *overflow_text);
+            overflow_text = none;
+            CheckByReturn();
+          } else {
+            text_line_.emplace_back(0, message::Text(now_font_));
+          }
+          limit_line_num = 1;
+        }
+        /// <summary>
+        /// 文字列を末尾に追加する
+        /// </summary>
+        /// <param name="str"></param>
+        void Append(const String & str) {
+          text_line_.back().Append(str);
+          CheckByReturn();
+        }
+        /// <summary>
+        /// 文字を末尾に追加する
+        /// </summary>
+        /// <param name="str"></param>
+        void Append(const wchar & str) {
+          text_line_.back().Append(str);
 
-      DefaultStyle() :line_spacing_(0), line_size_(default_line_size) {}
+          //Print(str);
+          CheckByReturn();
+        }
+        /// <summary>
+        /// 文字列が縦方向に収まらなくなった時trueを返す
+        /// </summary>
+        /// <returns></returns>
+        bool IsLimitHeihgt() {
+          return position().h - margin_.h - margin_.y <= sum_height_ + text_line_.back().Height();
+        }
+        /// <summary>
+        /// 改行をする
+        /// </summary>
+        void AppenNewLine() {
+          sum_height_ += text_line_.back().Height();
+          text_line_.emplace_back(sum_height_, message::Text(now_font_));
+          if (!IsLimitHeihgt()) {
+            limit_line_num = static_cast<int>(text_line_.size());
+          }
+        }
+        /// <summary>
+        /// 現在指定されているフォントを返す
+        /// </summary>
+        /// <returns></returns>
+        void draw() const {
+          auto& pos = position();
+          pos.draw(background_color_);
+          if (!background_tex_.isEmpty())
+            pos(background_tex_).draw();
 
-      bool IsDefaultLineSize() const { return line_size_ == default_line_size; }
+          int y = position().y + margin_.y;
+          for (auto& i : step(limit_line_num)) {
+            text_line_[i].Draw(pos.x + margin_.x, y + text_line_[i].y_);
+          }
+        }
 
-      int LineSize(int default_size) const {
-        return IsDefaultLineSize() ? default_size : line_size_;
-      }
-      void ResetLineSize() {
-        line_size_ = default_line_size;
-      }
-      void ResetLineSpacing() {
-        line_spacing_ = default_line_spacing;
-      }
+        const kag::message::TextFont & NowFont() const { return now_font_; }
+        /// <summary>
+        /// フォントを設定する
+        /// </summary>
+        /// <param name="font"></param>
+        void SetFont(const message::TextFont & font) {
+          text_line_.back().AppendNewFont(font);
+          now_font_ = font;
+        }
 
-      /// <summary>行（文字）の幅</summary>
-      int line_spacing_;
+        /// <summary>
+        /// デフォルトフォントを変更する
+        /// </summary>
+        /// <param name="font">設定するフォント</param>
+        void SetDefaultFont(const message::TextFont & font) {
+          default_font_ = font;
+        }
 
-      /// <summary>行間</summary>
-      int line_size_;
+        /// <summary>
+        /// デフォルトのフォントに戻す
+        /// </summary>
+        void ResetFont() {
+          SetFont(default_font_);
+        }
 
-      //TODO: 未実装
-      int pitch_;
-    };
+        void SetMarginTop(int top) {
+          margin_.y = top;
+        }
 
-    struct Style : DefaultStyle {
+        void SetMarginLeft(int left) {
+          margin_.x = left;
+        }
 
-      //TODO: 未実装
-      AlignType align_type_;
-      bool auto_return_;
-    };
+        void SetMarginRight(int width) {
+          margin_.w = width;
+        }
 
-    struct TextFont {
-      Font font_;
-      Color color_;
-      Color shadow_color_;
-      bool is_shadow_;
-      //TODO: フォントのサイズに応じて可変にする
-      Point shadow_pos = { 5,5 };
-      TextFont() :TextFont(Font(), Palette::White) {}
-      TextFont(const Font& font, const Color& color) :font_(font), color_(color), shadow_color_(Palette::Gray), is_shadow_(true) {
-      }
+        void SetMarginBottom(int height) {
+          margin_.h = height;
+        }
 
-      RectF Draw(const String& str, int x, int y) const {
-        if (is_shadow_) font_.draw(str, x + shadow_pos.x, y - font_.height + shadow_pos.x, shadow_color_);
-        return font_.draw(str, x, y - font_.height, color_);
-      }
+        void SetBackgroundColor(Color argb) {
+          background_color_ = argb;
+        }
 
-      size_t drawableCharacters(const String& str, int width) const {
-        return font_.drawableCharacters(str, width);
-      }
+        void SetBackgroundRGB(int r, int g, int b) {
+          const int a = background_color_.a;
+          background_color_ = Color(r, g, b, a);
+        }
 
-      Rect region(const String& str) const {
-        return font_(str).region();
-      }
+        void SetBackgroundOpacity(int a) {
+          background_color_.a = a;
+        }
 
-      int Height() const { return font_.height; }
+        void SetBackgroundTex(Texture tex) {
+          background_tex_ = tex;
+        }
+        /// <summary>
+        /// 文字列の開始位置を変更する
+        /// </summary>
+        /// <param name="x">開始するx座標</param>
+        /// <param name="y">開始するy座標</param>
+        void SetLocate(int x, int y) {
+          text_line_.emplace_back(y, message::TextLine(x, now_font_));
+          sum_height_ = y;
+        }
+        /// <summary>
+        /// 文字列の開始位置を変更する
+        /// </summary>
+        /// <param name="x"></param>
+        void SetLocateX(int x) {
+          text_line_.back().AppendNewFont(x, now_font_);
+        }
+        /// <summary>
+        /// 文字列の開始位置を変更する
+        /// </summary>
+        /// <param name="y"></param>
+        void SetLocateY(int y) {
+          SetLocate(0, y);
+        }
+        /// <summary>
+        /// 現在の文字列を基準にインデントを開始する
+        /// </summary>
+        void BeginIndent() {
+          indent_width_ = text_line_.back().Width();
+        }
+        /// <summary>
+        /// インデントを終了する
+        /// </summary>
+        void EndIndent() {
+          indent_width_ = InvalidIndent;
+        }
+        /// <summary>
+        /// 行間（文字を描画する縦幅）を設定する
+        /// <para>デフォルトでは文字の縦幅が一番大きい値になっている</para>
+        /// <para>ここで指定したサイズより大きい文字を描画すると収まらなくなる</para>
+        /// </summary>
+        /// <param name="px"></param>
+        void SetLineSize(int px) {
+          text_line_.back().SetLineSize(px);
+        }
 
-    };
+        /// <summary>
+        /// 行間をリセットしデフォルト値に戻す
+        /// </summary>
+        void ResetLineSize() {
+          text_line_.back().ResetLineSize();
+        }
+        /// <summary>
+        /// 行と行の間のサイズ（字の大きさを無視した値）を設定する
+        /// <para>実際はここで指定した値とlinesizeが加算された値になる</para>
+        /// </summary>
+        /// <param name="px"></param>
+        void SetLineSpacing(int px) {
+          text_line_.back().SetLineSpacing(px);
+        }
+        /// <summary>
+        /// 行と行の間のサイズをリセットする
+        /// </summary>
+        void ResetLineSpacing() {
+          text_line_.back().ResetLineSpacing();
+        }
+        /// <summary>
+        /// デフォルトのスタイルを設定する
+        /// </summary>
+        /// <param name="style"></param>
+        void SetDefaultStyle(const message::DefaultStyle & style) {
+          default_style_ = style;
+        }
+        /// <summary>
+        /// 現在のスタイルをデフォルトのスタイルに変更する
+        /// </summary>
+        void ResetStyle() {
+          SetLineSpacing(default_style_.line_spacing_);
+          SetLineSize(default_style_.line_size_);
+        }
+      private:
 
+        /// <summary>
+        /// 折り返しのチェックをする
+        /// <para>もし折り返して高さに収まらなくなった場合はoverflow_textに入れる</para>
+        /// </summary>
+        void CheckByReturn() {
+          assert(!IsLimitHeihgt());
+          int line_spacing = text_line_.back().LineSpacing();
+          for (;;) {
+            auto opt = text_line_.back().ByReturn(position().w - margin_.x - margin_.w);
+            if (!opt)
+              return;
 
+            int indent = 0;
+            if (indent_width_ != InvalidIndent)
+              indent = indent_width_;
+            sum_height_ += text_line_.back().Height();
+            if (!IsLimitHeihgt()) {
+              text_line_.emplace_back(sum_height_, message::TextLine(indent, *opt));
+              text_line_.back().SetLineSpacing(line_spacing);
+              limit_line_num = static_cast<int>(text_line_.size());
+            } else {
+              overflow_text = std::move(opt);
+              return;
+            }
+          }
+        }
+
+        /// <summary>インデントが無効な時の値</summary>
+        static constexpr int InvalidIndent = std::numeric_limits<int>::max();
+
+        /// <summary>インデントの開始位置(InvalidIndentで無効)</summary>
+        int indent_width_;
+
+        /// <summary>現在設定されているフォント</summary>
+        message::TextFont now_font_;
+
+        /// <summary>デフォルトに設定されているフォント</summary>
+        message::TextFont default_font_;
+
+        /// <summary>デフォルトに設定されているフォント</summary>
+        message::DefaultStyle default_style_;
+
+        /// <summary>
+        /// メッセージを表示する部分のマージン
+        /// <para>rect型だがposition_からの相対位置(内側が正)になっている</para>
+        /// </summary>
+        Rect margin_;
+
+        /// <summary>背景テクスチャ</summary>
+        Texture background_tex_;
+
+        /// <summary>背景色</summary>
+        Color background_color_;
+
+        /// <summary>描画してる文字列の高さの合計</summary>
+        int sum_height_;
+
+        /// <summary>表示できた限界の行数</summary>
+        int limit_line_num;
+
+        struct TextLineWithY : message::TextLine {
+          TextLineWithY(int y, const message::TextLine &line) : y_(y), message::TextLine(line) {}
+          int y_;
+        };
+
+        /// <summary>テキスト一行ごとの配列</summary>
+        Array<TextLineWithY> text_line_;
+
+        /// <summary>高さに収まらなくなった場合に飛び出した部分が入る</summary>
+        Optional<message::Text> overflow_text;
+      };
+    }
   }
 
-  class MessageLayer {
-  public:
-
-    MessageLayer();
-
-    /// <summary>
-    /// メッセージボックスをクリアする
-    /// </summary>
-    void Clear();
-
-    /// <summary>
-    /// 次のページに行く
-    /// </summary>
-    void NextPage();
-
-    /// <summary>
-    /// 文字列を末尾に追加する
-    /// </summary>
-    /// <param name="str"></param>
-    void Append(const String& str);
-
-    /// <summary>
-    /// 文字を末尾に追加する
-    /// </summary>
-    /// <param name="str"></param>
-    void Append(const wchar& str);
-
-    /// <summary>
-    /// 文字列が縦方向に収まらなくなった時trueを返す
-    /// </summary>
-    /// <returns></returns>
-    bool IsLimitHeihgt();
-
-    /// <summary>
-    /// 改行をする
-    /// </summary>
-    void AppenNewLine();
-
-    void Draw() const;
-
-    /// <summary>
-    /// 現在指定されているフォントを返す
-    /// </summary>
-    /// <returns></returns>
-    const message::TextFont& NowFont() const;
-
-    /// <summary>
-    /// フォントを設定する
-    /// </summary>
-    /// <param name="font"></param>
-    void SetFont(const message::TextFont& font);
-
-    /// <summary>
-    /// デフォルトフォントを変更する
-    /// </summary>
-    /// <param name="font">設定するフォント</param>
-    void SetDefaultFont(const message::TextFont& font);
-
-    /// <summary>
-    /// デフォルトのフォントに戻す
-    /// </summary>
-    void ResetFont();
-
-    void SetPositionTop(int top);
-    void SetPositionLeft(int left);
-    void SetPositionWidth(int width);
-    void SetPositionHeight(int height);
-
-    void SetMarginTop(int top);
-    void SetMarginLeft(int left);
-    void SetMarginRight(int width);
-    void SetMarginBottom(int height);
-
-    void SetVisible(bool is_visible);
-
-    void SetBackgroundColor(Color argb);
-    void SetBackgroundRGB(int r, int g, int b);
-    void SetBackgroundOpacity(int a);
-    void SetBackgroundTex(Texture tex);
-
-    /// <summary>
-    /// 文字列の開始位置を変更する
-    /// </summary>
-    /// <param name="x">開始するx座標</param>
-    /// <param name="y">開始するy座標</param>
-    void SetLocate(int x, int y);
-
-    /// <summary>
-    /// 文字列の開始位置を変更する
-    /// </summary>
-    /// <param name="x"></param>
-    void SetLocateX(int x);
-
-    /// <summary>
-    /// 文字列の開始位置を変更する
-    /// </summary>
-    /// <param name="y"></param>
-    void SetLocateY(int y);
-
-    /// <summary>
-    /// 現在の文字列を基準にインデントを開始する
-    /// </summary>
-    void BeginIndent();
-
-    /// <summary>
-    /// インデントを終了する
-    /// </summary>
-    void EndIndent();
-
-    /// <summary>
-    /// 行間（文字を描画する縦幅）を設定する
-    /// <para>デフォルトでは文字の縦幅が一番大きい値になっている</para>
-    /// <para>ここで指定したサイズより大きい文字を描画すると収まらなくなる</para>
-    /// </summary>
-    /// <param name="px"></param>
-    void SetLineSize(int px);
-
-    /// <summary>
-    /// 行間をリセットしデフォルト値に戻す
-    /// </summary>
-    void ResetLineSize();
-
-    /// <summary>
-    /// 行と行の間のサイズ（字の大きさを無視した値）を設定する
-    /// <para>実際はここで指定した値とlinesizeが加算された値になる</para>
-    /// </summary>
-    /// <param name="px"></param>
-    void SetLineSpacing(int px);
-
-    /// <summary>
-    /// 行と行の間のサイズをリセットする
-    /// </summary>
-    void ResetLineSpacing();
-
-    /// <summary>
-    /// デフォルトのスタイルを設定する
-    /// </summary>
-    /// <param name="style"></param>
-    void SetDefaultStyle(const message::DefaultStyle& style);
-
-    /// <summary>
-    /// 現在のスタイルをデフォルトのスタイルに変更する
-    /// </summary>
-    void ResetStyle();
-
-    operator std::shared_ptr<Layer>() const;
-  private:
-
-    class Pimpl;
-    std::shared_ptr<Pimpl> pimpl_;
-
-  };
-
+  using MessageLayer = LayerHelper<message::pimpl::MessageLayerPimpl>;
 }

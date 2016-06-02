@@ -84,7 +84,7 @@ namespace kag {
 
   void Executor::Pimpl::CommandTextNoDelay(const SnapShotSpan & str) {
     command_.push([str, this]() {
-      message_manager_.Current().Append(str.ToStr());
+      message_manager_.Current()->Append(str.ToStr());
     });
   }
 
@@ -96,24 +96,24 @@ namespace kag {
 
   void Executor::Pimpl::CommandIndent() {
     command_.push([this]() {
-      this->message_manager_.Current().BeginIndent();
+      this->message_manager_.Current()->BeginIndent();
     });
   }
 
   void Executor::Pimpl::CommandEndIndent() {
     command_.push([this]() {
-      this->message_manager_.Current().EndIndent();
+      this->message_manager_.Current()->EndIndent();
     });
   }
 
   void Executor::Pimpl::CommandLocate(Value<int> x, Value<int> y) {
     command_.push([x, y, this]() {
       if (x == Define::default) {
-        message_manager_.Current().SetLocateY(y());
+        message_manager_.Current()->SetLocateY(y());
       } else if (y == Define::default) {
-        message_manager_.Current().SetLocateX(x());
+        message_manager_.Current()->SetLocateX(x());
       } else {
-        message_manager_.Current().SetLocate(x(), y());
+        message_manager_.Current()->SetLocate(x(), y());
       }
     });
   }
@@ -136,7 +136,7 @@ namespace kag {
 
   void Executor::Pimpl::CommandResetStyle() {
     command_.push([this]() {
-      message_manager_.Current().ResetFont();
+      message_manager_.Current()->ResetFont();
     });
   }
 
@@ -158,7 +158,7 @@ namespace kag {
 
   void Executor::Pimpl::CommandResetFont() {
     command_.push([this]() {
-      message_manager_.Current().ResetFont();
+      message_manager_.Current()->ResetFont();
     });
   }
 

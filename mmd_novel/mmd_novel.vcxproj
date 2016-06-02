@@ -95,7 +95,6 @@
     <ClCompile Include="kag_executor\message\impl\message_layer_impl.cpp" />
     <ClCompile Include="kag_executor\executor\kag_executor.cpp" />
     <ClCompile Include="kag_executor\executor\impl\kag_executor_impl.cpp" />
-    <ClCompile Include="kag_executor\message\message_layer.cpp" />
     <ClCompile Include="kag_executor\message\message_manager.cpp" />
     <ClCompile Include="kag_executor\executor\tag_editor.cpp" />
     <ClCompile Include="kag_executor\executor\kag_file_executor.cpp" />
@@ -176,7 +175,7 @@
     <ClInclude Include="kag_executor\executor\impl\kag_file_executor_impl.h" />
     <ClInclude Include="MmdNovel\layer.h" />
     <ClInclude Include="MmdNovel.h" />
-    <ClInclude Include="kag_executor\message\impl\message_layer_impl.h" />
+    <ClInclude Include="MmdNovel\message\message_layer_impl.h" />
     <ClInclude Include="kag_executor\message\impl\message_manager_impl.h" />
     <ClInclude Include="MmdNovel\default_value.h" />
     <ClInclude Include="MmdNovel\image\image_layer.h" />
