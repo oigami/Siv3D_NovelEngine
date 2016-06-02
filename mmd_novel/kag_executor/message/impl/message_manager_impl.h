@@ -5,7 +5,7 @@ namespace kag {
   public:
     Pimpl() {
       click_key_ = Input::MouseL | Input::KeyEnter;
-      is_active_key = true;
+      is_active_key_ = true;
       resize(2);
       message_layer_[0][0].SetVisible(true);
       delay_time_ = 30;
@@ -21,7 +21,7 @@ namespace kag {
 
     void Clear() {
       is_wait_click_ = false;
-      is_click_new_page = false;
+      is_click_new_page_ = false;
       message_layer_[current_layer_][current_page_].Clear();
     }
 
@@ -34,15 +34,15 @@ namespace kag {
     }
 
     bool IsFlush() const {
-      return delay_text.Length() == delay_index_;
+      return delay_text_.Length() == delay_index_;
     }
 
     void Flush() {
       auto& current = Current();
-      for (int i = 0, len = delay_text.Length() - delay_index_; i < len; i++) {
-        current.Append(delay_text[delay_index_++]);
+      for (int i = 0, len = delay_text_.Length() - delay_index_; i < len; i++) {
+        current.Append(delay_text_[delay_index_++]);
         if (current.IsLimitHeihgt()) {
-          is_click_new_page = true;
+          is_click_new_page_ = true;
           is_wait_click_ = true;
           return;
         }
@@ -55,12 +55,12 @@ namespace kag {
         auto& current = Current();
         current.Append(text.ToStr());
         if (current.IsLimitHeihgt()) {
-          is_click_new_page = true;
+          is_click_new_page_ = true;
           is_wait_click_ = true;
           return;
         }
       } else {
-        delay_text = text;
+        delay_text_ = text;
         timer_.restart();
         delay_index_ = 0;
       }
@@ -77,14 +77,14 @@ namespace kag {
 
     void SetWaitClick() { is_wait_click_ = true; }
 
-    void SetClickNextPage() { is_click_new_page = true; }
+    void SetClickNextPage() { is_click_new_page_ = true; }
 
     bool Update() {
       if (is_wait_click_) {
         if (CheckClicked()) {
-          if (is_click_new_page)
+          if (is_click_new_page_)
             NextPage();
-          is_click_new_page = false;
+          is_click_new_page_ = false;
           is_wait_click_ = false;
         }
         return false;
@@ -92,11 +92,11 @@ namespace kag {
       auto& current = Current();
       int ms = timer_.ms();
       int loop = ms / delay_time_ - delay_index_;
-      loop = std::min(loop, delay_text.Length() - delay_index_);
+      loop = std::min(loop, delay_text_.Length() - delay_index_);
       for (int i = 0; i < loop; i++) {
-        current.Append(delay_text[delay_index_++]);
+        current.Append(delay_text_[delay_index_++]);
         if (current.IsLimitHeihgt()) {
-          is_click_new_page = true;
+          is_click_new_page_ = true;
           is_wait_click_ = true;
           return false;
         }
@@ -150,9 +150,9 @@ namespace kag {
       click_key_ = key;
     }
 
-    void SetInvalidKeyInput() { is_active_key = false; }
+    void SetInvalidKeyInput() { is_active_key_ = false; }
 
-    void SetValidKeyInput() { is_active_key = true; }
+    void SetValidKeyInput() { is_active_key_ = true; }
 
     void SetLayerManager(LayerManager& manager) {
       layer_manager_ = manager;
@@ -164,7 +164,7 @@ namespace kag {
     bool IsWait() const { return is_wait_click_ || !IsFlush(); }
 
     bool CheckClicked() const {
-      if (is_active_key) return click_key_.clicked;
+      if (is_active_key_) return click_key_.clicked;
       return false;
     }
 
@@ -190,7 +190,7 @@ namespace kag {
     int current_page_;
 
     /// <summary>遅延表示してるテキスト</summary>
-    SnapShotSpan delay_text;
+    SnapShotSpan delay_text_;
 
     /// <summary>次に表示する遅延テキストの添字</summary>
     int delay_index_;
@@ -202,10 +202,10 @@ namespace kag {
     bool is_wait_click_;
 
     /// <summary>クリックした時に改ページに行くかどうか</summary>
-    bool is_click_new_page;
+    bool is_click_new_page_;
 
     /// <summary>クリックによるスキップをするかどうか</summary>
-    bool is_click_skip;
+    bool is_click_skip_;
 
     bool is_no_wait_;
 
@@ -213,7 +213,7 @@ namespace kag {
     KeyCombination click_key_;
 
     /// <summary>キー入力が有効かどうか</summary>
-    bool is_active_key;
+    bool is_active_key_;
 
     LayerManager layer_manager_;
   };
