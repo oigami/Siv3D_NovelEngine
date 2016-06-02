@@ -1,4 +1,4 @@
-﻿#include <MmdNovel/message/message_layer_impl.h>
+﻿#include <MmdNovel/message/message_text.h>
 namespace kag {
   namespace message {
 
