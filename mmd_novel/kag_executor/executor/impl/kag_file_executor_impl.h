@@ -32,12 +32,14 @@ namespace kag {
     void EndNoWaitTag(Parser::CommandToken& token);
     void ERTag(Parser::CommandToken& token);
     void FontTTag(Parser::CommandToken& token);
+
     //void GlyphTag(Parser::CommandToken& token);
     //void GraphTag(Parser::CommandToken& token);
     //void HCHTag(Parser::CommandToken& token);
     void IndentTag(Parser::CommandToken& token);
     void LTag(Parser::CommandToken& token);
     void LocateTag(Parser::CommandToken& token);
+
     //void LockLinkTag(Parser::CommandToken& token);
     void NoWaitTag(Parser::CommandToken& token);
     void PTag(Parser::CommandToken& token);
@@ -45,8 +47,10 @@ namespace kag {
     void RTag(Parser::CommandToken& token);
     void ResetFontTag(Parser::CommandToken& token);
     void ResetStyleTag(Parser::CommandToken& token);
+
     //void RubyTag(Parser::CommandToken& token);
     void StyleTag(Parser::CommandToken& token);
+
     //void UnlockLinkTag(Parser::CommandToken& token);
 
     /* 画像関連 */

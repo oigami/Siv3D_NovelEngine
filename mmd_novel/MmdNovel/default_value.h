@@ -14,6 +14,7 @@ namespace kag {
       return Define::default == t;
     }
   }
+
   /// <summary>
   /// kagで使用する各種定数値
   /// </summary>

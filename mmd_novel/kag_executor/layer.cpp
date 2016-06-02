@@ -29,6 +29,7 @@ namespace kag {
       double elapsed(double t, double timeMillisec) const;
 
       Array<Data> data_;
+
       // 親のメモリとEffectの寿命が同じなので生ポインタにする
       // しないとプログラム終了時にSiv3DがEffectを強制解放した時に2重解放が起きてエラーが出る
       Layer* layer_;

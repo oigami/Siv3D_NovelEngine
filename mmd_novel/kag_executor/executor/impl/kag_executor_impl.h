@@ -4,6 +4,7 @@
 
 namespace kag {
   class Executor::Pimpl {
+
     /// <summary>
     /// 内部でthisをキャプチャしてるのでクラスのコピー禁止
     /// <para>std::function&lt;void(Pimpl*)>とする手法があるがとりあえずこのまま</para>

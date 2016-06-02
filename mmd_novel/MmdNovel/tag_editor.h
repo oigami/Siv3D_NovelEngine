@@ -80,6 +80,7 @@ namespace kag {
     This& opacity(int a) { layer_->SetBackgroundOpacity(a); return*this; }
     This& visible(bool visible) { layer_->IsVisible(visible); return *this; }
   private:
+
     //TODO: 未実装
     This& draggable() {}
     This& vertical() {}

@@ -69,8 +69,8 @@ namespace kag {
 
   void Parser::ShowErrorMsg(const Tokenizer::Token & token) const {
     String text = Format(L"構文エラー\n",
-      token.Span().Start(), L"文字目\n syntax error:\n",
-      StringView(token.Span().Str(), token.Span().Length()));
+                         token.Span().Start(), L"文字目\n syntax error:\n",
+                         StringView(token.Span().Str(), token.Span().Length()));
     MessageBox::Show(text);
   }
 

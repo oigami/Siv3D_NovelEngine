@@ -59,7 +59,7 @@ namespace kag {
     }
 
     inline Color ToColor(const SnapShotSpan& span) {
-      //ex) 0x00ff00
+      /* ex) 0x00ff00 */
       if (span.Length() != 8) throw std::runtime_error(span.ToNarrow());
       Color ret;
       int rgb = ToInt16(span);
@@ -167,6 +167,7 @@ namespace kag {
         args.erase(it);
         return c(val);
       }
+
       /// <summary>
       /// 属性の値を指定した関数で型変換して関数に渡す
       /// <para>見つからなかった場合は何もしない</para>

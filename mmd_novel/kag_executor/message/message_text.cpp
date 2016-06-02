@@ -43,7 +43,7 @@ namespace kag {
     }
 
     Optional<Text> TextLine::ByReturn(int width) {
-      // すでに使用している分を引いて使える部分の幅のみで計算する
+      /* すでに使用している分を引いて使える部分の幅のみで計算する */
       auto res = text_.back().text_.ByReturn(width - text_.back().x);
       return{ res };
     }

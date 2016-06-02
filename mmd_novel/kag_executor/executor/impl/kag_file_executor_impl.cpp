@@ -3,6 +3,7 @@ namespace kag {
 
   FileExecutor::Pimpl::Pimpl(const Executor& exe) :executor_(exe) {
     /* メッセージ関連 */
+
     //tag_func_[SnapShotSpan(L"cancelautomode")] = &FileExecutor::CancelAutoModeTag;
     //tag_func_[SnapShotSpan(L"cancelskip")] = &FileExecutor::CancelSkipTag;
     tag_func_[SnapShotSpan(L"ch")] = &Pimpl::CHTag;
@@ -16,12 +17,14 @@ namespace kag {
     tag_func_[SnapShotSpan(L"endnowait")] = &Pimpl::EndNoWaitTag;
     tag_func_[SnapShotSpan(L"er")] = &Pimpl::ERTag;
     tag_func_[SnapShotSpan(L"font")] = &Pimpl::FontTTag;
+
     //tag_func_[SnapShotSpan(L"glyph")] = &Pimpl::GlyphTag;
     //tag_func_[SnapShotSpan(L"graph")] = &Pimpl::GraphTag;
     //tag_func_[SnapShotSpan(L"hch")] = &Pimpl::HCH;
     tag_func_[SnapShotSpan(L"indent")] = &Pimpl::IndentTag;
     tag_func_[SnapShotSpan(L"l")] = &Pimpl::LTag;
     tag_func_[SnapShotSpan(L"locate")] = &Pimpl::LocateTag;
+
     //tag_func_[SnapShotSpan(L"locklink")] = &Pimpl::LockLinkTag;
     tag_func_[SnapShotSpan(L"nowait")] = &Pimpl::NoWaitTag;
     tag_func_[SnapShotSpan(L"p")] = &Pimpl::PTag;
@@ -29,8 +32,10 @@ namespace kag {
     tag_func_[SnapShotSpan(L"r")] = &Pimpl::RTag;
     tag_func_[SnapShotSpan(L"resetfont")] = &Pimpl::ResetFontTag;
     tag_func_[SnapShotSpan(L"resetstyle")] = &Pimpl::ResetStyleTag;
+
     //tag_func_[SnapShotSpan(L"ruby")] = &Pimpl::RubyTag;
     tag_func_[SnapShotSpan(L"style")] = &Pimpl::StyleTag;
+
     //tag_func_[SnapShotSpan(L"unlocklink")] = &Pimpl::UnlockLinkTag;
 
     /* 画像関連 */
@@ -49,24 +54,24 @@ namespace kag {
 
     while (executor_.CommandUpdate()) {
       switch (parser_.nextType()) {
-        case  kag::Parser::Type::Text:
-          executor_.CommandText(parser_.readText());
-          break;
+      case  kag::Parser::Type::Text:
+        executor_.CommandText(parser_.readText());
+        break;
 
-        case  kag::Parser::Type::Command:
-        {
-          auto token = parser_.readCommand();
-          auto func = tag_func_[token.name()];
-          if (func) {
-            (this->*func)(token);
-          } else {
-            throw std::runtime_error(token.name().ToNarrow());
-          }
-          break;
+      case  kag::Parser::Type::Command:
+      {
+        auto token = parser_.readCommand();
+        auto func = tag_func_[token.name()];
+        if (func) {
+          (this->*func)(token);
+        } else {
+          throw std::runtime_error(token.name().ToNarrow());
         }
+        break;
+      }
 
-        case  kag::Parser::Type::EndOfStream:
-          return;
+      case  kag::Parser::Type::EndOfStream:
+        return;
       }
     }
   }
@@ -124,6 +129,7 @@ namespace kag {
 
   void FileExecutor::Pimpl::ImageTag(Parser::CommandToken & token) {
     auto& args = token.arguments();
+
     //executor_.CommandImage(layer.second, page, tex);
     executor_.Command([args = std::move(args), executor = executor_]() mutable{
       using namespace converter;

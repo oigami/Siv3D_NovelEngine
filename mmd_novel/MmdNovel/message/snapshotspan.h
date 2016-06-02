@@ -34,6 +34,7 @@ namespace kag {
         return SnapShotSpan(c_ + start, new_start, new_end);
       }
     }
+
     /// <summary>
     /// 文字列を返す 末尾に\0がないので注意（lengthで長さを判定）
     /// </summary>

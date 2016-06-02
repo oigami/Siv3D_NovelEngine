@@ -47,6 +47,7 @@ namespace kag {
       Color color_;
       Color shadow_color_;
       bool is_shadow_;
+
       //TODO: フォントのサイズに応じて可変にする
       Point shadow_pos = { 5,5 };
       TextFont() :TextFont(Font(), Palette::White) {}
