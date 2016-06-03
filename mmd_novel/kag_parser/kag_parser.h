@@ -2,6 +2,7 @@
 #include <Siv3D.hpp>
 #include "tokenizer.h"
 #include <MmdNovel/default_value.h>
+#include <MmdNovel/layer.h>
 namespace kag {
   enum class FindAttributeResult {
     NotName,

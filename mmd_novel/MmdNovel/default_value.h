@@ -67,21 +67,4 @@ namespace kag {
   };
 
 
-  class LayerPage {
-    friend Value<LayerPage>;
-    constexpr LayerPage(detail::Default) :page(-1) {
-    }
-  public:
-    enum class Type {
-      Fore,
-      Back
-    };
-    constexpr LayerPage(Type type) :page(type == Type::Fore ? Define::fore_page : Define::back_page) {
-    }
-
-    constexpr operator int() const { return page; }
-    int page;
-    static const LayerPage Fore;
-    static const LayerPage Back;
-  };
 }

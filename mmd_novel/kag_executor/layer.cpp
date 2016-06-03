@@ -1,7 +1,8 @@
 ﻿#include <MmdNovel/layer.h>
 
 namespace kag {
-
+  LayerPage const kag::LayerPage::Fore(LayerPage::Type::Fore);
+  LayerPage const kag::LayerPage::Back(LayerPage::Type::Back);
   namespace {
 
     struct MoveEffect : IEffect {

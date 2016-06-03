@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include <Siv3D.hpp>
+#include <MmdNovel/default_value.h>
 namespace kag {
   class Layer;
   using LayerPtr = std::shared_ptr<Layer>;
@@ -45,7 +46,7 @@ namespace kag {
 
   using ScaleEffectData = EasingType::Data<double>;
 
-  class Layer : std::enable_shared_from_this<Layer> {
+  class Layer : s3d::Uncopyable {
     virtual void draw() const = 0;
     virtual void update() {};
 
@@ -108,6 +109,24 @@ namespace kag {
     std::shared_ptr<Pimpl> pimpl_;
   };
 
+  class LayerPage {
+    friend Value<LayerPage>;
+    constexpr LayerPage(detail::Default) :page(-1) {
+    }
+  public:
+    enum class Type {
+      Fore,
+      Back
+    };
+    constexpr LayerPage(Type type) :page(type == Type::Fore ? Define::fore_page : Define::back_page) {
+    }
+
+    constexpr operator int() const { return page; }
+    int page;
+    static const LayerPage Fore;
+    static const LayerPage Back;
+  };
+
   class LayerManagerImpl {
     Array<LayerPtr> list_;
   private:
@@ -128,5 +147,6 @@ namespace kag {
   };
 
   using LayerManager = std::shared_ptr<LayerManagerImpl>;
+
 
 }
