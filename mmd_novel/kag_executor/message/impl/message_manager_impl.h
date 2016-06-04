@@ -3,14 +3,13 @@
 namespace kag {
   class MessageManager::Pimpl {
   public:
-    Pimpl() {
+    Pimpl() :current_page_(LayerPage::Fore) {
       click_key_ = Input::MouseL | Input::KeyEnter;
       is_active_key_ = true;
       resize(2);
-      message_layer_[0][0]->IsVisible(true);
+      message_layer_[0][LayerPage::Fore]->IsVisible(true);
       delay_time_ = 30;
       delay_index_ = 0;
-      current_page_ = 0;
       current_layer_ = 0;
       is_no_wait_ = false;
     }
@@ -27,9 +26,8 @@ namespace kag {
 
     void AllClear() {
       for (auto& i : message_layer_) {
-        for (auto& j : i) {
-          j->Clear();
-        }
+        i[LayerPage::Fore]->Clear();
+        i[LayerPage::Back]->Clear();
       }
     }
 
@@ -113,7 +111,7 @@ namespace kag {
 
     void Draw() const {
       for (auto& i : message_layer_) {
-        i[message_fore_layer]->Draw();
+        i.Draw();
       }
     }
 
@@ -123,7 +121,7 @@ namespace kag {
 
     void SetCurrent(int layer_index, LayerPage type) {
       current_layer_ = layer_index;
-      current_page_ = type == LayerPage::Fore;
+      current_page_ = type;
     }
 
     void SetDelayTime(int delay_time) {
@@ -134,17 +132,17 @@ namespace kag {
       is_no_wait_ = is_no_wait;
     }
 
-    MessageLayer & GetLayer(int index, int page) {
+    MessageLayer & GetLayer(int index, LayerPage page) {
       return message_layer_[index][page];
     }
 
     MessageLayer & Current() { return GetLayer(current_layer_, current_page_); }
 
-    Array<std::array<MessageLayer, 2>>& Layers() { return message_layer_; }
+    Array<PageLayer<MessageLayer>>& Layers() { return message_layer_; }
 
     int CurrentLayerNum() const { return current_layer_; }
 
-    int CurrentPageNum() const { return current_page_; }
+    LayerPage CurrentPage() const { return current_page_; }
 
     void SetClickKey(const KeyCombination & key) {
       click_key_ = key;
@@ -157,7 +155,7 @@ namespace kag {
     void SetLayerManager(LayerManager& manager) {
       layer_manager_ = manager;
       for (auto& i : message_layer_) {
-        layer_manager_->Set(i[Define::fore_page]);
+        layer_manager_->Set(i);
       }
     }
 
@@ -175,7 +173,7 @@ namespace kag {
     /// <summary>
     /// 表が0、裏が1の配列の配列
     /// </summary>
-    Array<std::array<MessageLayer, 2>> message_layer_;
+    Array<PageLayer<MessageLayer>> message_layer_;
     static constexpr int message_fore_layer = 0;
     static constexpr int message_back_layer = 1;
 
@@ -185,9 +183,9 @@ namespace kag {
     int current_layer_;
 
     /// <summary>
-    /// 現在のページを表す 表が0、裏が1
+    /// 現在のページを表す
     /// </summary>
-    int current_page_;
+    LayerPage current_page_;
 
     /// <summary>遅延表示してるテキスト</summary>
     SnapShotSpan delay_text_;

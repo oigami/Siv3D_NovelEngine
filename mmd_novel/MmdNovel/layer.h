@@ -127,8 +127,42 @@ namespace kag {
     static const LayerPage Back;
   };
 
+  template<class Pimpl> class PageLayer {
+  public:
+    PageLayer(std::array<LayerPtr, 2>& l) : layer_(l) {}
+    PageLayer() = default;
+
+    Pimpl& operator[](LayerPage page) {
+      return layer_[page];
+    }
+    const Pimpl& operator[](LayerPage page) const {
+      return layer_[page];
+    }
+    operator PageLayer<LayerPtr>()const {
+      std::array<LayerPtr, 2> ret;
+      for (auto& i : step(2)) {
+        ret[i] = layer_[i];
+      }
+      PageLayer<LayerPtr> tmp(ret);
+      return tmp;
+    }
+    void Update() {
+      for (auto& i : layer_) {
+        i->Update();
+      }
+    }
+
+    void Draw()const {
+      for (auto& i : layer_) {
+        i->Draw();
+      }
+    }
+  private:
+    std::array<Pimpl, 2> layer_;
+  };
+
   class LayerManagerImpl {
-    Array<LayerPtr> list_;
+    Array<PageLayer<LayerPtr>> list_;
   private:
     class DummyLayer : public Layer {
       virtual void draw() {}
@@ -139,11 +173,11 @@ namespace kag {
 
     void Draw() const;
 
-    void Set(const LayerPtr& layer);
+    void Set(const PageLayer<LayerPtr>& layer);
 
-    void Remove(const LayerPtr& layer);
+    void Remove(const PageLayer<LayerPtr>& layer);
 
-    void Update(const LayerPtr& layer);
+    void Update(const PageLayer<LayerPtr>& layer);
   };
 
   using LayerManager = std::shared_ptr<LayerManagerImpl>;

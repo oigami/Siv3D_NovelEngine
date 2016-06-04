@@ -7,8 +7,8 @@ namespace kag {
     ImageManager() :layer_(2) {
       for (auto& i : step(layer_.size())) {
         const short index = static_cast<short>((i + 1) * 10);
-        layer_[i][Define::fore_page]->SetZIndex(index);
-        layer_[i][Define::back_page]->SetZIndex(index);
+        layer_[i][LayerPage::Fore]->SetZIndex(index);
+        layer_[i][LayerPage::Back]->SetZIndex(index);
       }
     }
 
@@ -17,12 +17,12 @@ namespace kag {
     void SetLayerManager(LayerManager& manager) {
       layer_manager_ = manager;
       for (auto& i : layer_) {
-        layer_manager_->Set(i[0]);
+        layer_manager_->Set(i);
       }
     }
   private:
 
     LayerManager layer_manager_;
-    Array<std::array<ImageLayer, 2>> layer_;
+    Array<PageLayer<ImageLayer>> layer_;
   };
 }

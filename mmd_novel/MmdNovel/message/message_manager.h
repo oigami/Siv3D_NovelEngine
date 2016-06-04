@@ -92,12 +92,9 @@ namespace kag {
     /// メッセージレイヤを返す
     /// </summary>
     /// <param name="index">レイヤ番号</param>
-    /// <param name="page">
-    /// <para>0 : 表</para>
-    /// <para>1 : 裏</para>
-    /// </param>
+    /// <param name="page"> ページ番号 </param>
     /// <returns></returns>
-    MessageLayer& GetLayer(int index, int page);
+    MessageLayer& GetLayer(int index, LayerPage page);
 
     /// <summary>
     /// カレントレイヤを返す
@@ -115,7 +112,7 @@ namespace kag {
     /// 現在の画面（裏 か 表）を返す
     /// </summary>
     /// <returns></returns>
-    int CurrentPageNum() const;
+    LayerPage CurrentPage() const;
 
     /// <summary>
     /// クリックに対応するキーを設定する

@@ -65,7 +65,7 @@ namespace kag {
     pimpl_->SetNoWaitText(is_no_wait);
   }
 
-  MessageLayer & MessageManager::GetLayer(int index, int page) {
+  MessageLayer & MessageManager::GetLayer(int index, LayerPage page) {
     return pimpl_->GetLayer(index, page);
   }
 
@@ -74,7 +74,7 @@ namespace kag {
 
   int MessageManager::CurrentLayerNum() const { return pimpl_->CurrentLayerNum(); }
 
-  int MessageManager::CurrentPageNum() const { return pimpl_->CurrentPageNum(); }
+  LayerPage MessageManager::CurrentPage() const { return pimpl_->CurrentPage(); }
 
   void MessageManager::SetClickKey(const KeyCombination & key) {
     pimpl_->SetClickKey(key);

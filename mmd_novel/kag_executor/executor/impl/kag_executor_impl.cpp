@@ -165,7 +165,7 @@ namespace kag {
   void Executor::Pimpl::CommandPosition(Value<int> layer, const Value<LayerPage>& page, const CommandFunc<PositionCommandEditor>& f) {
     command_.push([layer, page, f, this]() {
       const int new_layer = (layer == Define::default ? message_manager_.CurrentLayerNum() : layer());
-      const int l_page = (page == Define::default ? message_manager_.CurrentPageNum() : page());
+      const LayerPage l_page = (page == Define::default ? message_manager_.CurrentPage() : page());
       PositionCommandEditor editor(message_manager_.GetLayer(new_layer, l_page));
       f(editor);
       editor.Commit();

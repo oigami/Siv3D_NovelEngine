@@ -129,33 +129,39 @@ namespace kag {
 
   void LayerManagerImpl::Update() {
     for (auto& i : list_) {
-      i->Update();
+      i.Update();
     }
   }
   void LayerManagerImpl::Draw() const {
     for (auto& i : list_) {
-      i->Draw();
+      i.Draw();
     }
   }
-  void LayerManagerImpl::Set(const LayerPtr & layer) {
+  namespace {
+    auto comp = [](const PageLayer<LayerPtr>& a, const PageLayer<LayerPtr>& b) {
+      return a[LayerPage::Fore] < b[LayerPage::Fore];
+    };
+  }
+  void LayerManagerImpl::Set(const PageLayer<LayerPtr> & layer) {
     auto b = list_.begin();
-    auto it = std::lower_bound(b, list_.end(), layer);
+    auto it = std::lower_bound(b, list_.end(), layer, comp);
     if (b != it) --it;
     list_.insert(it, layer);
   }
-  void LayerManagerImpl::Remove(const LayerPtr & layer) {
+  void LayerManagerImpl::Remove(const PageLayer<LayerPtr> & layer) {
     auto e = list_.end();
-    auto it = std::equal_range(list_.begin(), e, layer);
+    auto it = std::equal_range(list_.begin(), e, layer, comp);
 
     while (it.first < it.second) {
-      if (*it.first == layer) {
+      if ((*it.first)[LayerPage::Fore] == layer[LayerPage::Fore]) {
         list_.erase(it.first);
         break;
       }
       ++it.first;
     }
   }
-  void LayerManagerImpl::Update(const LayerPtr & layer) {
+
+  void LayerManagerImpl::Update(const PageLayer<LayerPtr> & layer) {
     Remove(layer);
     Set(layer);
   }
