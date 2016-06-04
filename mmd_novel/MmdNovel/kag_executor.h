@@ -20,7 +20,7 @@ namespace kag {
       if (layer_num.first == LayerType::Message) {
         return messageManager().GetLayer(layer_num.second, page);
       } else {
-        return imageManager().GetLayer(layer_num.second, page);
+        return imageManager()->GetLayer(layer_num.second, page);
       }
     }
     MessageManager messageManager();

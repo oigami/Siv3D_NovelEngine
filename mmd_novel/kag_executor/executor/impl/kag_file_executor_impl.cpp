@@ -137,7 +137,7 @@ namespace kag {
       assert(layer.first == LayerType::Foreground);
 
       LayerPage page = args.ValOrDefaultTo(L"page", ToPage, LayerPage::Fore);
-      auto img_layer = executor.imageManager().GetLayer(layer.second, page);
+      auto img_layer = executor.imageManager()->GetLayer(layer.second, page);
       img_layer->SetTex(Texture(args.find_or_throw(L"storage").ToStr()));
 
       args.ValTo(L"left", ToInt10, img_layer.bind(&Layer::SetPositionLeft));

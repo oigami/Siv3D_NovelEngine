@@ -126,13 +126,44 @@ namespace kag {
     static const LayerPage Fore;
     static const LayerPage Back;
   };
+
+  struct TransUniversalData {
+    int time_millisec;
+
+    // ルール画像（グレースケール)
+    Texture rule_tex;
+
+    // あいまい領域値
+    int vague;
+  };
+
+  struct TransScrollData {
+    enum class Stay {
+      StayFore, StayBack, NoStay
+    };
+    enum class From {
+      Left, Top, Right, Bottom
+    };
+
+    int time_millisec;
+
+    // 裏ページが現れる方向
+    From from;
+
+    // 表ページの挙動
+    Stay stay;
+
+  };
+
   namespace detail {
     void PageLayerUppdate(const LayerPtr& fore_layer, const LayerPtr& back_layer);
-    void PageLayerDraw(const LayerPtr& fore_layer, const LayerPtr& back_layer);
+    void PageLayerDraw(Effect effect, const LayerPtr& fore_layer, const LayerPtr& back_layer);
+    void PageLayerTrans(int time_millisec, Effect &effect, const LayerPtr& fore_layer, const LayerPtr& back_layer);
   }
+
   template<class Pimpl> class PageLayer {
   public:
-    PageLayer(std::array<LayerPtr, 2>& l) : layer_(l) {}
+    PageLayer(std::array<LayerPtr, 2>& l, Effect ef) : layer_(l), effect(ef) {}
     PageLayer() = default;
 
     Pimpl& operator[](LayerPage page) {
@@ -146,18 +177,35 @@ namespace kag {
       for (auto& i : step(2)) {
         ret[i] = layer_[i];
       }
-      PageLayer<LayerPtr> tmp(ret);
+      PageLayer<LayerPtr> tmp(ret, effect);
       return tmp;
     }
     void Update() {
       detail::PageLayerUppdate(layer_[LayerPage::Fore], layer_[LayerPage::Back]);
+      effect.update();
     }
 
     void Draw()const {
-      detail::PageLayerDraw(layer_[LayerPage::Fore], layer_[LayerPage::Back]);
+      detail::PageLayerDraw(effect, layer_[LayerPage::Fore], layer_[LayerPage::Back]);
     }
 
+    void Trans(int time_millisec) {
+      detail::PageLayerTrans(time_millisec, effect, layer_[LayerPage::Fore], layer_[LayerPage::Back]);
+    }
+    void Trans(const TransUniversalData& data);
+    void Trans(const TransScrollData& data);
+
   private:
+
+    // トランジション用データ
+    struct Trans {
+
+      Texture rule_;
+
+    }trans_;
+
+    // トランジション用のエフェクト
+    Effect effect;
     std::array<Pimpl, 2> layer_;
   };
 
@@ -181,6 +229,5 @@ namespace kag {
   };
 
   using LayerManager = std::shared_ptr<LayerManagerImpl>;
-
 
 }

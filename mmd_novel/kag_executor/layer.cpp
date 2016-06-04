@@ -172,8 +172,63 @@ namespace kag {
       fore_layer->Update();
     }
 
-    void PageLayerDraw(const LayerPtr& fore_layer, const LayerPtr& back_layer) {
-      fore_layer->Draw();
+    RenderTexture tex;
+    void PageLayerDraw(Effect effect, const LayerPtr& fore_layer, const LayerPtr& back_layer) {
+      if (effect.num_effects) {
+        tex.clear(ColorF(0, 0, 0, 0));
+        decltype(auto) def = Graphics2D::GetRenderTarget();
+        Graphics2D::SetRenderTarget(tex);
+        /* 表画面をそのまま出力 */
+        Graphics2D::SetBlendState(BlendState::Opaque);
+        fore_layer->Draw();
+        constexpr BlendState blend(true,
+                                   /* カラーはアルファに応じて使用 */
+                                   Blend::SrcAlpha, Blend::DestAlpha, BlendOp::Add,
+                                   /* アルファは両方をそのまま使用 */
+                                   Blend::One, Blend::One, BlendOp::Add);
+        Graphics2D::SetBlendState(blend);
+
+        back_layer->Draw();
+        Graphics2D::SetBlendState(BlendState::Default);
+        Graphics2D::SetRenderTarget(Graphics::GetSwapChainTexture());
+        Rect(0, 0, Window::Size())(tex).draw();
+      } else {
+        fore_layer->Draw();
+      }
+    }
+    struct TransEffect : IEffect {
+      TransEffect(int time_millisec, Layer* fore, Layer* back)
+        :time_millisec_(time_millisec), fore_layer_(fore), back_layer_(back) {
+      }
+
+      bool update(double t) {
+        t *= 1000;
+        double s = elapsed(t);
+        int opacity = EaseIn(0, 255, Easing::Linear, s);
+
+        back_layer_->SetOpacity(opacity);
+        fore_layer_->SetOpacity(255 - opacity);
+        if (opacity == 255) {
+          fore_layer_->SetOpacity(opacity);
+          return false;
+        }
+        return true;
+      }
+
+      double elapsed(double time_millisec) const {
+        return Min<double>(time_millisec, time_millisec_) / time_millisec_;
+      }
+
+      int time_millisec_;
+      Layer *fore_layer_, *back_layer_;
+    };
+
+    void PageLayerTrans(int time_millisec, Effect & effect, const LayerPtr & fore_layer, const LayerPtr & back_layer) {
+      decltype(auto) def = Graphics2D::GetRenderTarget();
+      auto f = def.format;
+      tex = RenderTexture{ Window::Size(),f };
+      effect.add<TransEffect>(time_millisec, fore_layer.get(), back_layer.get());
+      effect.update();
     }
 
   }
