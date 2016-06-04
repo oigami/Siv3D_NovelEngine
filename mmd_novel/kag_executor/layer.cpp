@@ -165,4 +165,16 @@ namespace kag {
     Remove(layer);
     Set(layer);
   }
+
+  namespace detail {
+
+    void PageLayerUppdate(const LayerPtr& fore_layer, const LayerPtr& back_layer) {
+      fore_layer->Update();
+    }
+
+    void PageLayerDraw(const LayerPtr& fore_layer, const LayerPtr& back_layer) {
+      fore_layer->Draw();
+    }
+
+  }
 }

@@ -126,7 +126,10 @@ namespace kag {
     static const LayerPage Fore;
     static const LayerPage Back;
   };
-
+  namespace detail {
+    void PageLayerUppdate(const LayerPtr& fore_layer, const LayerPtr& back_layer);
+    void PageLayerDraw(const LayerPtr& fore_layer, const LayerPtr& back_layer);
+  }
   template<class Pimpl> class PageLayer {
   public:
     PageLayer(std::array<LayerPtr, 2>& l) : layer_(l) {}
@@ -147,16 +150,13 @@ namespace kag {
       return tmp;
     }
     void Update() {
-      for (auto& i : layer_) {
-        i->Update();
-      }
+      detail::PageLayerUppdate(layer_[LayerPage::Fore], layer_[LayerPage::Back]);
     }
 
     void Draw()const {
-      for (auto& i : layer_) {
-        i->Draw();
-      }
+      detail::PageLayerDraw(layer_[LayerPage::Fore], layer_[LayerPage::Back]);
     }
+
   private:
     std::array<Pimpl, 2> layer_;
   };
