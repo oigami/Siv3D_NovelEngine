@@ -45,18 +45,26 @@ namespace kag {
   using MoveEffectData = EasingType::Data<Vec2>;
 
   using ScaleEffectData = EasingType::Data<double>;
+  class ITransEffect;
 
   class Layer : s3d::Uncopyable {
-    virtual void draw() const = 0;
     virtual void update() {};
 
   public:
+
+    /// <summary>
+    /// 描画処理
+    /// </summary>
+    /// <remarks>トランジションはこちらのdrawを呼ぶ</remarks>
+    virtual void draw() const = 0;
+
     virtual ~Layer() = default;
+
     Layer();
 
     void Update();
 
-    void Draw() const;
+    void DrawPhase() const;
     void SetOpacity(int opacity);
     void SetPositionLeft(int left);
     void SetPositionTop(int top);
@@ -81,7 +89,13 @@ namespace kag {
     const Rect& position()const { return position_; }
     const uint8& opacity()const { return opacity_; }
 
+    void AddTrans(std::shared_ptr<ITransEffect> trans);
+
   private:
+
+    // トランジション用のエフェクト
+    std::shared_ptr<ITransEffect> trans_effect;
+
     Effect effect;
     Size normal_size_;
     Rect position_;
@@ -154,16 +168,46 @@ namespace kag {
     Stay stay;
 
   };
+  class ITransEffect {
+
+    /// <summary>
+    /// 更新処理
+    /// </summary>
+    /// <param name="t"> 現在の裏画面の不透明度 </param>
+    virtual void update(int opacity) = 0;
+
+    virtual void draw()const = 0;
+  public:
+
+    ITransEffect(int time_millisec, Layer* fore, Layer* back)
+      : fore_(fore), back_(back), t(0, 255, Easing::Linear, time_millisec) {
+      t.start();
+    }
+
+    bool Update() {
+      int opacity = static_cast<int>(t.easeIn());
+      update(opacity);
+      return opacity != 255;
+    }
+    void Draw() const {
+      draw();
+    }
+
+  protected:
+    Layer *fore_, *back_;
+
+  private:
+    EasingController<double> t;
+
+  };
 
   namespace detail {
-    void PageLayerUppdate(const LayerPtr& fore_layer, const LayerPtr& back_layer);
-    void PageLayerDraw(Effect effect, const LayerPtr& fore_layer, const LayerPtr& back_layer);
-    void PageLayerTrans(int time_millisec, Effect &effect, const LayerPtr& fore_layer, const LayerPtr& back_layer);
+    void PageLayerTrans(int time_millisec, const LayerPtr& fore_layer, const LayerPtr& back_layer);
   }
 
   template<class Pimpl> class PageLayer {
   public:
-    PageLayer(std::array<LayerPtr, 2>& l, Effect ef) : layer_(l), effect(ef) {}
+    PageLayer(std::array<LayerPtr, 2>& l) : layer_(l) {}
     PageLayer() = default;
 
     Pimpl& operator[](LayerPage page) {
@@ -177,35 +221,27 @@ namespace kag {
       for (auto& i : step(2)) {
         ret[i] = layer_[i];
       }
-      PageLayer<LayerPtr> tmp(ret, effect);
+      PageLayer<LayerPtr> tmp(ret);
       return tmp;
     }
+
     void Update() {
-      detail::PageLayerUppdate(layer_[LayerPage::Fore], layer_[LayerPage::Back]);
-      effect.update();
+      layer_[LayerPage::Fore]->Update();
     }
 
     void Draw()const {
-      detail::PageLayerDraw(effect, layer_[LayerPage::Fore], layer_[LayerPage::Back]);
+      layer_[LayerPage::Fore]->DrawPhase();
     }
 
     void Trans(int time_millisec) {
-      detail::PageLayerTrans(time_millisec, effect, layer_[LayerPage::Fore], layer_[LayerPage::Back]);
+      detail::PageLayerTrans(time_millisec, layer_[LayerPage::Fore], layer_[LayerPage::Back]);
     }
     void Trans(const TransUniversalData& data);
     void Trans(const TransScrollData& data);
 
   private:
 
-    // トランジション用データ
-    struct Trans {
 
-      Texture rule_;
-
-    }trans_;
-
-    // トランジション用のエフェクト
-    Effect effect;
     std::array<Pimpl, 2> layer_;
   };
 

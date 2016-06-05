@@ -104,11 +104,19 @@ namespace kag {
 
   void Layer::Update() {
     effect.update();
+    if (trans_effect) {
+      if (trans_effect->Update() == false)
+        trans_effect.reset();
+    }
     update();
   }
 
-  void Layer::Draw() const {
-    if (visible_) draw();
+  void Layer::DrawPhase() const {
+    if (trans_effect) {
+      trans_effect->Draw();
+    } else if (visible_) {
+      draw();
+    }
   }
 
   void Layer::SetOpacity(int opacity) { opacity_ = static_cast<uint8>(opacity); }
@@ -126,6 +134,11 @@ namespace kag {
   void Layer::MoveEffect(const MoveEffectData::Array & data) { effect.add<kag::MoveEffect>(this, data); }
   void Layer::ScaleEffect(const ScaleEffectData& data) { ScaleEffect(Array<ScaleEffect::Data>(1, data)); }
   void Layer::ScaleEffect(const ScaleEffectData::Array& data) { effect.add<kag::ScaleEffect>(this, data); }
+
+  void Layer::AddTrans(std::shared_ptr<ITransEffect> trans) {
+    trans_effect = trans;
+    trans->Update();
+  }
 
   void LayerManagerImpl::Update() {
     for (auto& i : list_) {
@@ -168,67 +181,42 @@ namespace kag {
 
   namespace detail {
 
-    void PageLayerUppdate(const LayerPtr& fore_layer, const LayerPtr& back_layer) {
-      fore_layer->Update();
-    }
-
     RenderTexture tex;
-    void PageLayerDraw(Effect effect, const LayerPtr& fore_layer, const LayerPtr& back_layer) {
-      if (effect.num_effects) {
-        tex.clear(ColorF(0, 0, 0, 0));
-        decltype(auto) def = Graphics2D::GetRenderTarget();
-        Graphics2D::SetRenderTarget(tex);
-        /* 表画面をそのまま出力 */
-        Graphics2D::SetBlendState(BlendState::Opaque);
-        fore_layer->Draw();
-        constexpr BlendState blend(true,
-                                   /* カラーはアルファに応じて使用 */
-                                   Blend::SrcAlpha, Blend::DestAlpha, BlendOp::Add,
-                                   /* アルファは両方をそのまま使用 */
-                                   Blend::One, Blend::One, BlendOp::Add);
-        Graphics2D::SetBlendState(blend);
 
-        back_layer->Draw();
-        Graphics2D::SetBlendState(BlendState::Default);
-        Graphics2D::SetRenderTarget(Graphics::GetSwapChainTexture());
-        Rect(0, 0, Window::Size())(tex).draw();
-      } else {
-        fore_layer->Draw();
-      }
-    }
-    struct TransEffect : IEffect {
-      TransEffect(int time_millisec, Layer* fore, Layer* back)
-        :time_millisec_(time_millisec), fore_layer_(fore), back_layer_(back) {
-      }
-
-      bool update(double t) {
-        t *= 1000;
-        double s = elapsed(t);
-        int opacity = EaseIn(0, 255, Easing::Linear, s);
-
-        back_layer_->SetOpacity(opacity);
-        fore_layer_->SetOpacity(255 - opacity);
-        if (opacity == 255) {
-          fore_layer_->SetOpacity(opacity);
-          return false;
+    void PageLayerTrans(int time_millisec, const LayerPtr & fore_layer, const LayerPtr & back_layer) {
+      struct Trans : ITransEffect {
+        Trans(int time_millisec, Layer* fore, Layer* back)
+          :ITransEffect(time_millisec, fore, back) {
         }
-        return true;
-      }
+        void update(int opacity) {
+          fore_->SetOpacity(255 - opacity);
+          back_->SetOpacity(opacity);
+        }
+        void draw()const {
+          tex.clear(ColorF(0, 0, 0, 0));
+          decltype(auto) def = Graphics2D::GetRenderTarget();
+          Graphics2D::SetRenderTarget(tex);
+          /* 表画面をそのまま出力 */
+          Graphics2D::SetBlendState(BlendState::Opaque);
+          fore_->draw();
+          constexpr BlendState blend(true,
+                                     /* カラーはアルファに応じて使用 */
+                                     Blend::SrcAlpha, Blend::DestAlpha, BlendOp::Add,
+                                     /* アルファは両方をそのまま使用 */
+                                     Blend::One, Blend::One, BlendOp::Add);
+          Graphics2D::SetBlendState(blend);
 
-      double elapsed(double time_millisec) const {
-        return Min<double>(time_millisec, time_millisec_) / time_millisec_;
-      }
-
-      int time_millisec_;
-      Layer *fore_layer_, *back_layer_;
-    };
-
-    void PageLayerTrans(int time_millisec, Effect & effect, const LayerPtr & fore_layer, const LayerPtr & back_layer) {
+          back_->draw();
+          Graphics2D::SetBlendState(BlendState::Default);
+          Graphics2D::SetRenderTarget(Graphics::GetSwapChainTexture());
+          Rect(0, 0, Window::Size())(tex).draw();
+        }
+      };
       decltype(auto) def = Graphics2D::GetRenderTarget();
       auto f = def.format;
       tex = RenderTexture{ Window::Size(),f };
-      effect.add<TransEffect>(time_millisec, fore_layer.get(), back_layer.get());
-      effect.update();
+      auto ptr = std::make_shared<Trans>(time_millisec, fore_layer.get(), back_layer.get());
+      fore_layer->AddTrans(ptr);
     }
 
   }
