@@ -236,8 +236,8 @@ namespace kag {
         Texture().draw();
 
         constexpr BlendState blend(true,
-          Blend::One, Blend::Zero, BlendOp::Add,
-          Blend::One, Blend::Zero, BlendOp::Add);
+                                   Blend::One, Blend::Zero, BlendOp::Add,
+                                   Blend::One, Blend::Zero, BlendOp::Add);
 
         Graphics2D::SetBlendState(blend);
         layer->draw();
@@ -280,10 +280,10 @@ namespace kag {
           Graphics2D::SetBlendState(BlendState::Opaque);
           fore_->draw();
           constexpr BlendState blend(true,
-            /* カラーはアルファに応じて使用 */
-            Blend::SrcAlpha, Blend::DestAlpha, BlendOp::Add,
-            /* アルファは両方をそのまま使用 */
-            Blend::One, Blend::One, BlendOp::Add);
+                                     /* カラーはアルファに応じて使用 */
+                                     Blend::SrcAlpha, Blend::DestAlpha, BlendOp::Add,
+                                     /* アルファは両方をそのまま使用 */
+                                     Blend::One, Blend::One, BlendOp::Add);
           Graphics2D::SetBlendState(blend);
 
           back_->draw();
@@ -300,4 +300,20 @@ namespace kag {
     }
 
   }
+
+  ITransEffect::ITransEffect(int time_millisec, Layer * fore, Layer * back)
+    : fore_(fore), back_(back), t(0.0, 1.0, Easing::Linear, time_millisec) {
+    t.start();
+  }
+
+  bool ITransEffect::Update() {
+    double opacity = t.easeIn();
+    update(opacity);
+    return !t.isEnd();
+  }
+
+  void ITransEffect::Draw() const {
+    draw();
+  }
+
 }

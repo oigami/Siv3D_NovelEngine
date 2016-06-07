@@ -177,23 +177,17 @@ namespace kag {
     virtual void update(double opacity) = 0;
 
     virtual void draw()const = 0;
+
   public:
 
-    ITransEffect(int time_millisec, Layer* fore, Layer* back)
-      : fore_(fore), back_(back), t(0.0, 1.0, Easing::Linear, time_millisec) {
-      t.start();
-    }
+    ITransEffect(int time_millisec, Layer* fore, Layer* back);
 
-    bool Update() {
-      double opacity = t.easeIn();
-      update(opacity);
-      return !t.isEnd();
-    }
-    void Draw() const {
-      draw();
-    }
+    bool Update();
+
+    void Draw() const;
 
   protected:
+
     Layer *fore_, *back_;
 
   private:

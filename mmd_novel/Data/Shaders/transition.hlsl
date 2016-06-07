@@ -14,7 +14,7 @@ Texture2D texture1 : register(t1);
 Texture2D texture2 : register(t2);
 
 float4 PS(VS_OUTPUT input) : SV_Target{
-  const float alpha = rule_tex.Sample(sampler0, input.tex).a;
+  const float alpha = rule_tex.Sample(sampler0, input.tex).r;
   const float fore_alpha = smoothstep(g_range.x, g_range.y, alpha);
   const float back_alpha = 1.0 - fore_alpha;
 

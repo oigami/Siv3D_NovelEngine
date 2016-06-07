@@ -29,11 +29,7 @@ void Main() {
       img_layer.Back()->SetOpacity(255);
       kag::TransUniversalData data;
       data.time_millisec = 9000;
-      Image img(L"Data/rule1080p/002.png");
-      for (auto& i : img) {
-        i.a = i.g;
-      }
-      Texture rule(img);
+      Texture rule(L"Data/rule1080p/002.png");
       data.rule_tex = rule;
       img_layer.Trans(data);
 
