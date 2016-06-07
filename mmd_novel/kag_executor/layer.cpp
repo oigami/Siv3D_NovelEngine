@@ -181,40 +181,33 @@ namespace kag {
 
   namespace detail {
 
-    RenderTexture tex;
-
-    struct Trans : ITransEffect {
+    struct Transition {
     public:
-      Trans() = default;
-
-      Trans(int time_millisec, Layer* fore, Layer* back, Texture rule)
-        :ITransEffect(time_millisec, fore, back), rule_(rule),
-        fore_tex_(Window::Size(), Graphics2D::GetRenderTarget().format),
-        back_tex_(Window::Size(), Graphics2D::GetRenderTarget().format) {
+      Transition() {
+        Transition::Init();
       }
 
-      void update(double opacity) {
+      Transition(Texture rule) : rule_(rule),
+        fore_tex_(Window::Size(), Graphics2D::GetRenderTarget().format),
+        back_tex_(Window::Size(), Graphics2D::GetRenderTarget().format) {
+        Transition::Init();
+      }
 
-        constant->x = static_cast<float>(opacity);
-        constant->y = static_cast<float>(opacity);
+      void update(double mini, double maxi, Layer* fore, Layer* back) {
 
-        draw(fore_tex_, fore_);
+        constant->x = static_cast<float>(mini);
+        constant->y = static_cast<float>(maxi);
 
-        draw(back_tex_, back_);
+        draw(fore_tex_, fore);
+
+        draw(back_tex_, back);
 
         Graphics2D::SetBlendState(BlendState::Default);
         Graphics2D::SetRenderTarget(Graphics::GetSwapChainTexture());
 
       }
 
-
-      static void Init() {
-        rule_shader = PixelShader(L"Data/Shaders/transition.hlsl");
-      }
-
-    private:
-
-      void draw()const {
+      void Draw(Color color)const {
 
         Graphics2D::SetBlendState(BlendState::Default);
         Graphics2D::SetRenderTarget(Graphics::GetSwapChainTexture());
@@ -223,9 +216,18 @@ namespace kag {
         Graphics2D::SetConstant(ShaderStage::Pixel, 1, constant);
         Graphics2D::SetTexture(ShaderStage::Pixel, 1, fore_tex_);
         Graphics2D::SetTexture(ShaderStage::Pixel, 2, back_tex_);
-        rule_.resize(Window::Size()).draw();
+        rule_.resize(Window::Size()).draw(color);
         Graphics2D::EndPS();
       }
+
+      static void Init() {
+        if (rule_shader.isEmpty())
+          rule_shader = PixelShader(L"Data/Shaders/transition.hlsl");
+      }
+
+    private:
+
+
 
       void draw(RenderTexture& tex, Layer *layer) {
         tex.clear(Color(0, 0, 0, 0));
@@ -251,51 +253,59 @@ namespace kag {
       static PixelShader rule_shader;
 
     };
+    PixelShader Transition::rule_shader;
 
-    PixelShader Trans::rule_shader;
+    struct RuleTrans : ITransEffect {
+    public:
+      RuleTrans() = default;
+
+      RuleTrans(int time_millisec, Layer* fore, Layer* back, Texture rule)
+        :ITransEffect(time_millisec, fore, back), trans(rule) {
+      }
+
+      void update(double opacity) {
+        trans.update(opacity, opacity, fore_, back_);
+      }
+
+    private:
+
+      void draw() const {
+        trans.Draw(Palette::White);
+      }
+
+      Transition trans;
+    };
+
+    struct CrossFadeTrans : ITransEffect {
+    public:
+      CrossFadeTrans() = default;
+
+      CrossFadeTrans(int time_millisec, Layer* fore, Layer* back)
+        :ITransEffect(time_millisec, fore, back), trans(Texture(Image(1, 1, Color(255, 0, 0, 255)))) {
+      }
+
+      void update(double opacity) {
+        opacity_ = opacity;
+        trans.update(0, 1, fore_, back_);
+      }
+
+    private:
+
+      void draw()const {
+        trans.Draw(ColorF(1, 1, 1, opacity_));
+      }
+
+      double opacity_;
+      Transition trans;
+    };
 
     void PageLayerTrans(const TransUniversalData& data, const LayerPtr& fore_layer, const LayerPtr& back_layer) {
-      Trans::Init();
-      decltype(auto) def = Graphics2D::GetRenderTarget();
-      auto f = def.format;
-      tex = RenderTexture{ Window::Size(), f };
-      auto ptr = std::make_shared<Trans>(data.time_millisec, fore_layer.get(), back_layer.get(), data.rule_tex);
+      auto ptr = std::make_shared<RuleTrans>(data.time_millisec, fore_layer.get(), back_layer.get(), data.rule_tex);
       fore_layer->AddTrans(ptr);
     }
 
     void PageLayerTrans(int time_millisec, const LayerPtr & fore_layer, const LayerPtr & back_layer) {
-      struct Trans : ITransEffect {
-        Trans(int time_millisec, Layer* fore, Layer* back)
-          :ITransEffect(time_millisec, fore, back) {
-        }
-        void update(double opacity) {
-          fore_->SetOpacity(255 - opacity * 255);
-          back_->SetOpacity(opacity * 255);
-        }
-        void draw()const {
-          tex.clear(ColorF(0, 0, 0, 0));
-          decltype(auto) def = Graphics2D::GetRenderTarget();
-          Graphics2D::SetRenderTarget(tex);
-          /* 表画面をそのまま出力 */
-          Graphics2D::SetBlendState(BlendState::Opaque);
-          fore_->draw();
-          constexpr BlendState blend(true,
-                                     /* カラーはアルファに応じて使用 */
-                                     Blend::SrcAlpha, Blend::DestAlpha, BlendOp::Add,
-                                     /* アルファは両方をそのまま使用 */
-                                     Blend::One, Blend::One, BlendOp::Add);
-          Graphics2D::SetBlendState(blend);
-
-          back_->draw();
-          Graphics2D::SetBlendState(BlendState::Default);
-          Graphics2D::SetRenderTarget(Graphics::GetSwapChainTexture());
-          Rect(0, 0, Window::Size())(tex).draw();
-        }
-      };
-      decltype(auto) def = Graphics2D::GetRenderTarget();
-      auto f = def.format;
-      tex = RenderTexture{ Window::Size(),f };
-      auto ptr = std::make_shared<Trans>(time_millisec, fore_layer.get(), back_layer.get());
+      auto ptr = std::make_shared<CrossFadeTrans>(time_millisec, fore_layer.get(), back_layer.get());
       fore_layer->AddTrans(ptr);
     }
 
