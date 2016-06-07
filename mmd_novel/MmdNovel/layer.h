@@ -217,6 +217,14 @@ namespace kag {
     const Pimpl& operator[](LayerPage page) const {
       return layer_[page];
     }
+    const Pimpl& Fore() const {
+      return layer_[LayerPage::Fore];
+    }
+
+    const Pimpl& Back() const {
+      return layer_[LayerPage::Back];
+    }
+
     operator PageLayer<LayerPtr>()const {
       std::array<LayerPtr, 2> ret;
       for (auto& i : step(2)) {

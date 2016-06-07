@@ -21,12 +21,12 @@ void Main() {
     if (Input::MouseR.clicked)
       executor.CommandText(L"右クリックテスト");
     if (Input::MouseM.clicked) {
-      auto& img_layer = executor.imageManager()->GetLayer(0);
+      auto img_layer = executor.imageManager()->GetLayer(0);
 
-      img_layer[kag::LayerPage::Back]->SetTex(TextureAsset(L"siv3d-kun"));
-      img_layer[kag::LayerPage::Back]->SetPositionLeft(40);
-      img_layer[kag::LayerPage::Back]->IsVisible(true);
-      img_layer[kag::LayerPage::Back]->SetOpacity(255);
+      img_layer.Back()->SetTex(TextureAsset(L"siv3d-kun"));
+      img_layer.Back()->SetPositionLeft(40);
+      img_layer.Back()->IsVisible(true);
+      img_layer.Back()->SetOpacity(255);
       kag::TransUniversalData data;
       data.time_millisec = 9000;
       Image img(L"Data/rule1080p/002.png");
