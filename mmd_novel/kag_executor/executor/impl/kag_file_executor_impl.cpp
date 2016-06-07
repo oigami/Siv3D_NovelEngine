@@ -194,6 +194,8 @@ namespace kag {
         data.vague = ToInt10(args.find_or_throw(L"vague"));
         data.time_millisec = time_millisec;
         layer.Trans(data);
+      } else if (method == L"crossfade") {
+        layer.Trans(time_millisec);
       } else if (method == L"scroll") {
 
         // TODO:

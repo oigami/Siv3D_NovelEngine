@@ -1,7 +1,7 @@
 ﻿[position layer=message opacity=0]
 [image storage=Data/Siv3D-kun.png layer=0 page=fore left=200]
 [image storage=Data/Siv3D-kun.png layer=0 page=back left=0 visible=true]
-[trans method="universal" rule="Data/rule1080p/020.png" time=1000 layer=0 vague=1]
+[trans method="crossfade" rule="Data/rule1080p/020.png" time=2000 layer=0 vague=1]
 ;[move layer=message0 time=1000 path="(100,100,255)(0,0,0)"]
 @font size=50 
 文[l]
