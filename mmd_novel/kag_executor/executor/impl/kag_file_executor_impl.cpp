@@ -43,6 +43,7 @@ namespace kag {
 
     /* レイヤ関連 */
     tag_func_[L"move"] = &Pimpl::MoveTag;
+    tag_func_[L"trans"] = &Pimpl::TransTag;
   }
 
   void FileExecutor::Pimpl::Load(const FilePath & path) {
@@ -178,6 +179,31 @@ namespace kag {
       }
       layer->MoveEffect(data);
     });
+  }
+
+  void FileExecutor::Pimpl::TransTag(Parser::CommandToken & token) {
+    executor_.Command([executor = executor_, args = std::move(token.arguments())]() mutable {
+      using namespace converter;
+      const auto layer_num = args.ValOrDefaultTo(L"layer", ToLayerNum, std::make_pair(LayerType::Background, 0));
+      const int time_millisec = ToInt10(args.find_or_throw(L"time"));
+      SnapShotSpan method = args.ValOrDefault(L"method", SnapShotSpan(L"universal"));
+      auto layer = executor.GetLayer(layer_num);
+      if (method == L"universal") {
+        TransUniversalData data;
+        data.rule_tex = Texture(args.find_or_throw(L"rule").ToStr());
+        data.vague = ToInt10(args.find_or_throw(L"vague"));
+        data.time_millisec = time_millisec;
+        layer.Trans(data);
+      } else if (method == L"scroll") {
+
+        // TODO:
+        throw std::runtime_error(method.ToNarrow());
+      } else {
+        throw std::runtime_error(method.ToNarrow());
+      }
+
+    });
+
   }
 
   void FileExecutor::Pimpl::NoWaitTag(Parser::CommandToken &) {

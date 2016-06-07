@@ -136,6 +136,10 @@ namespace kag {
       return message_layer_[index][page];
     }
 
+    PageLayer<MessageLayer> & GetLayer(int index) {
+      return message_layer_[index];
+    }
+
     MessageLayer & Current() { return GetLayer(current_layer_, current_page_); }
 
     Array<PageLayer<MessageLayer>>& Layers() { return message_layer_; }

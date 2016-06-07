@@ -4,6 +4,23 @@
 namespace kag {
   Executor::Executor() :pimpl_(std::make_shared<Pimpl>()) {
   }
+  PageLayer<LayerPtr> Executor::GetLayer(std::pair<kag::converter::LayerType, int> layer_num) {
+    using namespace converter;
+    switch (layer_num.first) {
+    case LayerType::Message:
+      return messageManager().GetLayer(layer_num.second);
+    case LayerType::Background:
+      assert(0);
+      throw std::runtime_error("Executor::Getlayer()");
+    case LayerType::Foreground:
+      return imageManager()->GetLayer(layer_num.second);
+    default:
+      break;
+    }
+    if (layer_num.first == LayerType::Message) {
+    } else {
+    }
+  }
   MessageManager Executor::messageManager() {
     return pimpl_->messageManager();
   }

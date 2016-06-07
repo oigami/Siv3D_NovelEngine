@@ -59,6 +59,8 @@ namespace kag {
 
     /* レイヤ関連 */
     void MoveTag(Parser::CommandToken& token);
+    void TransTag(Parser::CommandToken& token);
+
   };
 
 }

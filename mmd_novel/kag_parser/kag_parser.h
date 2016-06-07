@@ -159,6 +159,7 @@ namespace kag {
         }
       }
 
+
       template<class Converter, class T>
       T ValOrDefaultTo(const SnapShotSpan& name, Converter c, T default_val) {
         auto it = args.find(name);
@@ -167,6 +168,10 @@ namespace kag {
         auto val = std::move(it->second);
         args.erase(it);
         return c(val);
+      }
+      template<class T>
+      T ValOrDefault(const SnapShotSpan& name, T default_val) {
+        return ValOrDefaultTo(name, [](auto& v) {return v; }, default_val);
       }
 
       /// <summary>

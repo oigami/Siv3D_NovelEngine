@@ -70,6 +70,10 @@ namespace kag {
   }
 
 
+  PageLayer<MessageLayer>& MessageManager::GetLayer(int index) {
+    return pimpl_->GetLayer(index);
+  }
+
   MessageLayer & MessageManager::Current() { return pimpl_->Current(); }
 
   int MessageManager::CurrentLayerNum() const { return pimpl_->CurrentLayerNum(); }

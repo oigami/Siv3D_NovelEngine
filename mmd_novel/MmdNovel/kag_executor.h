@@ -23,6 +23,8 @@ namespace kag {
         return imageManager()->GetLayer(layer_num.second, page);
       }
     }
+
+    PageLayer<LayerPtr> GetLayer(std::pair<kag::converter::LayerType, int> layer_num);
     MessageManager messageManager();
     ImageManager imageManager();
 

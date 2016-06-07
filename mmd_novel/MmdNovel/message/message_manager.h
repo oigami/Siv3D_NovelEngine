@@ -97,6 +97,13 @@ namespace kag {
     MessageLayer& GetLayer(int index, LayerPage page);
 
     /// <summary>
+    /// メッセージレイヤを返す
+    /// </summary>
+    /// <param name="index">レイヤ番号</param>
+    /// <returns></returns>
+    PageLayer<MessageLayer>& GetLayer(int index);
+
+    /// <summary>
     /// カレントレイヤを返す
     /// </summary>
     /// <returns></returns>
