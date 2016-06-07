@@ -237,7 +237,7 @@ namespace kag {
 
     case KAGTokenType::Comment:
 
-      e_pos = static_cast<int>(str.indexOf(L"\n", e_pos + 1) + 1);
+      e_pos = static_cast<int>(str.indexOf(L"\n", e_pos + 1));
       break;
 
     }
