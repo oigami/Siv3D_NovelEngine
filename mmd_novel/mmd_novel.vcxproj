@@ -49,7 +49,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>$(SIV3D_20160110)\Inc;$(IncludePath)</IncludePath>
+    <IncludePath>$(SIV3D_20160110)\Inc;D:\VisualStudio\gitlab\Siv3d_MMD\Siv3D_MMD\include;$(ProjectDir);$(IncludePath)</IncludePath>
     <LibraryPath>$(SIV3D_20160110)\Lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
