@@ -1,5 +1,5 @@
 ﻿[position layer=message opacity=0]
-[image storage=Data/Siv3D-kun.png layer=0 page=fore left=0]
+[image storage=Data/Siv3D-kun.png layer=0 page=fore left=200]
 [move layer=message0 time=1000 path="(100,100,255)(0,0,0)"]
 @font size=50 
 文[l]

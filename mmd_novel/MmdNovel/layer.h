@@ -174,20 +174,20 @@ namespace kag {
     /// 更新処理
     /// </summary>
     /// <param name="t"> 現在の裏画面の不透明度 </param>
-    virtual void update(int opacity) = 0;
+    virtual void update(double opacity) = 0;
 
     virtual void draw()const = 0;
   public:
 
     ITransEffect(int time_millisec, Layer* fore, Layer* back)
-      : fore_(fore), back_(back), t(0, 255, Easing::Linear, time_millisec) {
+      : fore_(fore), back_(back), t(0.0, 1.0, Easing::Linear, time_millisec) {
       t.start();
     }
 
     bool Update() {
-      int opacity = static_cast<int>(t.easeIn());
+      double opacity = t.easeIn();
       update(opacity);
-      return opacity != 255;
+      return !t.isEnd();
     }
     void Draw() const {
       draw();
@@ -203,6 +203,7 @@ namespace kag {
 
   namespace detail {
     void PageLayerTrans(int time_millisec, const LayerPtr& fore_layer, const LayerPtr& back_layer);
+    void PageLayerTrans(const TransUniversalData& data, const LayerPtr& fore_layer, const LayerPtr& back_layer);
   }
 
   template<class Pimpl> class PageLayer {
@@ -236,7 +237,9 @@ namespace kag {
     void Trans(int time_millisec) {
       detail::PageLayerTrans(time_millisec, layer_[LayerPage::Fore], layer_[LayerPage::Back]);
     }
-    void Trans(const TransUniversalData& data);
+    void Trans(const TransUniversalData& data) {
+      detail::PageLayerTrans(data, layer_[LayerPage::Fore], layer_[LayerPage::Back]);
+    }
     void Trans(const TransScrollData& data);
 
   private:

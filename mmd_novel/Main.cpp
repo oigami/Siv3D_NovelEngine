@@ -2,7 +2,7 @@
 # include <HamFramework.hpp>
 #include <MmdNovel.h>
 void Main() {
-  TextureAsset::Register(L"siv3d-kun", L"Example/siv3d-kun.png");
+  TextureAsset::Register(L"siv3d-kun", L"Data/siv3d-kun.png");
   kag::FileExecutor executor(L"test.txt");
   auto img = executor.imageManager()->GetLayer(0, kag::LayerPage::Fore);
   kag::ScaleEffectData::Array data;
@@ -25,8 +25,17 @@ void Main() {
 
       img_layer[kag::LayerPage::Back]->SetTex(TextureAsset(L"siv3d-kun"));
       img_layer[kag::LayerPage::Back]->SetPositionLeft(40);
-      //img_layer[kag::LayerPage::Back]->IsVisible(true);
-      img_layer.Trans(9000);
+      img_layer[kag::LayerPage::Back]->IsVisible(true);
+      img_layer[kag::LayerPage::Back]->SetOpacity(255);
+      kag::TransUniversalData data;
+      data.time_millisec = 9000;
+      Image img(L"Data/rule1080p/002.png");
+      for (auto& i : img) {
+        i.a = i.g;
+      }
+      Texture rule(img);
+      data.rule_tex = rule;
+      img_layer.Trans(data);
 
       //img->ScaleEffect(data);
     }
