@@ -70,13 +70,15 @@ namespace kag {
   /// <param name="c"></param>
   /// <param name="pos"></param>
   /// <returns></returns>
-  KAGTokenType IsNormalSpecialSymbol(const String& c, int pos) {
+  KAGTokenType IsNormalSpecialSymbol(const String& c, int& pos) {
     switch (c[pos]) {
     case L'[':
       if (c[pos + 1] != L'[') // [[の場合は普通の文字になるのでチェック
         return KAGTokenType::SymbolOpenCommand;
+      pos++;
+      return KAGTokenType::EscapeText;
       break;
-    case '\n':
+    case L'\n':
       return KAGTokenType::SymbolNewLine;
     }
     return KAGTokenType::Text;
@@ -218,6 +220,7 @@ namespace kag {
     case KAGTokenType::SymbolOpenCommand:
       now_tokenize_ = ParseType::CommandBrancket;
       ++e_pos;
+
       break;
 
     case KAGTokenType::SymbolAtMark:
@@ -231,6 +234,8 @@ namespace kag {
       ++e_pos;
       break;
 
+    case KAGTokenType::EscapeText:
+      e_pos++;
     case KAGTokenType::Text:
       while (e_pos < size  && IsNormalSpecialSymbol(str, e_pos) == KAGTokenType::Text) ++e_pos;
       break;

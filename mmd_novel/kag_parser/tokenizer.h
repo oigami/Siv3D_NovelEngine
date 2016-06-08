@@ -9,6 +9,7 @@ namespace kag {
     SymbolNewLine,               /// <summary> \n </summary>
     Identifier,                  /// <summary> 識別子 </summary>
 
+    EscapeText,
     Text,                        /// <summary> テキスト </summary>
     Comment,                     /// <summary> ; </summary>
     SymbolAsterisk,              /// <summary> * </summary>
