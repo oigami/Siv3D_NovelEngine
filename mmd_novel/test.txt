@@ -1,21 +1,106 @@
 ﻿[position layer=message opacity=0]
-[image storage=Data/Siv3D-kun.png layer=0 page=fore left=200]
-[image storage=Data/Siv3D-kun.png layer=0 page=back left=0 visible=true]
-[trans method="crossfade" rule="Data/rule1080p/020.png" time=2000 layer=0 vague=1]
 ;[move layer=message0 time=1000 path="(100,100,255)(0,0,0)"]
-@font size=50 
-文[l]
-@font size=25  face="ＭＳ ゴシック"
+[position layer=message0 visible=true left=20 top=0]
+[position layer="message1" visible=true left=25 top=80]
+[deffont size=36 face="HG行書体" shadow=false][resetfont]
+[current layer="message0"][er]
+[position layer="message1" visible=true left=25 top=80 width =1200 height=540]
+実装したタグの機能紹介[p]
+[current layer="message0"][er]
+[nowait][[current]タグ[p][endnowait]
+[current layer="message1"]
+[deffont size=35 face=メイリオ shadow=false][resetfont]
+文字を描画するカレントレイヤを切り替える。
+[p][er]
+
+
+[current layer="message0"][er]
+[nowait][[locate]タグ[p][endnowait]
+[current layer="message1"]
+[locate x=100 y=100]文字を描画する座標を指定できる。
+[p][er]
+
+[current layer="message0"][er]
+[nowait][[indent]タグ[p][endnowait]
+[current layer="message1"]
+セリフなどで[r]
+？？？「[indent]あいうえお[r]
+かきくけこ」[r][endindent]
+とインデントができる。
+[p][er]
+
+[current layer="message0"][er]
+[nowait][[font]タグ[p][endnowait]
+[current layer="message1"]
+@font size=30  face="ＭＳ ゴシック"
 字のサイズを変更します。
 [r]
 @font face="ＭＳ ゴシック"
 フォントを "ＭＳ ゴシック" に設定しました。[r]
 [nowait]
-@deffont face=HG行書体 size=30
-[style linespacing=40]
-フォントを[locate x=0] "HG行書体" に設定しました。[l][er]
-[endnowait][resetfont]
-？？？「[indent]あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよらりるれろわをん」[endindent][l]
-[position layer=message0 page=fore left=30 top=15 width=400 height=400 frame="" color="0xff1122" marginl=20 margint=40 marginr=20 marginb=40 visible=true]
+@font face=HG行書体 size=25
+[style linespacing=30]
+フォントを"HG行書体" に設定しました。
+[p][er][resetfont]
 
-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+
+
+
+[current layer="message0"][er]
+[nowait][[position]タグ[p][endnowait]
+[current layer="message1"]
+[position layer="message1" visible=true left=100 top=100 width=500 height=500 color="0x88Ff88"]
+ウィンドウのサイズを変えたり、背景色を変えたりできる。
+[p][er]
+[position layer="message1" visible=true left=25 top=80 width =1200 height=780]
+
+[current layer="message0"][er]
+[nowait][[image]タグ[p][endnowait]
+[current layer="message1"]
+[image storage=Data/Siv3D-kun.png layer=0 page=fore left=200 index=0]
+画像を表示する。
+[p][er]
+
+[current layer="message0"][er]
+[nowait][[move]タグ[p][endnowait]
+[current layer="message1"]
+[move layer=0 time=1000 path="(100,100,255)(0,0,0)"]
+レイヤを移動する。
+[p]
+[move layer=message0 time=1000 path="(100,100,255)(0,0,0)"]
+[p][er]
+
+
+[current layer="message0"][er]
+[nowait][[trans]タグ[p][endnowait]
+[current layer="message1"]
+[position layer="message1" visible=true left=25 opacity=0 top=80 color ="0x000000"]
+[image storage=Data/Siv3D-kun.png layer=0 page=back left=600 visible=true]
+[trans method="universal" rule="Data/rule1080p/002.png" time=2000 layer=0 vague=1]
+[p][er]
+
+
+[trans method="universal" rule="Data/rule1080p/004.png" time=2000 layer=0 vague=1]
+[p][er]
+
+
+[trans method="universal" rule="Data/rule1080p/005.png" time=2000 layer=0 vague=1]
+[p][er]
+
+[trans method="universal" rule="Data/rule1080p/067.png" time=2000 layer=0 vague=1]
+[p][er]
+
+[font size=60]
+[current layer=message1 page=back]
+[position layer="message1" page=back visible=true left=25 opacity=0 top=80 color ="0x000000"]
+[font size=120]
+ほめてー!
+[current layer=message1 page=fore]
+文字もできるよ。[p]
+[trans method="universal" rule="Data/rule1080p/029.png" time=2000 layer=message1 vague=1]
+[p][er]
+
+
+[current layer="message0"][er]
+[font size=65]
+[nowait]終わり[endnowait]
