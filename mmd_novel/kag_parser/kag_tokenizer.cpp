@@ -235,9 +235,14 @@ namespace kag {
       break;
 
     case KAGTokenType::EscapeText:
-      e_pos++;
+      e_pos += 2;
     case KAGTokenType::Text:
-      while (e_pos < size  && IsNormalSpecialSymbol(str, e_pos) == KAGTokenType::Text) ++e_pos;
+      type = KAGTokenType::Text;
+      while (e_pos < size) {
+        auto type = IsNormalSpecialSymbol(str, e_pos);
+        if (type != KAGTokenType::Text && type != KAGTokenType::EscapeText)break;
+        ++e_pos;
+      }
       break;
 
     case KAGTokenType::Comment:
