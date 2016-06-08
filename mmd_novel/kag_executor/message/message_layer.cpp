@@ -53,7 +53,7 @@ namespace kag {
 
       void MessageLayerPimpl::AppenNewLine() {
         sum_height_ += text_line_.back().Height();
-        text_line_.emplace_back(sum_height_, message::Text(now_font_));
+        text_line_.emplace_back(sum_height_, TextLine(indent_width_ == InvalidIndent ? 0 : indent_width_, message::Text(now_font_)));
         if (!IsLimitHeihgt()) {
           limit_line_num = static_cast<int>(text_line_.size());
         }

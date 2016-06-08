@@ -277,6 +277,8 @@ namespace kag {
 
       args.ValTo(L"bold", ToBool, [&](bool val) { editor.is_bold(val); });
 
+      args.ValTo(L"shadow", ToBool, [&](bool val) { editor.is_shadow(val); });
+
       args.IfNotEmptyException();
     });
   }
