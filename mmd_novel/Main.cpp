@@ -6,7 +6,8 @@ void Main() {
   kag::FileExecutor executor(L"test.txt");
 
   Camera camera;
-  camera.pos.z -= 40;
+  camera.pos = { 0,12,-22 };
+  camera.lookat = { 0,12,0 };
   Graphics3D::SetCamera(camera);
   while (System::Update()) {
     Circle(Mouse::Pos(), 50).draw({ 255, 0, 0, 127 });

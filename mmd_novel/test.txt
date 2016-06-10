@@ -1,4 +1,5 @@
-﻿[mmd storage="Data/初音ミク/初音ミク.pmd" vmd="Data/初音ミク/初音ミク000L.vmd"]
+﻿[camera pos="(0,12,-22)" lookat="(0,12,0)"]
+[mmd storage="Data/初音ミク/初音ミク.pmd" vmd="Data/初音ミク/初音ミク000L.vmd"]
 [position layer=message opacity=0]
 ;[move layer=message0 time=1000 path="(100,100,255)(0,0,0)"]
 [position layer=message0 visible=true left=20 top=0]
@@ -13,7 +14,6 @@
 [deffont size=35 face=メイリオ shadow=false][resetfont]
 文字を描画するカレントレイヤを切り替える。
 [p][er]
-
 
 [current layer="message0"][er]
 [nowait][[locate]タグ[p][endnowait]

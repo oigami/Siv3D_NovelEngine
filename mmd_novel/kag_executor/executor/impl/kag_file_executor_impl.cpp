@@ -47,6 +47,8 @@ namespace kag {
 
     /* MMD関連 */
     tag_func_[L"mmd"] = &Pimpl::MMDTag;
+    tag_func_[L"camera"] = &Pimpl::CameraTag;
+
   }
 
   void FileExecutor::Pimpl::Load(const FilePath & path) {
@@ -225,6 +227,25 @@ namespace kag {
       args.Val(L"vmd", [&layer](const SnapShotSpan& val) {
         layer->SetVMD(s3d_mmd::VMD(val.ToStr()));
       });
+    });
+  }
+
+  void FileExecutor::Pimpl::CameraTag(Parser::CommandToken & token) {
+    executor_.Command([executor = executor_, args = std::move(token.arguments())]() mutable {
+      Camera camera;
+      args.Val(L"pos", [&camera](const SnapShotSpan& val) {
+        Vec3 pos;
+        if (swscanf(val.Str(), L"(%lf,%lf,%lf)", &pos.x, &pos.y, &pos.z) == 3) {
+          camera.pos = pos;
+        }
+      });
+      args.Val(L"lookat", [&camera](const SnapShotSpan& val) {
+        Vec3 lookat;
+        if (swscanf(val.Str(), L"(%lf,%lf,%lf)", &lookat.x, &lookat.y, &lookat.z) == 3) {
+          camera.lookat = lookat;
+        }
+      });
+      Graphics3D::SetCamera(camera);
     });
   }
 

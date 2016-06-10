@@ -63,7 +63,7 @@ namespace kag {
 
     /* MMD関連 */
     void MMDTag(Parser::CommandToken& token);
-
+    void CameraTag(Parser::CommandToken& token);
 
   };
 

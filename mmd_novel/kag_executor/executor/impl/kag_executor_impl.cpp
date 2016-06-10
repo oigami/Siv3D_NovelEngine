@@ -195,6 +195,7 @@ namespace kag {
   }
 
   void Executor::Pimpl::Draw() {
+    layer_manager_->Sort();
     layer_manager_->Draw();
   }
 }

@@ -267,6 +267,8 @@ namespace kag {
     void Remove(const PageLayer<LayerPtr>& layer);
 
     void Update(const PageLayer<LayerPtr>& layer);
+
+    void Sort();
   };
 
   using LayerManager = std::shared_ptr<LayerManagerImpl>;

@@ -179,6 +179,10 @@ namespace kag {
     Set(layer);
   }
 
+  void LayerManagerImpl::Sort() {
+    std::sort(list_.begin(), list_.end(), comp);
+  }
+
   namespace detail {
 
     struct Transition {
