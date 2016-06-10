@@ -1,76 +1,63 @@
-﻿[camera pos="(0,12,-22)" lookat="(0,12,0)"]
-[mmd storage="Data/初音ミク/初音ミク.pmd" vmd="Data/初音ミク/初音ミク000L.vmd"]
+﻿
 [position layer=message opacity=0]
 ;[move layer=message0 time=1000 path="(100,100,255)(0,0,0)"]
 [position layer=message0 visible=true left=20 top=0]
 [position layer="message1" visible=true left=25 top=80]
 [deffont size=36 face="HG行書体" shadow=false][resetfont]
 [current layer="message0"][er]
-[position layer="message1" visible=true left=25 top=80 width =1200 height=540]
+[position layer="message1" visible=true left=25 top=80 width =980 height=753]
+[position layer="message0" visible=true left=25 top=0 width =800]
 実装したタグの機能紹介[p]
 [current layer="message0"][er]
 [nowait][[current]タグ[p][endnowait]
 [current layer="message1"]
 [deffont size=35 face=メイリオ shadow=false][resetfont]
-文字を描画するカレントレイヤを切り替える。
-[p][er]
+文字を描画するカレントレイヤを切り替える。[p][er]
 
 [current layer="message0"][er]
 [nowait][[locate]タグ[p][endnowait]
 [current layer="message1"]
-[locate x=100 y=100]文字を描画する座標を指定できる。
-[p][er]
+[locate x=100 y=120]文字を描画する座標を指定できる。[p][er]
 
 [current layer="message0"][er]
 [nowait][[indent]タグ[p][endnowait]
 [current layer="message1"]
 セリフなどで[r]
 ？？？「[indent]あいうえお[r]
-かきくけこ」[r][endindent]
-とインデントができる。
-[p][er]
+かきくけこ」[endindent][r]
+とインデントができる。[p][er]
 
 [current layer="message0"][er]
 [nowait][[font]タグ[p][endnowait]
 [current layer="message1"]
 @font size=30  face="ＭＳ ゴシック"
-字のサイズを変更します。
-[r]
+字のサイズを変更します。[r]
 @font face="ＭＳ ゴシック"
 フォントを "ＭＳ ゴシック" に設定しました。[r]
-[nowait]
+
 @font face=HG行書体 size=25
 [style linespacing=30]
-フォントを"HG行書体" に設定しました。
-[p][er][resetfont]
-
-
-
+フォントを"HG行書体" に設定しました。[p][er][resetfont]
 
 [current layer="message0"][er]
 [nowait][[position]タグ[p][endnowait]
 [current layer="message1"]
 [position layer="message1" visible=true left=100 top=100 width=500 height=500 color="0x88Ff88"]
-ウィンドウのサイズを変えたり、背景色を変えたりできる。
-[p][er]
+ウィンドウのサイズを変えたり、背景色を変えたりできる。[p][er]
 [position layer="message1" visible=true left=25 top=80 width =1200 height=780]
 
 [current layer="message0"][er]
 [nowait][[image]タグ[p][endnowait]
 [current layer="message1"]
 [image storage=Data/Siv3D-kun.png layer=0 page=fore left=200 index=0]
-画像を表示する。
-[p][er]
+画像を表示する。[p][er]
 
 [current layer="message0"][er]
 [nowait][[move]タグ[p][endnowait]
 [current layer="message1"]
 [move layer=0 time=1000 path="(100,100,255)(0,0,0)"]
-レイヤを移動する。
-[p]
-[move layer=message0 time=1000 path="(100,100,255)(0,0,0)"]
-[p][er]
-
+レイヤを移動する。[p]
+[move layer=message0 time=1000 path="(100,100,255)(0,0,0)"][p][er]
 
 [current layer="message0"][er]
 [nowait][[trans]タグ[p][endnowait]
@@ -94,14 +81,24 @@
 [font size=60]
 [current layer=message1 page=back]
 [position layer="message1" page=back visible=true left=25 opacity=0 top=80 color ="0x000000"]
-[font size=120]
-ほめてー!
 [current layer=message1 page=fore]
-文字もできるよ。[p]
+文字もできる。[p]
 [trans method="universal" rule="Data/rule1080p/029.png" time=2000 layer=message1 vague=1]
 [p][er]
 
+[image storage="" layer=0]
+[camera pos="(0,12,-22)" lookat="(0,12,0)"]
 
 [current layer="message0"][er]
+[nowait][[mmd]タグ[p][endnowait]
+[current layer="message1"]
+[mmd storage="Data/初音ミク/初音ミク.pmd" vmd="Data/stand4.vmd"]
+MMDを表示する
+[p][er]
+
+[current layer="message0"][er]
+[current layer="message1"]
 [font size=65]
-[nowait]終わり[endnowait]
+終わり(右上の×ボタンで終了してください)
+[mmd vmd="Data/手を振るだけ/手振るだけ_真ん中.vmd"]
+
