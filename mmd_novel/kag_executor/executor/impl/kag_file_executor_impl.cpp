@@ -82,6 +82,10 @@ namespace kag {
     }
   }
 
+  int FileExecutor::Pimpl::NowFileLine() const {
+    return parser_.NowLine();
+  }
+
   /* - - - -  - - -  - - - - -  - - -  - - - - -  - - -  - - - - -  - - -  - - - - -  - - -  -
   タグの実装
   - - - -  - - -  - - - - -  - - -  - - - - -  - - -  - - - - -  - - -  - - - - -  - - -  - */
@@ -220,10 +224,11 @@ namespace kag {
       using namespace converter;
       auto page = args.ValOrDefaultTo(L"page", ToPage, LayerPage::Fore);
       auto layer = executor.mmdLayer()[page];
-      auto file = args.find_or_throw(L"storage");
       auto visible = args.ValOrDefaultTo(L"visible", ToBool, true);
       layer->IsVisible(visible);
-      layer->SetModel(file.ToStr());
+      args.Val(L"storage", [&layer](const SnapShotSpan& val) {
+        layer->SetModel(val.ToStr());
+      });
       args.Val(L"vmd", [&layer](const SnapShotSpan& val) {
         layer->SetVMD(s3d_mmd::VMD(val.ToStr()));
       });

@@ -7,6 +7,7 @@ namespace kag {
     Pimpl(const Executor& exe);
     void Load(const FilePath& path);
     void Update();
+    int NowFileLine() const;
   private:
     Executor executor_;
 

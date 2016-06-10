@@ -7,6 +7,7 @@ namespace kag {
     FileExecutor(const FilePath& filename);
     void Update();
 
+    int NowLine()const;
   private:
 
     class Pimpl;

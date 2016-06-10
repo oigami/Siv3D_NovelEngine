@@ -33,6 +33,7 @@ namespace kag {
   }
 
   void Tokenizer::Reset() {
+    now_line_ = 0;
     now_pos_ = -1;
     now_tokenize_ = ParseType::Normal;
     ReadNormal(KAGTokenType::SymbolNewLine);
@@ -88,7 +89,7 @@ namespace kag {
     Token token = std::move(next_token_);
     int size = static_cast<int>(str_->length);
     if (now_pos_ >= size) {
-      next_token_ = Token({ str_ , size ,size }, KAGTokenType::EndOfStream);
+      next_token_ = Token({ str_ , size ,size, now_line_ }, KAGTokenType::EndOfStream);
       return token;
     }
     switch (now_tokenize_) {
@@ -104,7 +105,7 @@ namespace kag {
       break;
     case ParseType::Label2:
       now_tokenize_ = ParseType::Label3;
-      next_token_ = Token({ L"|",now_pos_,now_pos_ + 1 }, KAGTokenType::SymbolVerticalLine);
+      next_token_ = Token(SnapShotSpan{ L"|", now_pos_, now_pos_ + 1,now_line_ }, KAGTokenType::SymbolVerticalLine);
       ++now_pos_;
       break;
     case ParseType::Label3:
@@ -144,19 +145,20 @@ namespace kag {
     const auto type = IsCommandSpecialSymbol(s_pos);
     switch (type) {
     case KAGTokenType::SymbolNewLine:
+      now_line_++;
     case KAGTokenType::SymbolCloseCommand:
       now_tokenize_ = ParseType::Normal;
-      next_token_ = Token({ str_, s_pos, ++e_pos }, KAGTokenType::SymbolCloseCommand);
+      next_token_ = Token({ str_, s_pos, ++e_pos,now_line_ }, KAGTokenType::SymbolCloseCommand);
       break;
 
     case KAGTokenType::Identifier:
       ++e_pos;
       while (!IsSpace(str[e_pos]) && IsCommandSpecialSymbol(e_pos) == KAGTokenType::Identifier)++e_pos;
-      next_token_ = Token({ str_, s_pos, e_pos }, KAGTokenType::Identifier);
+      next_token_ = Token({ str_, s_pos, e_pos,now_line_ }, KAGTokenType::Identifier);
       break;
 
     case KAGTokenType::SymbolEqual:
-      next_token_ = Token({ L"=", s_pos, ++e_pos }, KAGTokenType::SymbolEqual);
+      next_token_ = Token(SnapShotSpan{ L"=", s_pos, ++e_pos,now_line_ }, KAGTokenType::SymbolEqual);
       break;
 
     case KAGTokenType::LiteralString:
@@ -170,7 +172,7 @@ namespace kag {
         }
       } while (str[e_pos - 1] == L'`'); // 文字列がエスケープされている場合は再度検索する
 
-      next_token_ = Token({ str_, s_pos + 1, e_pos }, KAGTokenType::Identifier);
+      next_token_ = Token({ str_, s_pos + 1, e_pos,now_line_ }, KAGTokenType::Identifier);
       ++e_pos;
       break;
     }
@@ -188,7 +190,7 @@ namespace kag {
     } else {
       now_tokenize_ = ParseType::Normal;
     }
-    next_token_ = Token({ str_, s_pos, find_pos }, KAGTokenType::Identifier);
+    next_token_ = Token({ str_, s_pos, find_pos,now_line_ }, KAGTokenType::Identifier);
     now_pos_ = find_pos;
   }
 
@@ -196,7 +198,7 @@ namespace kag {
     const auto str = *str_;
     int s_pos = now_pos_;
     int find_pos = static_cast<int>(str.indexOf(L"\n", s_pos));
-    next_token_ = Token({ str_, s_pos, find_pos }, KAGTokenType::Identifier);
+    next_token_ = Token({ str_, s_pos, find_pos,now_line_ }, KAGTokenType::Identifier);
     now_pos_ = find_pos;
     now_tokenize_ = ParseType::Normal;
   }
@@ -210,6 +212,7 @@ namespace kag {
     int e_pos = s_pos;    // end position
 
     if (type == KAGTokenType::SymbolNewLine) {
+      now_line_++;
       do {
         e_pos++;
         type = IsNewLineSpecialSymbol(str, e_pos);
@@ -251,7 +254,7 @@ namespace kag {
       break;
 
     }
-    next_token_ = Token({ str_, s_pos, e_pos }, type);
+    next_token_ = Token({ str_, s_pos, e_pos ,now_line_ }, type);
     now_pos_ = e_pos;
   }
 

@@ -6,21 +6,23 @@ namespace kag {
   public:
     using string = String;
     using Char = string::value_type;
-  private:
-    explicit SnapShotSpan(const Char* c, int start, int end) : c_(c), start_(start), end_(end) {
+
+    //private:
+    explicit SnapShotSpan(const Char* c, int start, int end, int line)
+      : c_(c), start_(start), end_(end), line_num_(line) {
     }
   public:
-    SnapShotSpan() : SnapShotSpan(nullptr, 0, 0) {}
-    SnapShotSpan(const std::shared_ptr<string> &str, int s, int e)
-      :str_(str), start_(s), end_(e), c_(str->data() + s) {
+    SnapShotSpan() : SnapShotSpan(nullptr, 0, 0, 0) {}
+    SnapShotSpan(const std::shared_ptr<string> &str, int s, int e, int line)
+      :str_(str), start_(s), end_(e), c_(str->data() + s), line_num_(line) {
     }
 
-    template<size_t n> SnapShotSpan(const Char(&str)[n], int start, int end)
-      : c_(str), start_(start), end_(end) {
+    template<size_t n> SnapShotSpan(const Char(&str)[n], int start, int end, int line)
+      : c_(str), start_(start), end_(end), line_num_(line) {
     }
 
     template<size_t n> SnapShotSpan(const Char(&str)[n])
-      : c_(str), start_(0), end_(n - 1) {
+      : c_(str), start_(0), end_(n - 1), line_num_(0) {
     }
 
 
@@ -29,9 +31,9 @@ namespace kag {
       int new_end = new_start + count;
       assert(new_end <= end_);
       if (str_) {
-        return SnapShotSpan(str_, new_start, new_end);
+        return SnapShotSpan(str_, new_start, new_end, line_num_);
       } else {
-        return SnapShotSpan(c_ + start, new_start, new_end);
+        return SnapShotSpan(c_ + start, new_start, new_end, line_num_);
       }
     }
 
@@ -47,6 +49,8 @@ namespace kag {
     int Length() const { return end_ - start_; }
     int End() const { return end_; }
     int Start() const { return start_; }
+
+    int Line() const { return line_num_; }
 
     bool TextEqual(const SnapShotSpan& span) const {
       if (span.Length() != Length()) return false;
@@ -91,6 +95,7 @@ namespace kag {
     int start_;
     int end_;
     std::shared_ptr<string> str_;
+    int line_num_;
   };
 
   inline std::wostream &operator<<(std::wostream &os, const SnapShotSpan &span) {

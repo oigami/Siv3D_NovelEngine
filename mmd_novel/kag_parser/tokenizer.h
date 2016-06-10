@@ -93,6 +93,8 @@ namespace kag {
     /// 解析が終わったポジション
     /// </summary>
     int now_pos_;
+
+    int now_line_;
   };
 
 }

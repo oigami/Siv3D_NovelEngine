@@ -224,7 +224,7 @@ namespace kag {
 
     explicit Parser(const FilePath& path);
 
-    Parser() = default;
+    Parser();
 
     Type nextType();
 
@@ -233,9 +233,10 @@ namespace kag {
 
     void ShowErrorMsg(const Tokenizer::Token& token) const;
 
+    int NowLine()const { return now_line_; }
 
   private:
-
+    int now_line_;
     kag::Tokenizer tokenizer_;
 
   };

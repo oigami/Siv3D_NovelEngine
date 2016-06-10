@@ -10,5 +10,8 @@ namespace kag {
   void FileExecutor::Update() {
     pimpl_->Update();
   }
+  int FileExecutor::NowLine()const {
+    return pimpl_->NowFileLine();
+  }
 
 }

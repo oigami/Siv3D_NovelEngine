@@ -7,6 +7,9 @@ namespace kag {
     tokenizer_ = Tokenizer(reader.readAll());
   }
 
+  Parser::Parser() :now_line_(0) {
+  }
+
   Parser::Type Parser::nextType() {
     for (;;) {
       const KAGTokenType type = tokenizer_.NextToken().Type();
@@ -54,6 +57,7 @@ namespace kag {
         val.second = SnapShotSpan(L"true");
       }
       token = tokenizer_.Read();
+      now_line_ = std::max(now_line_, token.Span().Line());
       args.insert(std::move(val));
     }
 
@@ -63,8 +67,10 @@ namespace kag {
   Parser::TextToken Parser::readText() {
     if (tokenizer_.NextToken() != KAGTokenType::Text)
       throw std::runtime_error(tokenizer_.NextToken().Span().ToNarrow());
+    auto token = tokenizer_.Read().Span();
+    now_line_ = std::max(now_line_, token.Line());
 
-    return tokenizer_.Read().Span();
+    return token;
   }
 
   void Parser::ShowErrorMsg(const Tokenizer::Token & token) const {
