@@ -19,6 +19,10 @@ namespace kag {
 
       void draw() const;
 
+      void IsLoop(bool loop);
+
+      void SetTime(int time);
+
     private:
 
       s3d_mmd::VMD vmd_;

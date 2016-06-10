@@ -44,7 +44,7 @@
 [current layer="message1"]
 [position layer="message1" visible=true left=100 top=100 width=500 height=500 color="0x88Ff88"]
 ウィンドウのサイズを変えたり、背景色を変えたりできる。[p][er]
-[position layer="message1" visible=true left=25 top=80 width =1200 height=780]
+[position layer="message1" visible=true left=25 top=80 width =980 height=753]
 
 [current layer="message0"][er]
 [nowait][[image]タグ[p][endnowait]
@@ -100,5 +100,5 @@ MMDを表示する
 [current layer="message1"]
 [font size=65]
 終わり(右上の×ボタンで終了してください)
-[mmd vmd="Data/手を振るだけ/手振るだけ_真ん中.vmd"]
+[mmd vmd="Data/手を振るだけ/手振るだけ_真ん中.vmd" start_time=80 loop=false]
 

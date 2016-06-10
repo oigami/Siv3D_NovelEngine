@@ -42,19 +42,6 @@ namespace kag {
       return ToIntRadix(span, 10);
     }
 
-    /// <summary>
-    /// 値がL"default"の時に指定された値を返す関数を返す
-    /// <para>L"default"以外の時は通常のToInt10を呼び出す</para>
-    /// </summary>
-    /// <param name="default_val"></param>
-    /// <returns></returns>
-    inline auto ToInt10(int default_val) {
-      return [=](const SnapShotSpan& span) {
-        if (span == L"default") return default_val;
-        return ToInt10(span);
-      };
-    }
-
     inline int ToInt16(const SnapShotSpan& span) {
       return ToIntRadix(span, 16);
     }

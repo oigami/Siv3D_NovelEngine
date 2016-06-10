@@ -8,7 +8,6 @@ namespace kag {
     void MMDLayerPimpl::SetVMD(s3d_mmd::VMD vmd) {
       vmd_ = vmd;
       vmd_.setTime(0);
-      vmd_.IsLoop(true, 0);
     }
     void MMDLayerPimpl::update() {
       if (model_.isOpen()) {
@@ -20,6 +19,12 @@ namespace kag {
       if (model_.isOpen()) {
         model_.draw(vmd_);
       }
+    }
+    void MMDLayerPimpl::IsLoop(bool loop) {
+      vmd_.IsLoop(loop, 0);
+    }
+    void MMDLayerPimpl::SetTime(int time) {
+      vmd_.setTime(time);
     }
   }
 }

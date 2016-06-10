@@ -232,6 +232,9 @@ namespace kag {
       args.Val(L"vmd", [&layer](const SnapShotSpan& val) {
         layer->SetVMD(s3d_mmd::VMD(val.ToStr()));
       });
+      layer->IsLoop(args.ValOrDefaultTo(L"loop", ToBool, true));
+      layer->SetTime(args.ValOrDefaultTo(L"start_time", ToInt10, 0));
+
     });
   }
 
