@@ -122,10 +122,12 @@ namespace kag {
       void MessageLayerPimpl::SetLocate(int x, int y) {
         text_line_.emplace_back(y, message::TextLine(x, now_font_));
         sum_height_ = y;
+        limit_line_num++;
       }
 
       void MessageLayerPimpl::SetLocateX(int x) {
         text_line_.back().AppendNewFont(x, now_font_);
+        limit_line_num++;
       }
 
       void MessageLayerPimpl::SetLocateY(int y) {
