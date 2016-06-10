@@ -5,6 +5,7 @@ namespace kag {
     layer_manager_ = std::make_shared<LayerManagerImpl>();
     message_manager_.SetLayerManager(layer_manager_);
     image_manager_->SetLayerManager(layer_manager_);
+    layer_manager_->Set(mmd_layer_);
     Clear();
   }
 

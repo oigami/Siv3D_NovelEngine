@@ -44,6 +44,9 @@ namespace kag {
     /* レイヤ関連 */
     tag_func_[L"move"] = &Pimpl::MoveTag;
     tag_func_[L"trans"] = &Pimpl::TransTag;
+
+    /* MMD関連 */
+    tag_func_[L"mmd"] = &Pimpl::MMDTag;
   }
 
   void FileExecutor::Pimpl::Load(const FilePath & path) {
@@ -206,6 +209,23 @@ namespace kag {
 
     });
 
+  }
+
+  /* MMD関連 */
+
+  void FileExecutor::Pimpl::MMDTag(Parser::CommandToken & token) {
+    executor_.Command([executor = executor_, args = std::move(token.arguments())]() mutable {
+      using namespace converter;
+      auto page = args.ValOrDefaultTo(L"page", ToPage, LayerPage::Fore);
+      auto layer = executor.mmdLayer()[page];
+      auto file = args.find_or_throw(L"storage");
+      auto visible = args.ValOrDefaultTo(L"visible", ToBool, true);
+      layer->IsVisible(visible);
+      layer->SetModel(file.ToStr());
+      args.Val(L"vmd", [&layer](const SnapShotSpan& val) {
+        layer->SetVMD(s3d_mmd::VMD(val.ToStr()));
+      });
+    });
   }
 
   void FileExecutor::Pimpl::NoWaitTag(Parser::CommandToken &) {

@@ -84,6 +84,7 @@ namespace kag {
       Message,
       Foreground,
       Background,
+      MMD,
     };
 
     inline std::pair<LayerType, int> ToLayerNum(const SnapShotSpan& span) {
@@ -91,6 +92,8 @@ namespace kag {
       if (len <= 4) {
         if (span == L"base") {
           return{ LayerType::Background,0 };
+        } else if (span == L"mmd") {
+          return{ LayerType::MMD,0 };
         }
         return{ LayerType::Foreground, ToInt10(span) };
       }
@@ -107,7 +110,7 @@ namespace kag {
 
     inline int ToMessageLayerNum(const SnapShotSpan& span) {
       auto ret = ToLayerNum(span);
-      if (ret.first != LayerType::Message)throw std::runtime_error(span.ToNarrow());
+      if (ret.first != LayerType::Message) throw std::runtime_error(span.ToNarrow());
       return ret.second;
     }
   }

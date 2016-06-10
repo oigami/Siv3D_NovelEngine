@@ -17,12 +17,14 @@ namespace kag {
     Pimpl(const Pimpl&) = delete;
     void operator=(const Pimpl&) = delete;
 
+    PageLayer<MMDLayer> mmd_layer_;
   public:
 
     Pimpl();
 
     ImageManager imageManager() { return image_manager_; }
     MessageManager messageManager() { return message_manager_; }
+    PageLayer<MMDLayer> mmdLayer() { return mmd_layer_; }
 
     void Clear();
 

@@ -5,6 +5,9 @@ void Main() {
   TextureAsset::Register(L"siv3d-kun", L"Data/siv3d-kun.png");
   kag::FileExecutor executor(L"test.txt");
 
+  Camera camera;
+  camera.pos.z -= 40;
+  Graphics3D::SetCamera(camera);
   while (System::Update()) {
     Circle(Mouse::Pos(), 50).draw({ 255, 0, 0, 127 });
     executor.Update();

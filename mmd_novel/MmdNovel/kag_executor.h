@@ -4,6 +4,7 @@
 #include <MmdNovel/tag_editor.h>
 #include <MmdNovel/default_value.h>
 #include <kag_parser/kag_parser.h>
+#include <MmdNovel/mmd/mmd_layer.h>
 namespace kag {
 
   /// <summary>
@@ -16,17 +17,13 @@ namespace kag {
     Executor();
 
     LayerPtr GetLayer(std::pair<kag::converter::LayerType, int> layer_num, LayerPage page) {
-      using namespace converter;
-      if (layer_num.first == LayerType::Message) {
-        return messageManager().GetLayer(layer_num.second, page);
-      } else {
-        return imageManager()->GetLayer(layer_num.second, page);
-      }
+      return GetLayer(layer_num)[page];
     }
 
     PageLayer<LayerPtr> GetLayer(std::pair<kag::converter::LayerType, int> layer_num);
     MessageManager messageManager();
     ImageManager imageManager();
+    PageLayer<MMDLayer> mmdLayer();
 
     /// <summary>
     /// 次のコマンドに進める時にtrueを返す

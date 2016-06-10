@@ -11,21 +11,25 @@ namespace kag {
       return messageManager().GetLayer(layer_num.second);
     case LayerType::Background:
       assert(0);
-      throw std::runtime_error("Executor::Getlayer()");
+      throw std::runtime_error("Executor::Getlayer() Background");
     case LayerType::Foreground:
       return imageManager()->GetLayer(layer_num.second);
+    case LayerType::MMD:
+      return mmdLayer();
     default:
+      throw std::runtime_error("Executor::Getlayer() other");
       break;
     }
-    if (layer_num.first == LayerType::Message) {
-    } else {
-    }
+
   }
   MessageManager Executor::messageManager() {
     return pimpl_->messageManager();
   }
   ImageManager Executor::imageManager() {
     return pimpl_->imageManager();
+  }
+  PageLayer<MMDLayer> Executor::mmdLayer() {
+    return pimpl_->mmdLayer();
   }
   void Executor::Clear() {
     pimpl_->Clear();

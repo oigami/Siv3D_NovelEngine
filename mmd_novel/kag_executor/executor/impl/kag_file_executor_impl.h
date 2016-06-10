@@ -61,6 +61,10 @@ namespace kag {
     void MoveTag(Parser::CommandToken& token);
     void TransTag(Parser::CommandToken& token);
 
+    /* MMD関連 */
+    void MMDTag(Parser::CommandToken& token);
+
+
   };
 
 }

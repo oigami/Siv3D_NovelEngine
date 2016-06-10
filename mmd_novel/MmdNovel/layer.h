@@ -2,7 +2,7 @@
 #include <Siv3D.hpp>
 #include <MmdNovel/default_value.h>
 namespace kag {
-  class Layer;
+  struct Layer;
   using LayerPtr = std::shared_ptr<Layer>;
 
   struct EasingType {
@@ -47,7 +47,7 @@ namespace kag {
   using ScaleEffectData = EasingType::Data<double>;
   class ITransEffect;
 
-  class Layer : s3d::Uncopyable {
+  struct Layer : s3d::Uncopyable {
     virtual void update() {};
 
   public:
