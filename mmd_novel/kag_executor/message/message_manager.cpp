@@ -2,38 +2,47 @@
 #include "impl/message_manager_impl.h"
 
 namespace kag {
-  MessageManager::MessageManager() :pimpl_(std::make_shared<Pimpl>()) {
+  MessageManager::MessageManager() :pimpl_(std::make_shared<Pimpl>())
+  {
   }
 
-  void MessageManager::resize(size_t size) {
+  void MessageManager::resize(size_t size)
+  {
     pimpl_->resize(size);
   }
 
-  void MessageManager::Clear() {
+  void MessageManager::Clear()
+  {
     pimpl_->Clear();
   }
 
-  void MessageManager::AllClear() {
+  void MessageManager::AllClear()
+  {
     pimpl_->AllClear();
   }
 
-  bool MessageManager::IsFlush() const {
+  bool MessageManager::IsFlush() const
+  {
     return pimpl_->IsFlush();
   }
 
-  void MessageManager::Flush() {
+  void MessageManager::Flush()
+  {
     pimpl_->Flush();
   }
 
-  void MessageManager::Append(const SnapShotSpan & text) {
+  void MessageManager::Append(const SnapShotSpan & text)
+  {
     pimpl_->Append(text);
   }
 
-  void MessageManager::AppendNewLine() {
+  void MessageManager::AppendNewLine()
+  {
     pimpl_->AppendNewLine();
   }
 
-  void MessageManager::NextPage() {
+  void MessageManager::NextPage()
+  {
     pimpl_->NextPage();
   }
 
@@ -41,36 +50,44 @@ namespace kag {
 
   void MessageManager::SetClickNextPage() { pimpl_->SetClickNextPage(); }
 
-  bool MessageManager::Update() {
+  bool MessageManager::Update()
+  {
     return pimpl_->Update();
   }
 
-  void MessageManager::Draw() const {
+  void MessageManager::Draw() const
+  {
     pimpl_->Draw();
   }
 
-  void MessageManager::SetCurrentLayer(int layer_index) {
+  void MessageManager::SetCurrentLayer(int layer_index)
+  {
     pimpl_->SetCurrentLayer(layer_index);
   }
 
-  void MessageManager::SetCurrent(int layer_index, LayerPage type) {
+  void MessageManager::SetCurrent(int layer_index, LayerPage type)
+  {
     pimpl_->SetCurrent(layer_index, type);
   }
 
-  void MessageManager::SetDelayTime(int delay_time) {
+  void MessageManager::SetDelayTime(int delay_time)
+  {
     pimpl_->SetDelayTime(delay_time);
   }
 
-  void MessageManager::SetNoWaitText(bool is_no_wait) {
+  void MessageManager::SetNoWaitText(bool is_no_wait)
+  {
     pimpl_->SetNoWaitText(is_no_wait);
   }
 
-  MessageLayer & MessageManager::GetLayer(int index, LayerPage page) {
+  MessageLayer & MessageManager::GetLayer(int index, LayerPage page)
+  {
     return pimpl_->GetLayer(index, page);
   }
 
 
-  PageLayer<MessageLayer>& MessageManager::GetLayer(int index) {
+  PageLayer<MessageLayer>& MessageManager::GetLayer(int index)
+  {
     return pimpl_->GetLayer(index);
   }
 
@@ -80,7 +97,8 @@ namespace kag {
 
   LayerPage MessageManager::CurrentPage() const { return pimpl_->CurrentPage(); }
 
-  void MessageManager::SetClickKey(const KeyCombination & key) {
+  void MessageManager::SetClickKey(const KeyCombination & key)
+  {
     pimpl_->SetClickKey(key);
   }
 
@@ -88,7 +106,8 @@ namespace kag {
 
   void MessageManager::SetValidKeyInput() { pimpl_->SetValidKeyInput(); }
 
-  void MessageManager::SetLayerManager(LayerManager & manager) {
+  void MessageManager::SetLayerManager(LayerManager & manager)
+  {
     pimpl_->SetLayerManager(manager);
   }
 

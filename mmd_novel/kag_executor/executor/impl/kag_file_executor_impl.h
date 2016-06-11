@@ -2,7 +2,8 @@
 #include <MmdNovel/kag_file_executor.h>
 #include <kag_parser/kag_parser.h>
 namespace kag {
-  class FileExecutor::Pimpl {
+  class FileExecutor::Pimpl
+  {
   public:
     Pimpl(const Executor& exe);
     void Load(const FilePath& path);

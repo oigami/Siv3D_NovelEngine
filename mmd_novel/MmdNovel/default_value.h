@@ -3,14 +3,17 @@
 namespace kag {
   template<class Type> class Value;
   namespace detail {
-    struct Default {
+    struct Default
+    {
       constexpr Default() = default;
       constexpr operator int() const { return std::numeric_limits<int>::min() / 4; }
-      template<class Type> constexpr bool operator==(const Type& t) const {
+      template<class Type> constexpr bool operator==(const Type& t) const
+      {
         return t == static_cast<Type>(Define::default);
       }
     };
-    template<class Type> constexpr bool operator==(const Value<Type>& t, const Default&) {
+    template<class Type> constexpr bool operator==(const Value<Type>& t, const Default&)
+    {
       return Define::default == t;
     }
   }
@@ -34,23 +37,27 @@ namespace kag {
     constexpr kag::detail::Default default;
   }
 
-  template<class Type> class Value {
+  template<class Type> class Value
+  {
   public:
     constexpr Value(const Type& v) :t(v) {}
     constexpr Value() : t(detail::Default()) {}
 
-    Type& operator=(const Type& v) {
+    Type& operator=(const Type& v)
+    {
       t = v;
       return t;
     }
-    constexpr bool operator==(const detail::Default&) const {
+    constexpr bool operator==(const detail::Default&) const
+    {
       return t == Value().t;
     }
 
     constexpr const Type& operator()() const { return t; }
 
-    constexpr const Type& get_or_throw() const {
-      if (t == Define::default)
+    constexpr const Type& get_or_throw() const
+    {
+      if ( t == Define::default )
         throw std::runtime_error("Value is empty");
       return t;
     }

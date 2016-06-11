@@ -3,7 +3,8 @@
 #include <MmdNovel/kag_executor.h>
 
 namespace kag {
-  class Executor::Pimpl {
+  class Executor::Pimpl
+  {
 
     /// <summary>
     /// 内部でthisをキャプチャしてるのでクラスのコピー禁止

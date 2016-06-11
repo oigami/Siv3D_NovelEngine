@@ -7,9 +7,11 @@ namespace kag {
     namespace pimpl {
 
       // TODO: opacityを全体に反映させるための処理を追加する
-      class MessageLayerPimpl : public Layer {
+      class MessageLayerPimpl : public Layer
+      {
       public:
-        static std::shared_ptr<MessageLayerPimpl> create() {
+        static std::shared_ptr<MessageLayerPimpl> create()
+        {
           return std::make_shared<MessageLayerPimpl>();
         }
         MessageLayerPimpl();
@@ -110,7 +112,8 @@ namespace kag {
         /// <summary>
         /// 現在の文字列を基準にインデントを開始する
         /// </summary>
-        void BeginIndent() {
+        void BeginIndent()
+        {
           indent_width_ = text_line_.back().Width();
         }
 
@@ -192,7 +195,8 @@ namespace kag {
         // 表示できた限界の行数
         int limit_line_num;
 
-        struct TextLineWithY : message::TextLine {
+        struct TextLineWithY : message::TextLine
+        {
           TextLineWithY(int y, const message::TextLine &line) : y_(y), message::TextLine(line) {}
           int y_;
         };

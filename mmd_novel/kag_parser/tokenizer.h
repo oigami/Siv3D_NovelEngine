@@ -3,7 +3,8 @@
 #include <unordered_map>
 #include <MmdNovel/message/snapshotspan.h>
 namespace kag {
-  enum class KAGTokenType {
+  enum class KAGTokenType
+  {
     EndOfStream = -1,            /// <summary>  </summary>
     Unkown = 0,                  /// <summary> unkown </summary>
     SymbolNewLine,               /// <summary> \n </summary>
@@ -25,9 +26,11 @@ namespace kag {
   };
 
 
-  class Tokenizer {
+  class Tokenizer
+  {
   public:
-    enum class ParseType {
+    enum class ParseType
+    {
       CommandAtmark,                /// <summary> @ </summary>
       CommandBrancket,              /// <summary> [ </summary>
       Label,                        /// <summary> * </summary>
@@ -37,7 +40,8 @@ namespace kag {
     };
 
     using Char = String::value_type;
-    class Token {
+    class Token
+    {
     public:
 
       Token() : type_(KAGTokenType::EndOfStream) {}
@@ -46,7 +50,8 @@ namespace kag {
 
       const SnapShotSpan &Span()const { return span_; }
 
-      bool TextEqual(const Token &token) const {
+      bool TextEqual(const Token &token) const
+      {
         return span_.TextEqual(token.span_);
       }
 

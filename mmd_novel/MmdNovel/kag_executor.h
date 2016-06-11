@@ -11,12 +11,14 @@ namespace kag {
   /// kagの実行クラス
   /// <para>シャローコピーされるのでコピーをしてもデータが共有される</para>
   /// </summary>
-  class Executor {
+  class Executor
+  {
   public:
 
     Executor();
 
-    LayerPtr GetLayer(std::pair<kag::converter::LayerType, int> layer_num, LayerPage page) const {
+    LayerPtr GetLayer(std::pair<kag::converter::LayerType, int> layer_num, LayerPage page) const
+    {
       return GetLayer(layer_num)[page];
     }
 

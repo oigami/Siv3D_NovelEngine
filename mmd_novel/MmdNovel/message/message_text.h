@@ -2,12 +2,14 @@
 #include <MmdNovel/layer.h>
 namespace kag {
   namespace message {
-    enum AlignType {
+    enum AlignType
+    {
       Left,
       Center,
       Right,
     };
-    struct DefaultStyle {
+    struct DefaultStyle
+    {
       static constexpr int default_line_size = std::numeric_limits<int>::max();
       static constexpr int default_line_spacing = 0;
 
@@ -15,13 +17,16 @@ namespace kag {
 
       bool IsDefaultLineSize() const { return line_size_ == default_line_size; }
 
-      int LineSize(int default_size) const {
+      int LineSize(int default_size) const
+      {
         return IsDefaultLineSize() ? default_size : line_size_;
       }
-      void ResetLineSize() {
+      void ResetLineSize()
+      {
         line_size_ = default_line_size;
       }
-      void ResetLineSpacing() {
+      void ResetLineSpacing()
+      {
         line_spacing_ = default_line_spacing;
       }
 
@@ -35,14 +40,16 @@ namespace kag {
       int pitch_;
     };
 
-    struct Style : DefaultStyle {
+    struct Style : DefaultStyle
+    {
 
       //TODO: 未実装
       AlignType align_type_;
       bool auto_return_;
     };
 
-    struct TextFont {
+    struct TextFont
+    {
       Font font_;
       Color color_;
       Color shadow_color_;
@@ -51,19 +58,23 @@ namespace kag {
       //TODO: フォントのサイズに応じて可変にする
       Point shadow_pos = { 5,5 };
       TextFont() :TextFont(Font(), Palette::White) {}
-      TextFont(const Font& font, const Color& color) :font_(font), color_(color), shadow_color_(Palette::Gray), is_shadow_(true) {
+      TextFont(const Font& font, const Color& color) :font_(font), color_(color), shadow_color_(Palette::Gray), is_shadow_(true)
+      {
       }
 
-      RectF Draw(const String& str, int x, int y) const {
-        if (is_shadow_) font_.draw(str, x + shadow_pos.x, y - font_.height + shadow_pos.x, shadow_color_);
+      RectF Draw(const String& str, int x, int y) const
+      {
+        if ( is_shadow_ ) font_.draw(str, x + shadow_pos.x, y - font_.height + shadow_pos.x, shadow_color_);
         return font_.draw(str, x, y - font_.height, color_);
       }
 
-      size_t drawableCharacters(const String& str, int width) const {
+      size_t drawableCharacters(const String& str, int width) const
+      {
         return font_.drawableCharacters(str, width);
       }
 
-      Rect region(const String& str) const {
+      Rect region(const String& str) const
+      {
         return font_(str).region();
       }
 
@@ -74,7 +85,8 @@ namespace kag {
     /// <summary>
     /// フォント付き修飾テキスト
     /// </summary>
-    class Text {
+    class Text
+    {
     public:
       Text() = default;
 
@@ -135,9 +147,11 @@ namespace kag {
       String text_;
     };
 
-    class TextLine {
+    class TextLine
+    {
     private:
-      struct TextWithX {
+      struct TextWithX
+      {
         TextWithX() {}
         TextWithX(const Text& text, int x = 0) :text_(text), x(x) {}
         int x;

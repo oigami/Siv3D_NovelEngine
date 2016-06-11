@@ -6,7 +6,8 @@
 
 namespace kag {
 
-  class MessageManager {
+  class MessageManager
+  {
   public:
 
     MessageManager();

@@ -1,7 +1,8 @@
 ﻿#pragma once
 #include <MmdNovel/kag_executor.h>
 namespace kag {
-  class FileExecutor : public Executor {
+  class FileExecutor : public Executor
+  {
   public:
     FileExecutor();
     FileExecutor(const FilePath& filename);

@@ -3,13 +3,15 @@
 namespace kag {
 
   class Executor;
-  class FontCommandEditor {
+  class FontCommandEditor
+  {
     friend Executor;
     using This = FontCommandEditor;
 
     void StyleCheck(FontStyle style);
     FontStyle CreateStyle();
-    virtual void commit(const message::TextFont& font) {
+    virtual void commit(const message::TextFont& font)
+    {
       manager_.Current()->SetFont(font);
 
     }
@@ -48,20 +50,25 @@ namespace kag {
     MessageManager& manager_;
   };
 
-  class DefFontCommandEditor : public FontCommandEditor {
+  class DefFontCommandEditor : public FontCommandEditor
+  {
     friend Executor;
-    void commit(const message::TextFont& font) override {
+    void commit(const message::TextFont& font) override
+    {
       manager_.Current()->SetDefaultFont(font);
     }
     using FontCommandEditor::FontCommandEditor;
   };
 
-  class PositionCommandEditor {
+  class PositionCommandEditor
+  {
     friend Executor;
     using This = PositionCommandEditor;
-    PositionCommandEditor(MessageLayer& layer) :layer_(layer) {
+    PositionCommandEditor(MessageLayer& layer) :layer_(layer)
+    {
     }
-    void Commit() {
+    void Commit()
+    {
       layer_->Clear();
     }
   public:
@@ -89,11 +96,13 @@ namespace kag {
     MessageLayer& layer_;
   };
 
-  class StyleCommandEditor {
+  class StyleCommandEditor
+  {
     friend Executor;
     using This = StyleCommandEditor;
   protected:
-    StyleCommandEditor(MessageManager& manager) : layer_(manager.Current()) {
+    StyleCommandEditor(MessageManager& manager) : layer_(manager.Current())
+    {
     }
     void Commit() {}
   public:
@@ -110,13 +119,15 @@ namespace kag {
 
     MessageLayer& layer_;
   };
-  class DefaultStyleCommandEditor {
+  class DefaultStyleCommandEditor
+  {
     friend Executor;
     using This = DefaultStyleCommandEditor;
   protected:
 
     DefaultStyleCommandEditor(MessageManager& manager) :layer_(manager.Current()) {}
-    void Commit() {
+    void Commit()
+    {
       layer_->SetDefaultStyle(style_);
     }
   public:

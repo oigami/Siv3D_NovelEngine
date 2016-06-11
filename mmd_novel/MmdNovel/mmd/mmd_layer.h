@@ -3,11 +3,13 @@
 #include <MMD.h>
 namespace kag {
   namespace pimpl {
-    class MMDLayerPimpl : public  Layer {
+    class MMDLayerPimpl : public  Layer
+    {
       friend LayerHelper<MMDLayerPimpl>;
     public:
       MMDLayerPimpl() = default;
-      static std::shared_ptr<MMDLayerPimpl> create() {
+      static std::shared_ptr<MMDLayerPimpl> create()
+      {
         return std::make_shared<MMDLayerPimpl>();
       }
 

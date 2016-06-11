@@ -4,7 +4,8 @@
 #include <MmdNovel/default_value.h>
 #include <MmdNovel/layer.h>
 namespace kag {
-  enum class FindAttributeResult {
+  enum class FindAttributeResult
+  {
     NotName,
     TypeIsIncorrect,
     Ok,
@@ -14,9 +15,10 @@ namespace kag {
   /// 変換失敗時に例外を投げる
   /// </summary>
   namespace converter {
-    inline bool ToBool(const SnapShotSpan& span) {
-      if (span == L"true") return true;
-      if (span == L"false") return false;
+    inline bool ToBool(const SnapShotSpan& span)
+    {
+      if ( span == L"true" ) return true;
+      if ( span == L"false" ) return false;
       throw std::runtime_error(span.ToNarrow());
     }
 
@@ -29,26 +31,30 @@ namespace kag {
     /// <para>2以上 : n進数として変換</para>
     /// </param>
     /// <returns></returns>
-    inline int ToIntRadix(const SnapShotSpan& span, int radix) {
+    inline int ToIntRadix(const SnapShotSpan& span, int radix)
+    {
       auto c = span.Str();
       wchar_t *e;
       int ret = wcstol(c, &e, radix);
-      if (e != c + span.Length())
+      if ( e != c + span.Length() )
         throw std::runtime_error(span.ToNarrow());
       return ret;
     }
 
-    inline int ToInt10(const SnapShotSpan& span) {
+    inline int ToInt10(const SnapShotSpan& span)
+    {
       return ToIntRadix(span, 10);
     }
 
-    inline int ToInt16(const SnapShotSpan& span) {
+    inline int ToInt16(const SnapShotSpan& span)
+    {
       return ToIntRadix(span, 16);
     }
 
-    inline Color ToColor(const SnapShotSpan& span) {
+    inline Color ToColor(const SnapShotSpan& span)
+    {
       /* ex) 0x00ff00 */
-      if (span.Length() != 8) throw std::runtime_error(span.ToNarrow());
+      if ( span.Length() != 8 ) throw std::runtime_error(span.ToNarrow());
       Color ret;
       int rgb = ToInt16(span);
       ret.b = rgb & 0xff; rgb >>= 8;
@@ -58,31 +64,41 @@ namespace kag {
       return ret;
     }
 
-    inline LayerPage ToPage(const SnapShotSpan& span) {
-      if (span == L"fore") return LayerPage::Fore;
-      if (span == L"back") return LayerPage::Back;
+    inline LayerPage ToPage(const SnapShotSpan& span)
+    {
+      if ( span == L"fore" ) return LayerPage::Fore;
+      if ( span == L"back" ) return LayerPage::Back;
       throw std::runtime_error(span.ToNarrow());
     }
-    enum class LayerType {
+    enum class LayerType
+    {
       Message,
       Foreground,
       Background,
       MMD,
     };
 
-    inline std::pair<LayerType, int> ToLayerNum(const SnapShotSpan& span) {
+    inline std::pair<LayerType, int> ToLayerNum(const SnapShotSpan& span)
+    {
       const int len = span.Length();
-      if (len <= 4) {
-        if (span == L"base") {
+      if ( len <= 4 )
+      {
+        if ( span == L"base" )
+        {
           return{ LayerType::Background,0 };
-        } else if (span == L"mmd") {
+        }
+        else if ( span == L"mmd" )
+        {
           return{ LayerType::MMD,0 };
         }
         return{ LayerType::Foreground, ToInt10(span) };
       }
-      if (7 <= len) {
-        if (span.substr(0, 7) == L"message") {
-          if (len == 7) {
+      if ( 7 <= len )
+      {
+        if ( span.substr(0, 7) == L"message" )
+        {
+          if ( len == 7 )
+          {
             return{ LayerType::Message, Define::default };
           }
           return{ LayerType::Message, ToInt10(span.substr(7,len - 7)) };
@@ -91,37 +107,46 @@ namespace kag {
       throw std::runtime_error(span.ToNarrow());
     }
 
-    inline int ToMessageLayerNum(const SnapShotSpan& span) {
+    inline int ToMessageLayerNum(const SnapShotSpan& span)
+    {
       auto ret = ToLayerNum(span);
-      if (ret.first != LayerType::Message) throw std::runtime_error(span.ToNarrow());
+      if ( ret.first != LayerType::Message ) throw std::runtime_error(span.ToNarrow());
       return ret.second;
     }
 
     template<class T>inline T Convert(const SnapShotSpan& val);
-    template<>inline int Convert(const SnapShotSpan& val) {
+    template<>inline int Convert(const SnapShotSpan& val)
+    {
       return ToInt10(val);
     }
-    template<>inline std::pair<LayerType, int> Convert(const SnapShotSpan& val) {
+    template<>inline std::pair<LayerType, int> Convert(const SnapShotSpan& val)
+    {
       return ToLayerNum(val);
     }
-    template<>inline LayerPage Convert(const SnapShotSpan& val) {
+    template<>inline LayerPage Convert(const SnapShotSpan& val)
+    {
       return ToPage(val);
     }
-    template<>inline bool Convert(const SnapShotSpan& val) {
+    template<>inline bool Convert(const SnapShotSpan& val)
+    {
       return ToBool(val);
     }
 
-    template<>inline Color Convert(const SnapShotSpan& val) {
+    template<>inline Color Convert(const SnapShotSpan& val)
+    {
       return ToColor(val);
     }
-    template<>inline SnapShotSpan Convert(const SnapShotSpan& val) {
+    template<>inline SnapShotSpan Convert(const SnapShotSpan& val)
+    {
       return val;
     }
   }
 
-  class Parser {
+  class Parser
+  {
   public:
-    enum class Type {
+    enum class Type
+    {
       EndOfStream,
       Command,
       Text,
@@ -129,7 +154,8 @@ namespace kag {
 
     using TextToken = SnapShotSpan;
 
-    template<class T>struct Must {
+    template<class T>struct Must
+    {
       T& operator*() { return val; }
       T* operator->() { return &val; }
 
@@ -141,24 +167,28 @@ namespace kag {
     };
 
 
-    class  Arguments {
+    class  Arguments
+    {
       using arguments_type = std::map<SnapShotSpan, SnapShotSpan>;
       Arguments(const Arguments&) = delete;
       void operator=(const Arguments&) = delete;
     public:
       Arguments() = default;
       Arguments(Arguments&&) = default;
-      std::pair<arguments_type::iterator, bool> insert(std::pair<SnapShotSpan, SnapShotSpan>&& p) {
+      std::pair<arguments_type::iterator, bool> insert(std::pair<SnapShotSpan, SnapShotSpan>&& p)
+      {
         return args.insert(std::move(p));
       }
 
-      void IfNotEmptyException() const {
-        if (args.size()) throw std::runtime_error(args.begin()->first.ToNarrow());
+      void IfNotEmptyException() const
+      {
+        if ( args.size() ) throw std::runtime_error(args.begin()->first.ToNarrow());
       }
 
-      SnapShotSpan find_or_throw(const SnapShotSpan& name) {
+      SnapShotSpan find_or_throw(const SnapShotSpan& name)
+      {
         auto it = args.find(name);
-        if (it == args.end()) throw std::runtime_error(name.ToNarrow());
+        if ( it == args.end() ) throw std::runtime_error(name.ToNarrow());
         auto val = std::move(it->second);
         args.erase(it);
         return val;
@@ -172,10 +202,12 @@ namespace kag {
       /// <param name="find_f">見つかった場合に呼ばれる関数</param>
       /// <param name="not_found_f">見つからなかった時に呼ばれる関数</param>
       template<class Func, class Func2 = void(*)()>
-      void Val(const SnapShotSpan& name, Func find_f, Func2 not_found_f = []() {}) {
+      void Val(const SnapShotSpan& name, Func find_f, Func2 not_found_f = []() {})
+      {
         auto it = args.find(name);
-        if (it == args.end()) not_found_f();
-        else {
+        if ( it == args.end() ) not_found_f();
+        else
+        {
           auto val = std::move(it->second);
           args.erase(it);
           find_f(val);
@@ -183,9 +215,10 @@ namespace kag {
       }
 
       template<class Converter, class T>
-      T ValOrDefaultTo(const SnapShotSpan& name, Converter c, T default_val) {
+      T ValOrDefaultTo(const SnapShotSpan& name, Converter c, T default_val)
+      {
         auto it = args.find(name);
-        if (it == args.end())
+        if ( it == args.end() )
           return default_val;
         auto val = std::move(it->second);
         args.erase(it);
@@ -193,22 +226,26 @@ namespace kag {
       }
 
       template<class T>
-      T ValOrDefault(const SnapShotSpan& name, T default_val) {
-        return ValOrDefaultTo(name, [](auto& v) {return v; }, default_val);
+      T ValOrDefault(const SnapShotSpan& name, T default_val)
+      {
+        return ValOrDefaultTo(name, [](auto& v) { return v; }, default_val);
       }
       template<class T>
-      Arguments& get(const SnapShotSpan& name, T& val) {
+      Arguments& get(const SnapShotSpan& name, T& val)
+      {
         Val(name, [&](const SnapShotSpan& v) { val = converter::Convert<T>(v); });
         return *this;
       }
 
       template<class T>
-      Arguments& get(const SnapShotSpan& name, Optional<T>& val) {
+      Arguments& get(const SnapShotSpan& name, Optional<T>& val)
+      {
         Val(name, [&](const SnapShotSpan& v) { val = converter::Convert<T>(v); });
         return *this;
       }
       template<class T>
-      Arguments& get(const SnapShotSpan& name, Must<T>& val) {
+      Arguments& get(const SnapShotSpan& name, Must<T>& val)
+      {
         Val(name,
             [&](const SnapShotSpan& v) { *val = converter::Convert<T>(v); },
             []() { throw std::runtime_error(""); });
@@ -222,8 +259,10 @@ namespace kag {
       /// <param name="name"></param>
       /// <param name="find_f"></param>
       template<class Converter, class Func>
-      void ValTo(const SnapShotSpan& name, Converter(*c)(const SnapShotSpan&), Func find_f) {
-        Val(name, [&](const SnapShotSpan& val) {
+      void ValTo(const SnapShotSpan& name, Converter(*c)(const SnapShotSpan&), Func find_f)
+      {
+        Val(name, [&](const SnapShotSpan& val)
+        {
           find_f(c(val));
         });
       }
@@ -235,8 +274,10 @@ namespace kag {
       /// <param name="name"></param>
       /// <param name="find_f"></param>
       template<class Converter, class Func>
-      void ValTo(const SnapShotSpan& name, Converter c, Func find_f) {
-        Val(name, [&](const SnapShotSpan& val) {
+      void ValTo(const SnapShotSpan& name, Converter c, Func find_f)
+      {
+        Val(name, [&](const SnapShotSpan& val)
+        {
           find_f(c(val));
         });
       }
@@ -244,19 +285,23 @@ namespace kag {
     private:
       arguments_type args;
     };
-    struct IStruct {
+    struct IStruct
+    {
 
     };
-    class CommandToken {
+    class CommandToken
+    {
     public:
 
       CommandToken(const SnapShotSpan& n, Arguments&& args)
-        :name_(n), arguments_(std::move(args)) {
+        :name_(n), arguments_(std::move(args))
+      {
       }
 
       const SnapShotSpan& name() const { return name_; }
       Arguments& arguments() { return arguments_; }
-      template<class Func> auto get(Func f) {
+      template<class Func> auto get(Func f)
+      {
         auto res = f(arguments_);
         arguments_.IfNotEmptyException();
         return res;

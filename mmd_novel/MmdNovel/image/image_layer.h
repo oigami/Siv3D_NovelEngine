@@ -3,7 +3,8 @@
 #include <MmdNovel/layer.h>
 namespace kag {
 
-  class ImageLayerPimpl : public Layer {
+  class ImageLayerPimpl : public Layer
+  {
     friend LayerHelper<ImageLayerPimpl>;
   public:
 
