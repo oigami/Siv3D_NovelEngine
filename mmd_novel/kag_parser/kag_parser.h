@@ -58,14 +58,10 @@ namespace kag {
       return ret;
     }
 
-    inline int ToPageNum(const SnapShotSpan& span) {
-      if (span == L"fore") return Define::fore_page;
-      if (span == L"back") return Define::back_page;
-      throw std::runtime_error(span.ToNarrow());
-    }
-
     inline LayerPage ToPage(const SnapShotSpan& span) {
-      return ToPageNum(span) == Define::fore_page ? LayerPage::Fore : LayerPage::Back;
+      if (span == L"fore") return LayerPage::Fore;
+      if (span == L"back") return LayerPage::Back;
+      throw std::runtime_error(span.ToNarrow());
     }
     enum class LayerType {
       Message,
@@ -100,6 +96,27 @@ namespace kag {
       if (ret.first != LayerType::Message) throw std::runtime_error(span.ToNarrow());
       return ret.second;
     }
+
+    template<class T>inline T Convert(const SnapShotSpan& val);
+    template<>inline int Convert(const SnapShotSpan& val) {
+      return ToInt10(val);
+    }
+    template<>inline std::pair<LayerType, int> Convert(const SnapShotSpan& val) {
+      return ToLayerNum(val);
+    }
+    template<>inline LayerPage Convert(const SnapShotSpan& val) {
+      return ToPage(val);
+    }
+    template<>inline bool Convert(const SnapShotSpan& val) {
+      return ToBool(val);
+    }
+
+    template<>inline Color Convert(const SnapShotSpan& val) {
+      return ToColor(val);
+    }
+    template<>inline SnapShotSpan Convert(const SnapShotSpan& val) {
+      return val;
+    }
   }
 
   class Parser {
@@ -112,9 +129,25 @@ namespace kag {
 
     using TextToken = SnapShotSpan;
 
+    template<class T>struct Must {
+      T& operator*() { return val; }
+      T* operator->() { return &val; }
+
+      const T& operator*() const { return val; }
+      const T* operator->() const { return &val; }
+    private:
+
+      T val;
+    };
+
+
     class  Arguments {
       using arguments_type = std::map<SnapShotSpan, SnapShotSpan>;
+      Arguments(const Arguments&) = delete;
+      void operator=(const Arguments&) = delete;
     public:
+      Arguments() = default;
+      Arguments(Arguments&&) = default;
       std::pair<arguments_type::iterator, bool> insert(std::pair<SnapShotSpan, SnapShotSpan>&& p) {
         return args.insert(std::move(p));
       }
@@ -149,7 +182,6 @@ namespace kag {
         }
       }
 
-
       template<class Converter, class T>
       T ValOrDefaultTo(const SnapShotSpan& name, Converter c, T default_val) {
         auto it = args.find(name);
@@ -159,9 +191,28 @@ namespace kag {
         args.erase(it);
         return c(val);
       }
+
       template<class T>
       T ValOrDefault(const SnapShotSpan& name, T default_val) {
         return ValOrDefaultTo(name, [](auto& v) {return v; }, default_val);
+      }
+      template<class T>
+      Arguments& get(const SnapShotSpan& name, T& val) {
+        Val(name, [&](const SnapShotSpan& v) { val = converter::Convert<T>(v); });
+        return *this;
+      }
+
+      template<class T>
+      Arguments& get(const SnapShotSpan& name, Optional<T>& val) {
+        Val(name, [&](const SnapShotSpan& v) { val = converter::Convert<T>(v); });
+        return *this;
+      }
+      template<class T>
+      Arguments& get(const SnapShotSpan& name, Must<T>& val) {
+        Val(name,
+            [&](const SnapShotSpan& v) { *val = converter::Convert<T>(v); },
+            []() { throw std::runtime_error(""); });
+        return *this;
       }
 
       /// <summary>
@@ -193,6 +244,9 @@ namespace kag {
     private:
       arguments_type args;
     };
+    struct IStruct {
+
+    };
     class CommandToken {
     public:
 
@@ -202,7 +256,11 @@ namespace kag {
 
       const SnapShotSpan& name() const { return name_; }
       Arguments& arguments() { return arguments_; }
-
+      template<class Func> auto get(Func f) {
+        auto res = f(arguments_);
+        arguments_.IfNotEmptyException();
+        return res;
+      }
     private:
 
       SnapShotSpan name_;

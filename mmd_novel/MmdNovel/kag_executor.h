@@ -16,14 +16,14 @@ namespace kag {
 
     Executor();
 
-    LayerPtr GetLayer(std::pair<kag::converter::LayerType, int> layer_num, LayerPage page) {
+    LayerPtr GetLayer(std::pair<kag::converter::LayerType, int> layer_num, LayerPage page) const {
       return GetLayer(layer_num)[page];
     }
 
-    PageLayer<LayerPtr> GetLayer(std::pair<kag::converter::LayerType, int> layer_num);
-    MessageManager messageManager();
-    ImageManager imageManager();
-    PageLayer<MMDLayer> mmdLayer();
+    PageLayer<LayerPtr> GetLayer(std::pair<kag::converter::LayerType, int> layer_num) const;
+    MessageManager messageManager()const;
+    ImageManager imageManager()const;
+    PageLayer<MMDLayer> mmdLayer()const;
 
     /// <summary>
     /// 次のコマンドに進める時にtrueを返す

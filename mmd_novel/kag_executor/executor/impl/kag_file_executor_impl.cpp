@@ -1,4 +1,5 @@
 ﻿#include "kag_file_executor_impl.h"
+#define GET(name) get(L#name, name)
 namespace kag {
 
   FileExecutor::Pimpl::Pimpl(const Executor& exe) :executor_(exe) {
@@ -117,144 +118,177 @@ namespace kag {
   }
 
   void FileExecutor::Pimpl::StyleTag(Parser::CommandToken & token) {
-    auto& args = token.arguments();
-    executor_.CommandStyle([=](StyleCommandEditor& editor) mutable {
-      args.Val(L"linesize", [&](const SnapShotSpan& val) {
-        if (val == L"default") {
-          editor.linesize();
-        } else {
-          editor.linesize(converter::ToInt10(val));
+    struct StyleVal {
+      Optional<int> linesize_;
+      Optional<int> linespacing;
+
+      Executor exe_;
+      StyleVal(Parser::CommandToken& token, const Executor& exe) : exe_(exe) {
+        auto& args = token.arguments();
+        Optional<SnapShotSpan> linesize;
+        args.GET(linesize).GET(linespacing);
+        if (linesize) {
+          if (*linesize == L"default") {
+            linesize_ = message::Style::default_line_size;
+          } else {
+            linesize_ = converter::ToInt10(*linesize);
+          }
         }
-      });
-
-      args.ValTo(L"linespacing", converter::ToInt10, [&](int val) {
-        editor.linespacing(val);
-      });
-
-      args.IfNotEmptyException();
-    });
+      }
+      void attach() const {
+        auto& layer = exe_.messageManager().Current();
+        if (linesize_) layer->SetLineSize(*linesize_);
+      }
+    };
+    executor_.Command([tag = StyleVal(token, executor_)]() { tag.attach(); });
   }
 
   /* レイヤ関連 */
 
   void FileExecutor::Pimpl::ImageTag(Parser::CommandToken & token) {
-    auto& args = token.arguments();
+    struct ImageVal {
+      Parser::Must<std::pair<converter::LayerType, int>> layer;
+      LayerPage page = LayerPage::Fore;
+      Parser::Must<SnapShotSpan> storage;
+      Optional<int> left, top;
+      Optional<int> opacity;
+      Optional<int> index;
+      Optional<bool> visible;
 
-    //executor_.CommandImage(layer.second, page, tex);
-    executor_.Command([args = std::move(args), executor = executor_]() mutable{
-      using namespace converter;
-      auto layer = ToLayerNum(args.find_or_throw(L"layer"));
-      assert(layer.first == LayerType::Foreground);
-
-      LayerPage page = args.ValOrDefaultTo(L"page", ToPage, LayerPage::Fore);
-      auto img_layer = executor.imageManager()->GetLayer(layer.second, page);
-      img_layer->SetTex(Texture(args.find_or_throw(L"storage").ToStr()));
-
-      args.ValTo(L"left", ToInt10, img_layer.bind(&Layer::SetPositionLeft));
-      args.ValTo(L"top", ToInt10, img_layer.bind(&Layer::SetPositionTop));
-      args.ValTo(L"opacity", ToInt10, img_layer.bind(&Layer::SetOpacity));
-      args.ValTo(L"visible", ToBool, img_layer.bind(&Layer::IsVisible));
-      args.ValTo(L"index", ToInt10, [&img_layer](int z_index) {
-        uint8 z = static_cast<uint8>(Max(0, Min(z_index, 255)));
-        img_layer->SetZIndex(z);
-      });
+      Executor exe_;
+      ImageVal(Parser::CommandToken& token, const Executor& exe) :exe_(exe) {
+        auto& args = token.arguments();
+        args.GET(layer).GET(page).GET(storage).GET(left).GET(top)
+          .GET(opacity).GET(index).GET(visible);
+      }
+      void attach() const {
+        auto ptr = exe_.imageManager()->GetLayer(layer->second)[page];
+        ptr->SetTex(Texture(storage->ToStr()));
+        if (left) ptr->SetPositionLeft(*left);
+        if (top) ptr->SetPositionLeft(*top);
+        if (index) ptr->SetZIndex(*index);
+        if (visible) ptr->IsVisible(*visible);
+      }
+    };
+    executor_.Command([tag = ImageVal(token, executor_)](){
+      tag.attach();
     });
   }
 
   void FileExecutor::Pimpl::MoveTag(Parser::CommandToken & token) {
-    executor_.Command([executor = executor_, args = std::move(token.arguments())]() mutable {
-      using namespace converter;
-      auto layer_num = ToLayerNum(args.find_or_throw(L"layer"));
-      auto page = args.ValOrDefaultTo(L"page", ToPage, LayerPage::Fore);
-      int time = ToInt10(args.find_or_throw(L"time"));
-      LayerPtr layer = executor.GetLayer(layer_num, page);
+    struct MoveVal {
+      Parser::Must<std::pair<converter::LayerType, int>> layer;
+      LayerPage page = LayerPage::Fore;
+      Parser::Must<int> time;
+      Parser::Must<SnapShotSpan> path;
 
-      auto path = args.find_or_throw(L"path");
-      auto buf = path.Str();
-      auto len = path.Length();
-      int n = static_cast<int>(std::count(buf, buf + len, L'('));
-      Vec2 s, e;
-      s = layer->position().pos;
-      int n_pos = 0;
-      MoveEffectData::Array data;
+      std::function<void()> func;
+      MoveVal(Parser::CommandToken& token, const Executor& exe) {
+        auto& args = token.arguments();
+        args.GET(layer).GET(page).GET(time).GET(path);
 
-      for (int i = 0; i < n; i++) {
-        int opacity;
-        if (swscanf(buf + n_pos, L"(%lf,%lf,%d)%n", &e.x, &e.y, &opacity, &n_pos) != 3) {
-          throw std::runtime_error(path.ToNarrow());
+        auto buf = path->Str();
+        int n = static_cast<int>(std::count(buf, buf + path->Length(), L'('));
+        Vec2 s = { 0,0 }, e;
+        int n_pos = 0;
+        MoveEffectData::Array data;
+        for (int i = 0; i < n; i++) {
+          int opacity;
+          if (swscanf(buf + n_pos, L"(%lf,%lf,%d)%n", &e.x, &e.y, &opacity, &n_pos) != 3) {
+            throw std::runtime_error(path->ToNarrow());
+          }
+          data.push_back(MoveEffectData(s, e, Easing::Linear, EasingType::Type::In, *time));
+          std::swap(s, e);
         }
-        data.push_back(MoveEffectData(s, e, Easing::Linear, EasingType::Type::In, time));
-        std::swap(s, e);
+        func = [data, layer = *layer, page = page, exe]() mutable{
+          auto ptr = exe.GetLayer(layer)[page];
+          data[0].start = ptr->position().pos;
+          ptr->MoveEffect(data);
+        };
       }
-      layer->MoveEffect(data);
-    });
+    };
+    executor_.Command(MoveVal(token, executor_).func);
   }
 
   void FileExecutor::Pimpl::TransTag(Parser::CommandToken & token) {
-    executor_.Command([executor = executor_, args = std::move(token.arguments())]() mutable {
-      using namespace converter;
-      const auto layer_num = args.ValOrDefaultTo(L"layer", ToLayerNum, std::make_pair(LayerType::Background, 0));
-      const int time_millisec = ToInt10(args.find_or_throw(L"time"));
-      SnapShotSpan method = args.ValOrDefault(L"method", SnapShotSpan(L"universal"));
-      auto layer = executor.GetLayer(layer_num);
-      if (method == L"universal") {
-        TransUniversalData data;
-        data.rule_tex = Texture(args.find_or_throw(L"rule").ToStr());
-        data.vague = ToInt10(args.find_or_throw(L"vague"));
-        data.time_millisec = time_millisec;
-        layer.Trans(data);
-      } else if (method == L"crossfade") {
-        layer.Trans(time_millisec);
-      } else if (method == L"scroll") {
+    struct TransVal {
+      std::pair<converter::LayerType, int> layer = { converter::LayerType::Background,0 };
+      Parser::Must<int> time;
+      SnapShotSpan method = L"universal";
+      Parser::Must<SnapShotSpan> rule;
+      Parser::Must<int> vague;
 
-        // TODO:
-        throw std::runtime_error(method.ToNarrow());
-      } else {
-        throw std::runtime_error(method.ToNarrow());
+      std::function<void()> func;
+
+      TransVal(Parser::CommandToken& token, const Executor& exe) {
+        auto& args = token.arguments();
+        args.GET(layer).GET(time).GET(method);
+        if (method == L"universal") {
+          args.GET(rule).GET(vague);
+          TransUniversalData data;
+          data.rule_tex = Texture(rule->ToStr());
+          data.vague = *vague;
+          data.time_millisec = *time;
+          func = [data, exe, layer = layer]() mutable { exe.GetLayer(layer).Trans(data); };
+        } else if (method == L"crossfade") {
+          func = [time_millisec = *time, exe, layer = layer]() mutable { exe.GetLayer(layer).Trans(time_millisec); };
+        } else {
+          throw std::runtime_error(method.ToNarrow());
+        }
       }
-
-    });
-
+    };
+    executor_.Command(TransVal(token, executor_).func);
   }
 
   /* MMD関連 */
 
   void FileExecutor::Pimpl::MMDTag(Parser::CommandToken & token) {
-    executor_.Command([executor = executor_, args = std::move(token.arguments())]() mutable {
-      using namespace converter;
-      auto page = args.ValOrDefaultTo(L"page", ToPage, LayerPage::Fore);
-      auto layer = executor.mmdLayer()[page];
-      auto visible = args.ValOrDefaultTo(L"visible", ToBool, true);
-      layer->IsVisible(visible);
-      args.Val(L"storage", [&layer](const SnapShotSpan& val) {
-        layer->SetModel(val.ToStr());
-      });
-      args.Val(L"vmd", [&layer](const SnapShotSpan& val) {
-        layer->SetVMD(s3d_mmd::VMD(val.ToStr()));
-      });
-      layer->IsLoop(args.ValOrDefaultTo(L"loop", ToBool, true));
-      layer->SetTime(args.ValOrDefaultTo(L"start_time", ToInt10, 0));
-
-    });
+    struct MMDVal {
+      MMDVal(Parser::CommandToken& token, const Executor& exe) {
+        exe_ = exe;
+        auto& args = token.arguments();
+        args.GET(storage).GET(vmd).GET(loop).GET(start_time).GET(visible).GET(page);
+      }
+      Optional<SnapShotSpan> storage, vmd;
+      LayerPage page = LayerPage::Fore;
+      bool loop = true;
+      int start_time = 0;
+      bool visible = true;
+      Executor exe_;
+      void attach() const {
+        auto layer = exe_.mmdLayer()[page];
+        layer->IsVisible(visible);
+        if (storage) layer->SetModel(storage->ToStr());
+        if (vmd) layer->SetVMD(vmd->ToStr());
+        layer->IsLoop(loop);
+        layer->SetTime(start_time);
+      }
+    };
+    executor_.Command([tag = MMDVal(token, executor_)]() { tag.attach(); });
   }
 
   void FileExecutor::Pimpl::CameraTag(Parser::CommandToken & token) {
-    executor_.Command([executor = executor_, args = std::move(token.arguments())]() mutable {
-      Camera camera;
-      args.Val(L"pos", [&camera](const SnapShotSpan& val) {
-        Vec3 pos;
-        if (swscanf(val.Str(), L"(%lf,%lf,%lf)", &pos.x, &pos.y, &pos.z) == 3) {
-          camera.pos = pos;
+    struct CameraVal {
+      Optional<Vec3> pos_, lookat_;
+      CameraVal(Parser::CommandToken& token) {
+        auto& args = token.arguments();
+        Optional<SnapShotSpan> pos, lookat;
+        args.GET(pos).GET(lookat);
+        Vec3 tmp;
+        if (pos && swscanf(pos->Str(), L"(%lf,%lf,%lf)", &tmp.x, &tmp.y, &tmp.z) == 3)
+          pos_ = tmp;
+        if (lookat && swscanf(lookat->Str(), L"(%lf,%lf,%lf)", &tmp.x, &tmp.y, &tmp.z) == 3) {
+          lookat_ = tmp;
         }
-      });
-      args.Val(L"lookat", [&camera](const SnapShotSpan& val) {
-        Vec3 lookat;
-        if (swscanf(val.Str(), L"(%lf,%lf,%lf)", &lookat.x, &lookat.y, &lookat.z) == 3) {
-          camera.lookat = lookat;
-        }
-      });
-      Graphics3D::SetCamera(camera);
-    });
+      }
+      void attach() const {
+        Camera camera;
+        if (pos_) camera.pos = *pos_;
+        if (lookat_) camera.lookat = *lookat_;
+        Graphics3D::SetCamera(camera);
+      }
+    };
+    executor_.Command([tag = CameraVal(token)](){ tag.attach(); });
   }
 
   void FileExecutor::Pimpl::NoWaitTag(Parser::CommandToken &) {
@@ -314,65 +348,81 @@ namespace kag {
     executor_.CommandCurrent(layer(), page);
   }
 
+  namespace {
+    struct FontVal {
+      Executor exe_;
+      Optional<SnapShotSpan> face;
+      Optional<int> size;
+      Optional<bool> italic, bold, shadow;
+      Optional<Color> color, shadowcolor;
+      virtual void commit(const MessageLayer& layer, message::TextFont new_font) const {
+        layer->SetFont(new_font);
+      }
+      void attach()const {
+        auto manager = exe_.messageManager();
+        auto now_font = manager.Current()->NowFont();
+        FontProperty prop;
+        prop.name = face ? face->ToStr() : now_font.font_.name();
+        prop.size = size ? *size : now_font.font_.size();
+        prop.style = CreateStyle();
+        message::TextFont new_font = now_font;
+        new_font.font_ = Font(prop);
+        if (color) new_font.color_ = *color;
+        if (shadow) new_font.is_shadow_ = *shadow;
+        if (shadowcolor) new_font.shadow_color_ = *shadowcolor;
+        commit(manager.Current(), new_font);
+      }
+      FontStyle CreateStyle() const {
+        int style_cnt = (italic == true) + (bold == true) * 2;
+        switch (style_cnt) {
+        case 1: return FontStyle::Italic;
+        case 2: return FontStyle::Bold;
+        case 3: return FontStyle::BoldItalic;
+        default:return FontStyle::Regular;
+        }
+      }
+      FontVal(Parser::CommandToken& token, Executor exe) {
+        auto& args = token.arguments();
+        args.GET(face).GET(size).GET(italic).GET(bold).GET(shadow).GET(color).GET(shadowcolor);
+        exe_ = exe;
+      }
+    };
+    struct DefFont : FontVal {
+      using FontVal::FontVal;
+      void commit(const MessageLayer& layer, message::TextFont new_font) const override {
+        layer->SetDefaultFont(new_font);
+      }
+    };
+  }
+
   void FileExecutor::Pimpl::DefFontTag(Parser::CommandToken & token) {
-    auto& args = token.arguments();
-    executor_.CommandDefFont([args](FontCommandEditor& editor) mutable {
-      using namespace converter;
-      args.Val(L"face", [&](const SnapShotSpan& val) { editor.face(val.ToStr()); });
-
-      args.ValTo(L"size", ToInt10, [&](int val) { editor.size(val); });
-
-      args.ValTo(L"italic", ToBool, [&](bool val) { editor.is_italic(val); });
-
-      args.ValTo(L"bold", ToBool, [&](bool val) { editor.is_bold(val); });
-
-      args.ValTo(L"shadow", ToBool, [&](bool val) { editor.is_shadow(val); });
-
-      args.IfNotEmptyException();
-    });
+    executor_.Command([tag = DefFont(token, executor_)]() { tag.attach(); });
   }
 
   void FileExecutor::Pimpl::DefStyleTag(Parser::CommandToken & token) {
-    auto& args = token.arguments();
-    executor_.CommandDefStyle([args = std::move(args)](DefaultStyleCommandEditor& editor)mutable {
-      args.Val(L"linesize", [&](const SnapShotSpan& val) {
-        if (val == L"default") {
-          editor.linesize();
-        } else {
-          editor.linesize(converter::ToInt10(val));
-        }
-      });
-
-      args.ValTo(L"linespacing", converter::ToInt10, [&](int val) {
-        editor.linespacing(val);
-      });
-
-      args.IfNotEmptyException();
-    });
+    struct DefStyleVal {
+      DefStyleVal(Parser::CommandToken & token, const Executor& exe) {
+        auto& args = token.arguments();
+        args.GET(linesize).GET(linespacing).GET(pitch);
+        exe_ = exe;
+      }
+      void attach() const {
+        message::DefaultStyle style;
+        style.line_size_ = linesize;
+        style.line_spacing_ = linespacing;
+        style.pitch_ = pitch;
+        exe_.messageManager().Current()->SetDefaultStyle(style);
+      }
+      int linesize;
+      int linespacing;
+      int pitch;
+      Executor exe_;
+    };
+    executor_.Command([tag = DefStyleVal(token, executor_)](){ tag.attach(); });
   }
 
   void FileExecutor::Pimpl::FontTTag(Parser::CommandToken & token) {
-
-    auto& args = token.arguments();
-    executor_.CommandFont([args = std::move(args)](FontCommandEditor& editor)mutable {
-      using namespace converter;
-      args.Val(L"face", [&](const SnapShotSpan& val) { editor.face(val.ToStr()); });
-
-      args.ValTo(L"size", ToInt10, [&](int val) { editor.size(val); });
-
-      args.ValTo(L"italic", ToBool, [&](bool val) { editor.is_italic(val); });
-
-      args.ValTo(L"bold", ToBool, [&](bool val) { editor.is_bold(val); });
-
-      args.ValTo(L"color", ToColor, [&](const Color& val) {editor.color(val); });
-
-      args.ValTo(L"shadow", ToBool, [&](bool val) {editor.is_shadow(val); });
-
-      args.ValTo(L"shadowcolor", ToColor, [&](const Color& val) { editor.shadowcolor(val); });
-
-      args.IfNotEmptyException();
-    });
-
+    executor_.Command([tag = FontVal(token, executor_)]() { tag.attach(); });
   }
 
   void FileExecutor::Pimpl::IndentTag(Parser::CommandToken &) {
@@ -380,49 +430,45 @@ namespace kag {
   }
 
   void FileExecutor::Pimpl::PositionTTag(Parser::CommandToken & token) {
-    using namespace converter;
-    Value<int> index;
-    Value<LayerPage> page;
-    auto& args = token.arguments();
-    args.ValTo(L"layer", ToMessageLayerNum, [&](int val) { index = val; });
+    struct PositionVal {
+      PositionVal(Parser::CommandToken & token, const Executor& exe) :exe_(exe) {
+        auto& args = token.arguments();
+        args.GET(layer).GET(page).GET(left).GET(top).GET(width).GET(height)
+          .GET(marginl).GET(margint).GET(marginr).GET(marginb)
+          .GET(color).GET(frame).GET(opacity).GET(visible);
+        if (layer.first != converter::LayerType::Message)
+          throw std::runtime_error("position");
+      }
+      std::pair<converter::LayerType, int> layer;
+      Optional<LayerPage> page; // 省略時 カレントページ
+      Optional<int> left, top, width, height;
+      Optional<int> marginl, margint, marginr, marginb;
+      Optional<Color> color;
+      Optional<SnapShotSpan> frame;
+      Optional<int> opacity;
+      Optional<bool> visible;
+      Executor exe_;
+      void attach()const {
+        auto manager = exe_.messageManager();
+        MessageLayer ptr = manager.GetLayer(layer.second == Define::default ? 0 : layer.second,
+                                            page ? *page : manager.CurrentPage());
+        if (left) ptr->SetPositionLeft(*left);
+        if (top) ptr->SetPositionTop(*top);
+        if (width) ptr->SetPositionWidth(*width);
+        if (height) ptr->SetPositionHeight(*height);
 
-    args.ValTo(L"page", ToPage, [&](LayerPage val) { page = val; });
+        if (marginl) ptr->SetMarginLeft(*marginl);
+        if (margint) ptr->SetMarginLeft(*margint);
+        if (marginr) ptr->SetMarginLeft(*marginr);
+        if (marginb) ptr->SetMarginLeft(*marginb);
 
-    executor_.CommandPosition(index, page, [args = std::move(args)](PositionCommandEditor& editor) mutable {
-      args.ValTo(L"left", ToInt10, [&](int val) { editor.position_left(val); });
-
-      args.ValTo(L"top", ToInt10, [&](int val) { editor.position_top(val); });
-
-      args.ValTo(L"width", ToInt10, [&](int val) { editor.position_width(val); });
-
-      args.ValTo(L"height", ToInt10, [&](int val) { editor.position_height(val); });
-
-      args.ValTo(L"marginl", ToInt10, [&](int val) { editor.margin_left(val); });
-
-      args.ValTo(L"margint", ToInt10, [&](int val) { editor.margin_top(val); });
-
-      args.ValTo(L"marginr", ToInt10, [&](int val) { editor.margin_right(val); });
-
-      args.ValTo(L"marginb", ToInt10, [&](int val) { editor.margin_bottom(val); });
-
-      args.ValTo(L"color", ToColor, [&](const Color& col) {
-        editor.color(col.r, col.g, col.b);
-      });
-
-      args.Val(L"frame", [&](const SnapShotSpan& val) {
-        if (val.Length() != 0) {
-          editor.frame(Texture(val.ToStr()));
-        } else {
-          editor.frame(Texture());
-        }
-      });
-
-      args.ValTo(L"opacity", ToInt10, [&](int val) { editor.opacity(val); });
-
-      args.ValTo(L"visible", ToBool, [&](bool val) { editor.visible(val); });
-
-      args.IfNotEmptyException();
-    });
+        if (color) ptr->SetBackgroundRGB(color->r, color->g, color->b);
+        if (frame) ptr->SetBackgroundTex(Texture(frame->ToStr()));
+        if (opacity) ptr->SetBackgroundOpacity(*opacity);
+        if (visible) ptr->IsVisible(*visible);
+      }
+    };
+    executor_.Command([tag = PositionVal(token, executor_)]() { tag.attach(); });
   }
 
   void FileExecutor::Pimpl::CHTag(Parser::CommandToken & token) {

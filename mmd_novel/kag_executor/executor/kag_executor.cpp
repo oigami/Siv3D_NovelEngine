@@ -4,7 +4,7 @@
 namespace kag {
   Executor::Executor() :pimpl_(std::make_shared<Pimpl>()) {
   }
-  PageLayer<LayerPtr> Executor::GetLayer(std::pair<kag::converter::LayerType, int> layer_num) {
+  PageLayer<LayerPtr> Executor::GetLayer(std::pair<kag::converter::LayerType, int> layer_num) const {
     using namespace converter;
     switch (layer_num.first) {
     case LayerType::Message:
@@ -22,13 +22,13 @@ namespace kag {
     }
 
   }
-  MessageManager Executor::messageManager() {
+  MessageManager Executor::messageManager() const {
     return pimpl_->messageManager();
   }
-  ImageManager Executor::imageManager() {
+  ImageManager Executor::imageManager() const {
     return pimpl_->imageManager();
   }
-  PageLayer<MMDLayer> Executor::mmdLayer() {
+  PageLayer<MMDLayer> Executor::mmdLayer()const {
     return pimpl_->mmdLayer();
   }
   void Executor::Clear() {
