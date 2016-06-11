@@ -92,4 +92,270 @@ namespace kag {
     MessageBox::Show(text);
   }
 
+  Parser::CommandToken::CommandToken(const SnapShotSpan & n, Arguments && args)
+    :name_(n), arguments_(std::move(args))
+  {
+  }
+
+  void Parser::CommandToken::AddIllegalException(const SnapShotSpan & arg_name, const SnapShotSpan & arg_val)
+  {
+    errors_.push_back({ arg_name,arg_val });
+  }
+
+  void Parser::CommandToken::AddNotFoundException(const SnapShotSpan & arg_name)
+  {
+    errors_.push_back({ arg_name });
+  }
+
+  Parser::Error::Error(const SnapShotSpan & name) :arg_name(name), type(Type::NotFoundArgument) {}
+
+  Parser::Error::Error(const SnapShotSpan & name, const SnapShotSpan & val)
+    : arg_name(name), arg_val(val), type(Type::IllegalArgument)
+  {
+  }
+  namespace converter {
+
+    bool TryBool(const SnapShotSpan & span, bool & out)
+    {
+      if ( span == L"true" )
+      {
+        out = true;
+        return true;
+      }
+      if ( span == L"false" )
+      {
+        out = false;
+        return true;
+      }
+      return false;
+    }
+
+    bool ToBool(const SnapShotSpan & span)
+    {
+      bool out = false;
+      if ( !TryBool(span, out) )
+        throw std::runtime_error(span.ToNarrow());
+      return out;
+    }
+
+    bool TryIntRadix(const SnapShotSpan & span, int radix, int & out)
+    {
+      auto c = span.Str();
+      wchar_t *e;
+      int ret = wcstol(c, &e, radix);
+      if ( e != c + span.Length() )
+        return false;
+      out = ret;
+      return true;
+    }
+
+
+    /// <summary>
+    ///
+    /// </summary>
+    /// <param name="span"></param>
+    /// <param name="radix">
+    /// <para>0 : 先頭を見て変換</para>
+    /// <para>2以上 : n進数として変換</para>
+    /// </param>
+    /// <returns></returns>
+    int ToIntRadix(const SnapShotSpan & span, int radix)
+    {
+      int out = 0;
+      if ( !TryIntRadix(span, radix, out) )
+        throw std::runtime_error(span.ToNarrow());
+      return out;
+    }
+
+    bool TryInt10(const SnapShotSpan & span, int& out)
+    {
+      return TryIntRadix(span, 10, out);
+    }
+
+    int ToInt10(const SnapShotSpan & span)
+    {
+      int out = 0;
+      if ( !TryInt10(span, out) )
+        throw std::runtime_error(span.ToNarrow());
+      return out;
+    }
+
+    bool TryInt16(const SnapShotSpan & span, int & out)
+    {
+      return TryIntRadix(span, 16, out);
+    }
+
+    int ToInt16(const SnapShotSpan & span)
+    {
+      int out = 0;
+      if ( !TryInt16(span, out) )
+        throw std::runtime_error(span.ToNarrow());
+      return out;
+    }
+
+    bool TryColor(const SnapShotSpan & span, Color & out)
+    {
+      /* ex) 0x00ff00 */
+      if ( span.Length() != 8 ) return false;
+      int rgb = ToInt16(span);
+      out.b = rgb & 0xff; rgb >>= 8;
+      out.g = rgb & 0xff; rgb >>= 8;
+      out.r = rgb & 0xff;
+      out.a = 255;
+      return true;
+    }
+
+    Color ToColor(const SnapShotSpan & span)
+    {
+      Color out;
+      if ( !TryColor(span, out) )
+        throw std::runtime_error(span.ToNarrow());
+      return out;
+    }
+
+    bool TryPage(const SnapShotSpan & span, LayerPage & out)
+    {
+      if ( span == L"fore" )
+      {
+        out = LayerPage::Fore;
+      }
+      else if ( span == L"back" )
+      {
+        out = LayerPage::Fore;
+      }
+      else
+      {
+        return false;
+      }
+      return true;
+    }
+
+    LayerPage ToPage(const SnapShotSpan & span)
+    {
+      LayerPage out = LayerPage::Fore;
+      if ( !TryPage(span, out) )
+        throw std::runtime_error(span.ToNarrow());
+      return out;
+    }
+
+    bool TryLayerNum(const SnapShotSpan & span, std::pair<LayerType, int>& out)
+    {
+      const int len = span.Length();
+      if ( len <= 4 )
+      {
+        if ( span == L"base" )
+        {
+          out = { LayerType::Background,0 };
+          return true;
+        }
+        else if ( span == L"mmd" )
+        {
+          out = { LayerType::MMD,0 };
+          return true;
+        }
+        int num = 0;
+        bool ok = TryInt10(span, num);
+        out = { LayerType::Foreground,num };
+        return ok;
+      }
+      if ( 7 <= len )
+      {
+        if ( span.substr(0, 7) == L"message" )
+        {
+          if ( len == 7 )
+          {
+            out = { LayerType::Message, Define::default };
+            return true;
+          }
+          int num = 0;
+          bool ok = TryInt10(span.substr(7, len - 7), num);
+          out = { LayerType::Message,num };
+          return ok;
+        }
+      }
+      return false;
+    }
+
+    std::pair<LayerType, int> ToLayerNum(const SnapShotSpan & span)
+    {
+      std::pair<LayerType, int> out;
+      if ( !TryLayerNum(span, out) )
+        throw std::runtime_error(span.ToNarrow());
+      return out;
+    }
+
+    bool TryMessageLayerNum(const SnapShotSpan & span, int & out)
+    {
+      std::pair<LayerType, int> ret;
+      if ( !TryLayerNum(span, ret) )return false;
+      if ( ret.first != LayerType::Message ) return false;
+      out = ret.second;
+      return true;
+    }
+
+    int ToMessageLayerNum(const SnapShotSpan & span)
+    {
+      int out = 0;
+      if ( !TryMessageLayerNum(span, out) )
+        throw std::runtime_error(span.ToNarrow());
+      return out;
+    }
+
+    template<> int Convert(const SnapShotSpan& val)
+    {
+      return ToInt10(val);
+    }
+    template<> std::pair<LayerType, int> Convert(const SnapShotSpan& val)
+    {
+      return ToLayerNum(val);
+    }
+    template<> LayerPage Convert(const SnapShotSpan& val)
+    {
+      return ToPage(val);
+    }
+    template<> bool Convert(const SnapShotSpan& val)
+    {
+      return ToBool(val);
+    }
+
+    template<> Color Convert(const SnapShotSpan& val)
+    {
+      return ToColor(val);
+    }
+    template<> SnapShotSpan Convert(const SnapShotSpan& val)
+    {
+      return val;
+    }
+
+
+    template<> bool TryConvert(const SnapShotSpan& val, int& out)
+    {
+      return TryInt10(val, out);
+    }
+    template<> bool TryConvert(const SnapShotSpan& val, std::pair<LayerType, int>& out)
+    {
+      return TryLayerNum(val, out);
+    }
+    template<> bool TryConvert(const SnapShotSpan& val, LayerPage& out)
+    {
+      return TryPage(val, out);
+    }
+    template<> bool TryConvert(const SnapShotSpan& val, bool& out)
+    {
+      return TryBool(val, out);
+    }
+
+    template<> bool TryConvert(const SnapShotSpan& val, Color& out)
+    {
+      return TryColor(val, out);
+    }
+    template<> bool TryConvert(const SnapShotSpan& val, SnapShotSpan& out)
+    {
+      out = val;
+      return true;
+    }
+
+
+  }
+
 }

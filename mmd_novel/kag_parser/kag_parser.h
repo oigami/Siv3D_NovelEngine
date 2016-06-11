@@ -15,12 +15,11 @@ namespace kag {
   /// 変換失敗時に例外を投げる
   /// </summary>
   namespace converter {
-    inline bool ToBool(const SnapShotSpan& span)
-    {
-      if ( span == L"true" ) return true;
-      if ( span == L"false" ) return false;
-      throw std::runtime_error(span.ToNarrow());
-    }
+
+    bool TryBool(const SnapShotSpan& span, bool& out);
+    bool ToBool(const SnapShotSpan& span);
+
+    bool TryIntRadix(const SnapShotSpan& span, int radix, int& out);
 
     /// <summary>
     ///
@@ -31,45 +30,19 @@ namespace kag {
     /// <para>2以上 : n進数として変換</para>
     /// </param>
     /// <returns></returns>
-    inline int ToIntRadix(const SnapShotSpan& span, int radix)
-    {
-      auto c = span.Str();
-      wchar_t *e;
-      int ret = wcstol(c, &e, radix);
-      if ( e != c + span.Length() )
-        throw std::runtime_error(span.ToNarrow());
-      return ret;
-    }
+    int ToIntRadix(const SnapShotSpan& span, int radix);
 
-    inline int ToInt10(const SnapShotSpan& span)
-    {
-      return ToIntRadix(span, 10);
-    }
+    bool TryInt10(const SnapShotSpan& span, int& out);
+    int ToInt10(const SnapShotSpan& span);
 
-    inline int ToInt16(const SnapShotSpan& span)
-    {
-      return ToIntRadix(span, 16);
-    }
+    bool TryInt16(const SnapShotSpan& span, int& out);
+    int ToInt16(const SnapShotSpan& span);
 
-    inline Color ToColor(const SnapShotSpan& span)
-    {
-      /* ex) 0x00ff00 */
-      if ( span.Length() != 8 ) throw std::runtime_error(span.ToNarrow());
-      Color ret;
-      int rgb = ToInt16(span);
-      ret.b = rgb & 0xff; rgb >>= 8;
-      ret.g = rgb & 0xff; rgb >>= 8;
-      ret.r = rgb & 0xff;
-      ret.a = 255;
-      return ret;
-    }
+    bool TryColor(const SnapShotSpan& span, Color& out);
+    Color ToColor(const SnapShotSpan& span);
 
-    inline LayerPage ToPage(const SnapShotSpan& span)
-    {
-      if ( span == L"fore" ) return LayerPage::Fore;
-      if ( span == L"back" ) return LayerPage::Back;
-      throw std::runtime_error(span.ToNarrow());
-    }
+    bool TryPage(const SnapShotSpan& span, LayerPage& out);
+    LayerPage ToPage(const SnapShotSpan& span);
     enum class LayerType
     {
       Message,
@@ -78,68 +51,15 @@ namespace kag {
       MMD,
     };
 
-    inline std::pair<LayerType, int> ToLayerNum(const SnapShotSpan& span)
-    {
-      const int len = span.Length();
-      if ( len <= 4 )
-      {
-        if ( span == L"base" )
-        {
-          return{ LayerType::Background,0 };
-        }
-        else if ( span == L"mmd" )
-        {
-          return{ LayerType::MMD,0 };
-        }
-        return{ LayerType::Foreground, ToInt10(span) };
-      }
-      if ( 7 <= len )
-      {
-        if ( span.substr(0, 7) == L"message" )
-        {
-          if ( len == 7 )
-          {
-            return{ LayerType::Message, Define::default };
-          }
-          return{ LayerType::Message, ToInt10(span.substr(7,len - 7)) };
-        }
-      }
-      throw std::runtime_error(span.ToNarrow());
-    }
+    bool TryLayerNum(const SnapShotSpan& span, std::pair<LayerType, int>& out);
+    std::pair<LayerType, int> ToLayerNum(const SnapShotSpan& span);
 
-    inline int ToMessageLayerNum(const SnapShotSpan& span)
-    {
-      auto ret = ToLayerNum(span);
-      if ( ret.first != LayerType::Message ) throw std::runtime_error(span.ToNarrow());
-      return ret.second;
-    }
+    bool TryMessageLayerNum(const SnapShotSpan& span, int& out);
+    int ToMessageLayerNum(const SnapShotSpan& span);
 
-    template<class T>inline T Convert(const SnapShotSpan& val);
-    template<>inline int Convert(const SnapShotSpan& val)
-    {
-      return ToInt10(val);
-    }
-    template<>inline std::pair<LayerType, int> Convert(const SnapShotSpan& val)
-    {
-      return ToLayerNum(val);
-    }
-    template<>inline LayerPage Convert(const SnapShotSpan& val)
-    {
-      return ToPage(val);
-    }
-    template<>inline bool Convert(const SnapShotSpan& val)
-    {
-      return ToBool(val);
-    }
+    template<class T> T Convert(const SnapShotSpan& val);
+    template<class T> bool TryConvert(const SnapShotSpan& val, T& out);
 
-    template<>inline Color Convert(const SnapShotSpan& val)
-    {
-      return ToColor(val);
-    }
-    template<>inline SnapShotSpan Convert(const SnapShotSpan& val)
-    {
-      return val;
-    }
   }
 
   class Parser
@@ -285,28 +205,38 @@ namespace kag {
     private:
       arguments_type args;
     };
-    struct IStruct
+    struct Error
     {
+      enum class Type
+      {
+        NotFoundArgument,
+        IllegalArgument,
+        NotFoundTag
+      };
 
+      Error(const SnapShotSpan& name);
+      Error(const SnapShotSpan& name, const SnapShotSpan& val);
+
+      Type type = Type::NotFoundTag;
+      SnapShotSpan arg_name;
+      SnapShotSpan arg_val;
     };
+
     class CommandToken
     {
     public:
 
-      CommandToken(const SnapShotSpan& n, Arguments&& args)
-        :name_(n), arguments_(std::move(args))
-      {
-      }
+      CommandToken(const SnapShotSpan& n, Arguments&& args);
 
       const SnapShotSpan& name() const { return name_; }
       Arguments& arguments() { return arguments_; }
-      template<class Func> auto get(Func f)
-      {
-        auto res = f(arguments_);
-        arguments_.IfNotEmptyException();
-        return res;
-      }
+
+      void AddIllegalException(const SnapShotSpan& arg_name, const SnapShotSpan& arg_val);
+      void AddNotFoundException(const SnapShotSpan& arg_name);
+
     private:
+
+      Array<Error> errors_;
 
       SnapShotSpan name_;
       Arguments arguments_;
