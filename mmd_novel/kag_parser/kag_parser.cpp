@@ -358,4 +358,29 @@ namespace kag {
 
   }
 
+  std::pair<Parser::Arguments::arguments_type::iterator, bool>
+    Parser::Arguments::insert(std::pair<SnapShotSpan, SnapShotSpan>&& p)
+  {
+    return args.insert(std::move(p));
+  }
+
+  void Parser::Arguments::IfNotEmptyException() const
+  {
+    if ( args.size() ) throw std::runtime_error(args.begin()->first.ToNarrow());
+  }
+
+  SnapShotSpan Parser::Arguments::find_or_throw(const SnapShotSpan & name)
+  {
+    auto it = args.find(name);
+    if ( it == args.end() ) throw std::runtime_error(name.ToNarrow());
+    auto val = std::move(it->second);
+    args.erase(it);
+    return val;
+  }
+
+  SnapShotSpan Parser::Arguments::ValOrDefault(const SnapShotSpan & name, const SnapShotSpan & default_val)
+  {
+    return ValOrDefaultTo(name, [](auto& v) { return v; }, default_val);
+  }
+
 }

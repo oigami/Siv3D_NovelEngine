@@ -11,9 +11,6 @@ namespace kag {
     Ok,
   };
 
-  /// <summary>
-  /// 変換失敗時に例外を投げる
-  /// </summary>
   namespace converter {
 
     bool TryBool(const SnapShotSpan& span, bool& out);
@@ -95,24 +92,11 @@ namespace kag {
     public:
       Arguments() = default;
       Arguments(Arguments&&) = default;
-      std::pair<arguments_type::iterator, bool> insert(std::pair<SnapShotSpan, SnapShotSpan>&& p)
-      {
-        return args.insert(std::move(p));
-      }
+      std::pair<arguments_type::iterator, bool> insert(std::pair<SnapShotSpan, SnapShotSpan>&& p);
 
-      void IfNotEmptyException() const
-      {
-        if ( args.size() ) throw std::runtime_error(args.begin()->first.ToNarrow());
-      }
+      void IfNotEmptyException() const;
 
-      SnapShotSpan find_or_throw(const SnapShotSpan& name)
-      {
-        auto it = args.find(name);
-        if ( it == args.end() ) throw std::runtime_error(name.ToNarrow());
-        auto val = std::move(it->second);
-        args.erase(it);
-        return val;
-      }
+      SnapShotSpan find_or_throw(const SnapShotSpan& name);
 
       /// <summary>
       /// 属性の値を関数に渡す
@@ -125,17 +109,17 @@ namespace kag {
       void Val(const SnapShotSpan& name, Func find_f, Func2 not_found_f = []() {})
       {
         auto it = args.find(name);
-        if ( it == args.end() ) not_found_f();
-        else
+        if ( it == args.end() )
         {
-          auto val = std::move(it->second);
-          args.erase(it);
-          find_f(val);
+          not_found_f();
+          return;
         }
+        auto val = std::move(it->second);
+        args.erase(it);
+        find_f(val);
       }
 
-      template<class Converter, class T>
-      T ValOrDefaultTo(const SnapShotSpan& name, Converter c, T default_val)
+      template<class Converter, class T> T ValOrDefaultTo(const SnapShotSpan& name, Converter c, T default_val)
       {
         auto it = args.find(name);
         if ( it == args.end() )
@@ -145,29 +129,24 @@ namespace kag {
         return c(val);
       }
 
-      template<class T>
-      T ValOrDefault(const SnapShotSpan& name, T default_val)
+      SnapShotSpan ValOrDefault(const SnapShotSpan& name, const SnapShotSpan& default_val);
+
+      template<class T> Arguments& get(const SnapShotSpan& name, T& val)
       {
-        return ValOrDefaultTo(name, [](auto& v) { return v; }, default_val);
-      }
-      template<class T>
-      Arguments& get(const SnapShotSpan& name, T& val)
-      {
-        Val(name, [&](const SnapShotSpan& v) { val = converter::Convert<T>(v); });
+        Val(name, [&val](const SnapShotSpan& v) { val = converter::Convert<T>(v); });
         return *this;
       }
 
-      template<class T>
-      Arguments& get(const SnapShotSpan& name, Optional<T>& val)
+      template<class T> Arguments& get(const SnapShotSpan& name, Optional<T>& val)
       {
-        Val(name, [&](const SnapShotSpan& v) { val = converter::Convert<T>(v); });
+        Val(name, [&val](const SnapShotSpan& v) { val = converter::Convert<T>(v); });
         return *this;
       }
-      template<class T>
-      Arguments& get(const SnapShotSpan& name, Must<T>& val)
+
+      template<class T> Arguments& get(const SnapShotSpan& name, Must<T>& val)
       {
         Val(name,
-            [&](const SnapShotSpan& v) { *val = converter::Convert<T>(v); },
+            [&val](const SnapShotSpan& v) { *val = converter::Convert<T>(v); },
             []() { throw std::runtime_error(""); });
         return *this;
       }
@@ -178,33 +157,15 @@ namespace kag {
       /// </summary>
       /// <param name="name"></param>
       /// <param name="find_f"></param>
-      template<class Converter, class Func>
-      void ValTo(const SnapShotSpan& name, Converter(*c)(const SnapShotSpan&), Func find_f)
+      template<class Converter, class Func> void ValTo(const SnapShotSpan& name, Converter c, Func find_f)
       {
-        Val(name, [&](const SnapShotSpan& val)
-        {
-          find_f(c(val));
-        });
-      }
-
-      /// <summary>
-      /// 属性の値を指定した関数で型変換して関数に渡す
-      /// <para>見つからなかった場合は何もしない</para>
-      /// </summary>
-      /// <param name="name"></param>
-      /// <param name="find_f"></param>
-      template<class Converter, class Func>
-      void ValTo(const SnapShotSpan& name, Converter c, Func find_f)
-      {
-        Val(name, [&](const SnapShotSpan& val)
-        {
-          find_f(c(val));
-        });
+        Val(name, [&find_f, &c, &val](const SnapShotSpan& val) { find_f(c(val)); });
       }
 
     private:
       arguments_type args;
     };
+
     struct Error
     {
       enum class Type
