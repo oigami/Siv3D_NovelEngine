@@ -18,6 +18,8 @@ namespace kag {
     /// <param name="size">レイヤ数</param>
     void resize(size_t size);
 
+    int size() const;
+
     /// <summary>
     /// カレントレイヤをクリアする
     /// </summary>

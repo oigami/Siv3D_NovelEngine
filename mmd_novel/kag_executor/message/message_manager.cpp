@@ -11,6 +11,11 @@ namespace kag {
     pimpl_->resize(size);
   }
 
+  int MessageManager::size() const
+  {
+    return pimpl_->size();
+  }
+
   void MessageManager::Clear()
   {
     pimpl_->Clear();

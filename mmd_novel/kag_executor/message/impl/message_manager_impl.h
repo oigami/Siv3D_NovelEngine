@@ -21,6 +21,11 @@ namespace kag {
       message_layer_.resize(size);
     }
 
+    int size() const
+    {
+      return static_cast<int>(message_layer_.size());
+    }
+
     void Clear()
     {
       is_wait_click_ = false;
