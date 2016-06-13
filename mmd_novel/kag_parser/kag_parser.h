@@ -12,11 +12,78 @@ namespace kag {
   };
 
   namespace converter {
+    enum class LayerType
+    {
+      Message,
+      Foreground,
+      Background,
+      MMD,
+    };
 
+
+    /// <summary>
+    /// 文字列をブール値に変換する
+    /// </summary>
+    /// <param name="span">文字列</param>
+    /// <param name="out">代入する変数</param>
+    /// <returns>変換の成否</returns>
     bool TryBool(const SnapShotSpan& span, bool& out);
-    bool ToBool(const SnapShotSpan& span);
 
+    /// <summary>
+    /// 文字列をradix進数と解釈して整数値に変換する
+    /// </summary>
+    /// <param name="span">文字列</param>
+    /// <param name="out">代入する変数</param>
+    /// <returns>変換の成否</returns>
     bool TryIntRadix(const SnapShotSpan& span, int radix, int& out);
+
+    /// <summary>
+    /// 文字列を整数値に変換する
+    /// </summary>
+    /// <param name="span">文字列</param>
+    /// <param name="out">代入する変数</param>
+    /// <returns>変換の成否</returns>
+    bool TryInt10(const SnapShotSpan& span, int& out);
+
+    /// <summary>
+    /// 文字列を16進数と解釈して整数値に変換する
+    /// </summary>
+    /// <param name="span">文字列</param>
+    /// <param name="out">代入する変数</param>
+    /// <returns>変換の成否</returns>
+    bool TryInt16(const SnapShotSpan& span, int& out);
+
+    /// <summary>
+    /// 文字列をカラー値に変換する
+    /// </summary>
+    /// <param name="span">文字列</param>
+    /// <param name="out">代入する変数</param>
+    /// <returns>変換の成否</returns>
+    bool TryColor(const SnapShotSpan& span, Color& out);
+
+    /// <summary>
+    /// 文字列をLayerPageに変換する
+    /// </summary>
+    /// <param name="span">文字列</param>
+    /// <param name="out">代入する変数</param>
+    /// <returns>変換の成否</returns>
+    bool TryPage(const SnapShotSpan& span, LayerPage& out);
+
+    /// <summary>
+    /// 文字列をLayerNumに変換する
+    /// </summary>
+    /// <param name="span">文字列</param>
+    /// <param name="out">代入する変数</param>
+    /// <returns>変換の成否</returns>
+    bool TryLayerNum(const SnapShotSpan& span, std::pair<LayerType, int>& out);
+
+    /// <summary>
+    /// 文字列をブール値に変換する
+    /// </summary>
+    /// <param name="span">文字列</param>
+    /// <exception cref="std::invalid_argument">変換に失敗した時</exception>
+    /// <returns>変換した値</returns>
+    bool ToBool(const SnapShotSpan& span);
 
     /// <summary>
     ///
@@ -26,33 +93,62 @@ namespace kag {
     /// <para>0 : 先頭を見て変換</para>
     /// <para>2以上 : n進数として変換</para>
     /// </param>
-    /// <returns></returns>
+    /// <returns>変換した値</returns>
     int ToIntRadix(const SnapShotSpan& span, int radix);
 
-    bool TryInt10(const SnapShotSpan& span, int& out);
+    /// <summary>
+    /// 文字列を整数値に変換する
+    /// </summary>
+    /// <param name="span">文字列</param>
+    /// <exception cref="std::invalid_argument">変換に失敗した時</exception>
     int ToInt10(const SnapShotSpan& span);
 
-    bool TryInt16(const SnapShotSpan& span, int& out);
+    /// <summary>
+    /// 文字列を整数値に変換する
+    /// </summary>
+    /// <param name="span">文字列</param>
+    /// <exception cref="std::invalid_argument">変換に失敗した時</exception>
+    /// <returns>変換した値</returns>
     int ToInt16(const SnapShotSpan& span);
 
-    bool TryColor(const SnapShotSpan& span, Color& out);
+    /// <summary>
+    /// 文字列をカラー値に変換する
+    /// </summary>
+    /// <param name="span">文字列</param>
+    /// <exception cref="std::invalid_argument">変換に失敗した時</exception>
+    /// <returns>変換した値</returns>
     Color ToColor(const SnapShotSpan& span);
 
-    bool TryPage(const SnapShotSpan& span, LayerPage& out);
+    /// <summary>
+    /// 文字列をLayerPageに変換する
+    /// </summary>
+    /// <param name="span">文字列</param>
+    /// <exception cref="std::invalid_argument">変換に失敗した時</exception>
+    /// <returns>変換した値</returns>
     LayerPage ToPage(const SnapShotSpan& span);
-    enum class LayerType
-    {
-      Message,
-      Foreground,
-      Background,
-      MMD,
-    };
 
-    bool TryLayerNum(const SnapShotSpan& span, std::pair<LayerType, int>& out);
+    /// <summary>
+    /// 文字列をLayerTypeに変換する
+    /// </summary>
+    /// <param name="span">文字列</param>
+    /// <exception cref="std::invalid_argument">変換に失敗した時</exception>
+    /// <returns>変換した値</returns>
     std::pair<LayerType, int> ToLayerNum(const SnapShotSpan& span);
 
-
+    /// <summary>
+    /// 文字列を各種型に変換する
+    /// </summary>
+    /// <param name="span">文字列</param>
+    /// <exception cref="std::invalid_argument">変換に失敗した時</exception>
+    /// <returns>変換した値</returns>
     template<class T> T Convert(const SnapShotSpan& val);
+
+    /// <summary>
+    /// 文字列を各種型に変換する
+    /// </summary>
+    /// <param name="span">文字列</param>
+    /// <param name="out">代入する変数</param>
+    /// <returns>変換の成否</returns>
     template<class T> bool TryConvert(const SnapShotSpan& val, T& out);
 
   }
@@ -85,6 +181,7 @@ namespace kag {
     class  Arguments
     {
       using arguments_type = std::map<SnapShotSpan, SnapShotSpan>;
+
       Arguments(const Arguments&) = delete;
       void operator=(const Arguments&) = delete;
     public:
@@ -113,6 +210,13 @@ namespace kag {
         find_f(val);
       }
 
+      /// <summary>
+      /// 属性を取得する
+      /// </summary>
+      /// <param name="name">属性の名前</param>
+      /// <param name="val">代入する変数</param>
+      /// <param name="error_func">型変換失敗時に呼ばれる関数</param>
+      /// <returns></returns>
       template<class T, class Func> Arguments& get(const SnapShotSpan& name, T& val, Func error_func)
       {
         Val(name, [&error_func, &name, &val](const SnapShotSpan& v)
@@ -123,6 +227,14 @@ namespace kag {
         return *this;
       }
 
+      /// <summary>
+      /// 属性を取得する
+      /// <para>属性がない場合は何もしない</para>
+      /// </summary>
+      /// <param name="name">属性の名前</param>
+      /// <param name="val">代入する変数</param>
+      /// <param name="error_func">型変換失敗時に呼ばれる関数</param>
+      /// <returns></returns>
       template<class T, class Func> Arguments& get(const SnapShotSpan& name, Optional<T>& val, Func error_func)
       {
         Val(name, [&error_func, &name, &val](const SnapShotSpan& v)
@@ -136,12 +248,28 @@ namespace kag {
         return *this;
       }
 
+      /// <summary>
+      /// 属性を取得する
+      /// <para>属性がない場合は何もしない</para>
+      /// </summary>
+      /// <param name="name">属性の名前</param>
+      /// <param name="val">代入する変数</param>
+      /// <param name="error_func">型変換失敗時に呼ばれる関数</param>
+      /// <returns></returns>
       template<class T, class Func> Arguments& get(const SnapShotSpan& name, Value<T>& val, Func error_func)
       {
         get(name, *val, error_func);
         return *this;
       }
 
+      /// <summary>
+      /// 属性を取得する
+      /// <para>属性がない場合は何もしない</para>
+      /// </summary>
+      /// <param name="name">属性の名前</param>
+      /// <param name="val">代入する変数</param>
+      /// <param name="error_func">属性が存在しなかった時、型変換失敗時に呼ばれる関数</param>
+      /// <returns></returns>
       template<class T, class Func> Arguments& get(const SnapShotSpan& name, Must<T>& val, Func error_func)
       {
         Val(name, [&error_func, &name, &val](const SnapShotSpan& v)
@@ -182,26 +310,56 @@ namespace kag {
 
       const SnapShotSpan& name() const { return name_; }
 
+      /// <summary>
+      /// 型変換エラー時に呼ぶ関数
+      /// </summary>
+      /// <param name="arg_name">失敗した属性の名前</param>
+      /// <param name="arg_val">失敗した属性の値</param>
       void AddIllegalException(const SnapShotSpan& arg_name, const SnapShotSpan& arg_val);
+
+      /// <summary>
+      ///必須属性がなかった時に呼ぶ関数
+      /// </summary>
+      /// <param name="arg_name">なかった属性の名前</param>
       void AddNotFoundException(const SnapShotSpan& arg_name);
 
       void AddException(const SnapShotSpan& arg_name, const SnapShotSpan& arg_val);
       void AddException(const SnapShotSpan& arg_name);
 
+      /// <summary>
+      /// 属性値を取得する
+      /// </summary>
+      /// <param name="name">取得する属性の名前</param>
+      /// <param name="val">代入する変数</param>
+      /// <returns></returns>
       template<class T> CommandToken& get(const SnapShotSpan& name, T& val)
       {
         arguments_.get(name, val, [this](auto... args) { AddException(args...); });
         return *this;
       }
 
+      /// <summary>
+      /// 属性値を取得する
+      /// </summary>
+      /// <param name="name">取得する属性の名前</param>
+      /// <param name="val">代入する変数</param>
+      /// <returns></returns>
       template<class T> CommandToken& get(const SnapShotSpan& name, Must<T>& val)
       {
         arguments_.get(name, val, [this](auto... args) { AddException(args...); });
         return *this;
       }
 
+      /// <summary>
+      /// エラーが発生している時trueを返す
+      /// </summary>
+      /// <returns></returns>
       bool HasError() const { return !errors_.empty(); }
 
+      /// <summary>
+      /// エラー内容を返す
+      /// </summary>
+      /// <returns></returns>
       const Array<Error>& Errors() const { return errors_; }
 
     private:
@@ -216,13 +374,32 @@ namespace kag {
 
     Parser();
 
+    /// <summary>
+    /// 次に返すトークンの種類を返す
+    /// </summary>
+    /// <returns></returns>
     Type nextType();
 
+    /// <summary>
+    /// 次のコマンドを返す
+    /// <para>nextType()で判定したあとに使う</para>
+    /// </summary>
+    /// <returns></returns>
     CommandToken readCommand();
+
+    /// <summary>
+    /// 次のテキストを返す
+    /// <para>nextType()で判定したあとに使う</para>
+    /// </summary>
+    /// <returns></returns>
     TextToken readText();
 
     void ShowErrorMsg(const Tokenizer::Token& token) const;
 
+    /// <summary>
+    /// 処理をしている行を返す
+    /// </summary>
+    /// <returns></returns>
     int NowLine()const { return now_line_; }
 
   private:

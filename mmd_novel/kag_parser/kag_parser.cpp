@@ -147,7 +147,7 @@ namespace kag {
     {
       bool out = false;
       if ( !TryBool(span, out) )
-        throw std::runtime_error(span.ToNarrow());
+        throw std::invalid_argument(span.ToNarrow());
       return out;
     }
 
@@ -176,7 +176,7 @@ namespace kag {
     {
       int out = 0;
       if ( !TryIntRadix(span, radix, out) )
-        throw std::runtime_error(span.ToNarrow());
+        throw std::invalid_argument(span.ToNarrow());
       return out;
     }
 
@@ -189,7 +189,7 @@ namespace kag {
     {
       int out = 0;
       if ( !TryInt10(span, out) )
-        throw std::runtime_error(span.ToNarrow());
+        throw std::invalid_argument(span.ToNarrow());
       return out;
     }
 
@@ -202,7 +202,7 @@ namespace kag {
     {
       int out = 0;
       if ( !TryInt16(span, out) )
-        throw std::runtime_error(span.ToNarrow());
+        throw std::invalid_argument(span.ToNarrow());
       return out;
     }
 
@@ -222,7 +222,7 @@ namespace kag {
     {
       Color out;
       if ( !TryColor(span, out) )
-        throw std::runtime_error(span.ToNarrow());
+        throw std::invalid_argument(span.ToNarrow());
       return out;
     }
 
@@ -247,7 +247,7 @@ namespace kag {
     {
       LayerPage out = LayerPage::Fore;
       if ( !TryPage(span, out) )
-        throw std::runtime_error(span.ToNarrow());
+        throw std::invalid_argument(span.ToNarrow());
       return out;
     }
 
@@ -293,7 +293,7 @@ namespace kag {
     {
       std::pair<LayerType, int> out;
       if ( !TryLayerNum(span, out) )
-        throw std::runtime_error(span.ToNarrow());
+        throw std::invalid_argument(span.ToNarrow());
       return out;
     }
 
