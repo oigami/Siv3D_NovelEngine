@@ -77,6 +77,22 @@ namespace kag {
         if ( func )
         {
           (this->*func)(token);
+          auto& errors = token.Errors();
+          if ( errors.size() )
+            Println(L'[', token.name(), L"]タグでエラーが発生");
+          for ( auto& i : errors )
+          {
+            if ( i.type == Parser::Error::Type::IllegalArgument )
+            {
+              Println(Format(LR"(  {}行目: "{}"属性の値 "{}"が不正です)"_fmt,
+                             i.arg_val.Line(), i.arg_name.ToStr(), i.arg_val.ToStr()));
+            }
+            else
+            {
+              Println(Format(LR"(  {}行目 :"{}"属性は必須です)"_fmt,
+                             token.name().Line(), i.arg_name.ToStr()));
+            }
+          }
         }
         else
         {
@@ -107,7 +123,7 @@ namespace kag {
   void FileExecutor::Pimpl::LocateTag(Parser::CommandToken & token)
   {
     Value<int> x, y;
-    token.GET(x).GET(y);
+    if ( token.GET(x).GET(y).HasError() ) return;
     executor_.CommandLocate(x, y);
   }
 
@@ -137,7 +153,7 @@ namespace kag {
       StyleVal(Parser::CommandToken& token, const Executor& exe) : exe_(exe)
       {
         Optional<SnapShotSpan> linesize;
-        token.GET(linesize).GET(linespacing);
+        if ( token.GET(linesize).GET(linespacing).HasError() ) return;
         if ( linesize )
         {
           if ( *linesize == L"default" )
@@ -156,7 +172,9 @@ namespace kag {
         if ( linesize_ ) layer->SetLineSize(*linesize_);
       }
     };
-    executor_.Command([tag = StyleVal(token, executor_)]() { tag.attach(); });
+    StyleVal tag(token, executor_);
+    if ( token.HasError() ) return;
+    executor_.Command([tag = std::move(tag)]() { tag.attach(); });
   }
 
   /* レイヤ関連 */
@@ -189,7 +207,9 @@ namespace kag {
         if ( visible ) ptr->IsVisible(*visible);
       }
     };
-    executor_.Command([tag = ImageVal(token, executor_)](){
+    ImageVal tag(token, executor_);
+    if ( token.HasError() ) return;
+    executor_.Command([tag = std::move(tag)](){
       tag.attach();
     });
   }
@@ -206,7 +226,7 @@ namespace kag {
       std::function<void()> func;
       MoveVal(Parser::CommandToken& token, const Executor& exe)
       {
-        token.GET(layer).GET(page).GET(time).GET(path);
+        if ( token.GET(layer).GET(page).GET(time).GET(path).HasError() ) return;
 
         auto buf = path->Str();
         int n = static_cast<int>(std::count(buf, buf + path->Length(), L'('));
@@ -230,7 +250,9 @@ namespace kag {
         };
       }
     };
-    executor_.Command(MoveVal(token, executor_).func);
+    MoveVal tag(token, executor_);
+    if ( token.HasError() ) return;
+    executor_.Command(tag.func);
   }
 
   void FileExecutor::Pimpl::TransTag(Parser::CommandToken & token)
@@ -247,10 +269,10 @@ namespace kag {
 
       TransVal(Parser::CommandToken& token, const Executor& exe)
       {
-        token.GET(layer).GET(time).GET(method);
+        if ( token.GET(layer).GET(time).GET(method).HasError() ) return;
         if ( method == L"universal" )
         {
-          token.GET(rule).GET(vague);
+          if ( token.GET(rule).GET(vague).HasError() ) return;
           TransUniversalData data;
           data.rule_tex = Texture(rule->ToStr());
           data.vague = *vague;
@@ -263,11 +285,13 @@ namespace kag {
         }
         else
         {
-          throw std::runtime_error(method.ToNarrow());
+          token.AddIllegalException(L"method", method);
         }
       }
     };
-    executor_.Command(TransVal(token, executor_).func);
+    TransVal tag(token, executor_);
+    if ( token.HasError() )return;
+    executor_.Command(tag.func);
   }
 
   /* MMD関連 */
@@ -297,7 +321,8 @@ namespace kag {
         layer->SetTime(start_time);
       }
     };
-    executor_.Command([tag = MMDVal(token, executor_)]() { tag.attach(); });
+    MMDVal tag(token, executor_);
+    executor_.Command([tag = std::move(tag)]() { tag.attach(); });
   }
 
   void FileExecutor::Pimpl::CameraTag(Parser::CommandToken & token)
@@ -341,7 +366,7 @@ namespace kag {
   void FileExecutor::Pimpl::DelayTag(Parser::CommandToken & token)
   {
     Parser::Must<SnapShotSpan> speed;
-    token.GET(speed);
+    if ( token.GET(speed).HasError() ) return;
     if ( *speed == L"user" )
     {
       executor_.CommandDelay(30);
@@ -396,7 +421,8 @@ namespace kag {
     LayerPage page = LayerPage::Fore;
 
     using namespace converter;
-    token.GET(layer).GET(page);
+    if ( token.GET(layer).GET(page).HasError() )
+      return;
     executor_.CommandCurrent(layer.second, page);
   }
 
@@ -456,7 +482,9 @@ namespace kag {
 
   void FileExecutor::Pimpl::DefFontTag(Parser::CommandToken & token)
   {
-    executor_.Command([tag = DefFont(token, executor_)]() { tag.attach(); });
+    DefFont tag(token, executor_);
+    if ( token.HasError() ) return;
+    executor_.Command([tag = std::move(tag)]() { tag.attach(); });
   }
 
   void FileExecutor::Pimpl::DefStyleTag(Parser::CommandToken & token)
@@ -503,10 +531,10 @@ namespace kag {
         token.GET(layer).GET(page).GET(left).GET(top).GET(width).GET(height)
           .GET(marginl).GET(margint).GET(marginr).GET(marginb)
           .GET(color).GET(frame).GET(opacity).GET(visible);
-        if ( layer.first != converter::LayerType::Message )
-          throw std::runtime_error("position");
+        if ( layer && layer->first != converter::LayerType::Message )
+          token.AddIllegalException(L"layer", L""); // TODO:パースした元の値を取得する方法を考える
       }
-      std::pair<converter::LayerType, int> layer;
+      Optional<std::pair<converter::LayerType, int>> layer;
       Optional<LayerPage> page; // 省略時 カレントページ
       Optional<int> left, top, width, height;
       Optional<int> marginl, margint, marginr, marginb;
@@ -518,31 +546,43 @@ namespace kag {
       void attach()const
       {
         auto manager = exe_.messageManager();
-        MessageLayer ptr = manager.GetLayer(layer.second == Define::default ? 0 : layer.second,
-                                            page ? *page : manager.CurrentPage());
-        if ( left ) ptr->SetPositionLeft(*left);
-        if ( top ) ptr->SetPositionTop(*top);
-        if ( width ) ptr->SetPositionWidth(*width);
-        if ( height ) ptr->SetPositionHeight(*height);
+        int start = layer ? layer->second : manager.CurrentLayerNum();
+        int end = start + 1;
+        if ( start == Define::default )
+        {
+          end = manager.size();
+          start = 0;
+        }
+        const LayerPage p = page ? *page : manager.CurrentPage();
+        for ( int i = start; i < end; i++ )
+        {
+          MessageLayer ptr = manager.GetLayer(i, p);
+          if ( left ) ptr->SetPositionLeft(*left);
+          if ( top ) ptr->SetPositionTop(*top);
+          if ( width ) ptr->SetPositionWidth(*width);
+          if ( height ) ptr->SetPositionHeight(*height);
 
-        if ( marginl ) ptr->SetMarginLeft(*marginl);
-        if ( margint ) ptr->SetMarginLeft(*margint);
-        if ( marginr ) ptr->SetMarginLeft(*marginr);
-        if ( marginb ) ptr->SetMarginLeft(*marginb);
+          if ( marginl ) ptr->SetMarginLeft(*marginl);
+          if ( margint ) ptr->SetMarginLeft(*margint);
+          if ( marginr ) ptr->SetMarginLeft(*marginr);
+          if ( marginb ) ptr->SetMarginLeft(*marginb);
 
-        if ( color ) ptr->SetBackgroundRGB(color->r, color->g, color->b);
-        if ( frame ) ptr->SetBackgroundTex(Texture(frame->ToStr()));
-        if ( opacity ) ptr->SetBackgroundOpacity(*opacity);
-        if ( visible ) ptr->IsVisible(*visible);
+          if ( color ) ptr->SetBackgroundRGB(color->r, color->g, color->b);
+          if ( frame ) ptr->SetBackgroundTex(Texture(frame->ToStr()));
+          if ( opacity ) ptr->SetBackgroundOpacity(*opacity);
+          if ( visible ) ptr->IsVisible(*visible);
+        }
       }
     };
-    executor_.Command([tag = PositionVal(token, executor_)]() { tag.attach(); });
+    PositionVal tag(token, executor_);
+    if ( token.HasError() ) return;
+    executor_.Command([tag = std::move(tag)]() { tag.attach(); });
   }
 
   void FileExecutor::Pimpl::CHTag(Parser::CommandToken & token)
   {
     Parser::Must<SnapShotSpan> text;
-    token.GET(text);
+    if ( token.GET(text).HasError() ) return;
     executor_.CommandTextNoDelay(*text);
   }
 

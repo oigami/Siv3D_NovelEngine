@@ -219,6 +219,10 @@ namespace kag {
         return *this;
       }
 
+      bool HasError() const { return !errors_.empty(); }
+
+      const Array<Error>& Errors() const { return errors_; }
+
     private:
 
       Array<Error> errors_;
