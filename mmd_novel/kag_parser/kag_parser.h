@@ -51,8 +51,6 @@ namespace kag {
     bool TryLayerNum(const SnapShotSpan& span, std::pair<LayerType, int>& out);
     std::pair<LayerType, int> ToLayerNum(const SnapShotSpan& span);
 
-    bool TryMessageLayerNum(const SnapShotSpan& span, int& out);
-    int ToMessageLayerNum(const SnapShotSpan& span);
 
     template<class T> T Convert(const SnapShotSpan& val);
     template<class T> bool TryConvert(const SnapShotSpan& val, T& out);
@@ -94,10 +92,6 @@ namespace kag {
       Arguments(Arguments&&) = default;
       std::pair<arguments_type::iterator, bool> insert(std::pair<SnapShotSpan, SnapShotSpan>&& p);
 
-      void IfNotEmptyException() const;
-
-      SnapShotSpan find_or_throw(const SnapShotSpan& name);
-
       /// <summary>
       /// 属性の値を関数に渡す
       /// <para>見つからなかった場合はふたつ目の関数を呼び出す</para>
@@ -118,18 +112,6 @@ namespace kag {
         args.erase(it);
         find_f(val);
       }
-
-      template<class Converter, class T> T ValOrDefaultTo(const SnapShotSpan& name, Converter c, T default_val)
-      {
-        auto it = args.find(name);
-        if ( it == args.end() )
-          return default_val;
-        auto val = std::move(it->second);
-        args.erase(it);
-        return c(val);
-      }
-
-      SnapShotSpan ValOrDefault(const SnapShotSpan& name, const SnapShotSpan& default_val);
 
       template<class T, class Func> Arguments& get(const SnapShotSpan& name, T& val, Func error_func)
       {
@@ -169,17 +151,6 @@ namespace kag {
         },
             [&error_func, &name]() { error_func(name); });
         return *this;
-      }
-
-      /// <summary>
-      /// 属性の値を指定した関数で型変換して関数に渡す
-      /// <para>見つからなかった場合は何もしない</para>
-      /// </summary>
-      /// <param name="name"></param>
-      /// <param name="find_f"></param>
-      template<class Converter, class Func> void ValTo(const SnapShotSpan& name, Converter c, Func find_f)
-      {
-        Val(name, [&find_f, &c, &val](const SnapShotSpan& val) { find_f(c(val)); });
       }
 
     private:

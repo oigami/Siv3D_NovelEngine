@@ -297,23 +297,6 @@ namespace kag {
       return out;
     }
 
-    bool TryMessageLayerNum(const SnapShotSpan & span, int & out)
-    {
-      std::pair<LayerType, int> ret;
-      if ( !TryLayerNum(span, ret) )return false;
-      if ( ret.first != LayerType::Message ) return false;
-      out = ret.second;
-      return true;
-    }
-
-    int ToMessageLayerNum(const SnapShotSpan & span)
-    {
-      int out = 0;
-      if ( !TryMessageLayerNum(span, out) )
-        throw std::runtime_error(span.ToNarrow());
-      return out;
-    }
-
     template<> int Convert(const SnapShotSpan& val)
     {
       return ToInt10(val);
@@ -375,25 +358,6 @@ namespace kag {
     Parser::Arguments::insert(std::pair<SnapShotSpan, SnapShotSpan>&& p)
   {
     return args.insert(std::move(p));
-  }
-
-  void Parser::Arguments::IfNotEmptyException() const
-  {
-    if ( args.size() ) throw std::runtime_error(args.begin()->first.ToNarrow());
-  }
-
-  SnapShotSpan Parser::Arguments::find_or_throw(const SnapShotSpan & name)
-  {
-    auto it = args.find(name);
-    if ( it == args.end() ) throw std::runtime_error(name.ToNarrow());
-    auto val = std::move(it->second);
-    args.erase(it);
-    return val;
-  }
-
-  SnapShotSpan Parser::Arguments::ValOrDefault(const SnapShotSpan & name, const SnapShotSpan & default_val)
-  {
-    return ValOrDefaultTo(name, [](auto& v) { return v; }, default_val);
   }
 
 }
