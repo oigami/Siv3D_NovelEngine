@@ -57,14 +57,17 @@ namespace kag {
       if ( tokenizer_.NextToken() == KAGTokenType::SymbolEqual )
       {
         tokenizer_.Read();
-        token = tokenizer_.Read();
-        if ( token != KAGTokenType::Identifier )
+        token = tokenizer_.NextToken();
+        if ( token == KAGTokenType::SymbolCloseCommand )
+          val.second = SnapShotSpan(L"", 0, 0, val.first.Line());
+        else if ( token != KAGTokenType::Identifier )
           ShowErrorMsg(token);
-        val.second = token.Span();
+        else
+          val.second = tokenizer_.Read().Span();
       }
       else
       {
-        val.second = SnapShotSpan(L"true");
+        val.second = SnapShotSpan(L"true", 0, 4, val.first.Line());
       }
       token = tokenizer_.Read();
       now_line_ = std::max(now_line_, token.Span().Line());

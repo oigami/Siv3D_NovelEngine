@@ -139,6 +139,7 @@ namespace kag {
     switch ( str[pos] )
     {
     case L'\n':
+      now_line_++;
       if ( now_tokenize_ == ParseType::CommandAtmark )
         return KAGTokenType::SymbolNewLine;
       break;
@@ -162,7 +163,11 @@ namespace kag {
     }
     else
     {
-      while ( IsSpace(str[s_pos]) ) ++s_pos;
+      while ( IsSpace(str[s_pos]) )
+      {
+        if ( str[s_pos] == L'\n' ) now_line_++;
+        ++s_pos;
+      }
     }
     int e_pos = s_pos;
 
@@ -170,7 +175,6 @@ namespace kag {
     switch ( type )
     {
     case KAGTokenType::SymbolNewLine:
-      now_line_++;
     case KAGTokenType::SymbolCloseCommand:
       now_tokenize_ = ParseType::Normal;
       next_token_ = Token({ str_, s_pos, ++e_pos,now_line_ }, KAGTokenType::SymbolCloseCommand);
