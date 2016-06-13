@@ -139,12 +139,15 @@ namespace kag {
     {
     }
   public:
+
     enum class Type
     {
       Fore,
       Back
     };
-    constexpr LayerPage(Type type) :page(type == Type::Fore ? Define::fore_page : Define::back_page)
+    constexpr LayerPage() :page(Define::fore_page) {}
+
+    constexpr LayerPage(Type type) : page(type == Type::Fore ? Define::fore_page : Define::back_page)
     {
     }
 

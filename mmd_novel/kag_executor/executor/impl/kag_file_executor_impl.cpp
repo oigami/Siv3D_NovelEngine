@@ -79,18 +79,25 @@ namespace kag {
           (this->*func)(token);
           auto& errors = token.Errors();
           if ( errors.size() )
+          {
             Println(L'[', token.name(), L"]タグでエラーが発生");
+            LOG_ERROR(L'[', token.name(), L"]タグでエラーが発生");
+          }
           for ( auto& i : errors )
           {
             if ( i.type == Parser::Error::Type::IllegalArgument )
             {
-              Println(Format(LR"(  {}行目: "{}"属性の値 "{}"が不正です)"_fmt,
-                             i.arg_val.Line(), i.arg_name.ToStr(), i.arg_val.ToStr()));
+              String error = Format(LR"(  {}行目: "{}"属性 "{}" は不正な値です)"_fmt,
+                                   i.arg_val.Line(), i.arg_name.ToStr(), i.arg_val.ToStr());
+              Println(error);
+              LOG_ERROR(error);
             }
             else
             {
-              Println(Format(LR"(  {}行目 :"{}"属性は必須です)"_fmt,
-                             token.name().Line(), i.arg_name.ToStr()));
+              String error = Format(LR"(  {}行目 :"{}"属性は必須です)"_fmt,
+                             token.name().Line(), i.arg_name.ToStr());
+              Println(error);
+              LOG_ERROR(error);
             }
           }
         }

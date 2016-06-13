@@ -131,28 +131,38 @@ namespace kag {
 
       SnapShotSpan ValOrDefault(const SnapShotSpan& name, const SnapShotSpan& default_val);
 
-      template<class T> Arguments& get(const SnapShotSpan& name, T& val)
+      template<class T, class Func> Arguments& get(const SnapShotSpan& name, T& val, Func error_func)
       {
-        Val(name, [&val](const SnapShotSpan& v) { val = converter::Convert<T>(v); });
+        Val(name, [&error_func, &name, &val](const SnapShotSpan& v)
+        {
+          if ( !converter::TryConvert<T>(v, val) )
+            error_func(name, v);
+        });
         return *this;
       }
 
-      template<class T> Arguments& get(const SnapShotSpan& name, Optional<T>& val)
+      template<class T, class Func> Arguments& get(const SnapShotSpan& name, Optional<T>& val, Func error_func)
       {
-        Val(name, [&val](const SnapShotSpan& v) { val = Optional<T>(converter::Convert<T>(v)); });
+        Val(name, [&error_func, &name, &val](const SnapShotSpan& v)
+        {
+          T res;
+          if ( !converter::TryConvert<T>(v, res) )
+            error_func(name, v);
+          else
+            val = Optional<T>(res);
+        });
         return *this;
       }
 
-      template<class T> Arguments& get(const SnapShotSpan& name, Value<T>& val)
+      template<class T, class Func> Arguments& get(const SnapShotSpan& name, Value<T>& val, Func error_func)
       {
-        Val(name, [&val](const SnapShotSpan& v) { val = converter::Convert<T>(v); });
+        get(name, *val, error_func);
         return *this;
       }
 
       template<class T, class Func> Arguments& get(const SnapShotSpan& name, Must<T>& val, Func error_func)
       {
-        Val(name,
-            [&error_func, &name, &val](const SnapShotSpan& v)
+        Val(name, [&error_func, &name, &val](const SnapShotSpan& v)
         {
           if ( !converter::TryConvert<T>(v, *val) )
             error_func(name, v);
@@ -209,7 +219,7 @@ namespace kag {
 
       template<class T> CommandToken& get(const SnapShotSpan& name, T& val)
       {
-        arguments_.get(name, val);
+        arguments_.get(name, val, [this](auto... args) { AddException(args...); });
         return *this;
       }
 

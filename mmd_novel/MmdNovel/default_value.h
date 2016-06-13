@@ -53,7 +53,11 @@ namespace kag {
       return t == Value().t;
     }
 
+    Type& operator()() { return t; }
     constexpr const Type& operator()() const { return t; }
+
+    Type& operator*() { return t; }
+    constexpr const Type& operator*() const { return t; }
 
     constexpr const Type& get_or_throw() const
     {
