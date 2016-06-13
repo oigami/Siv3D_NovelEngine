@@ -139,15 +139,25 @@ namespace kag {
 
       template<class T> Arguments& get(const SnapShotSpan& name, Optional<T>& val)
       {
+        Val(name, [&val](const SnapShotSpan& v) { val = Optional<T>(converter::Convert<T>(v)); });
+        return *this;
+      }
+
+      template<class T> Arguments& get(const SnapShotSpan& name, Value<T>& val)
+      {
         Val(name, [&val](const SnapShotSpan& v) { val = converter::Convert<T>(v); });
         return *this;
       }
 
-      template<class T> Arguments& get(const SnapShotSpan& name, Must<T>& val)
+      template<class T, class Func> Arguments& get(const SnapShotSpan& name, Must<T>& val, Func error_func)
       {
         Val(name,
-            [&val](const SnapShotSpan& v) { *val = converter::Convert<T>(v); },
-            []() { throw std::runtime_error(""); });
+            [&error_func, &name, &val](const SnapShotSpan& v)
+        {
+          if ( !converter::TryConvert<T>(v, *val) )
+            error_func(name, v);
+        },
+            [&error_func, &name]() { error_func(name); });
         return *this;
       }
 
@@ -190,10 +200,24 @@ namespace kag {
       CommandToken(const SnapShotSpan& n, Arguments&& args);
 
       const SnapShotSpan& name() const { return name_; }
-      Arguments& arguments() { return arguments_; }
 
       void AddIllegalException(const SnapShotSpan& arg_name, const SnapShotSpan& arg_val);
       void AddNotFoundException(const SnapShotSpan& arg_name);
+
+      void AddException(const SnapShotSpan& arg_name, const SnapShotSpan& arg_val);
+      void AddException(const SnapShotSpan& arg_name);
+
+      template<class T> CommandToken& get(const SnapShotSpan& name, T& val)
+      {
+        arguments_.get(name, val);
+        return *this;
+      }
+
+      template<class T> CommandToken& get(const SnapShotSpan& name, Must<T>& val)
+      {
+        arguments_.get(name, val, [this](auto... args) { AddException(args...); });
+        return *this;
+      }
 
     private:
 

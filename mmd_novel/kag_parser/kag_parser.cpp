@@ -107,6 +107,16 @@ namespace kag {
     errors_.push_back({ arg_name });
   }
 
+  void Parser::CommandToken::AddException(const SnapShotSpan & arg_name, const SnapShotSpan & arg_val)
+  {
+    AddIllegalException(arg_name, arg_val);
+  }
+
+  void Parser::CommandToken::AddException(const SnapShotSpan & arg_name)
+  {
+    AddNotFoundException(arg_name);
+  }
+
   Parser::Error::Error(const SnapShotSpan & name) :arg_name(name), type(Type::NotFoundArgument) {}
 
   Parser::Error::Error(const SnapShotSpan & name, const SnapShotSpan & val)

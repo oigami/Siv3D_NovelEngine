@@ -107,12 +107,7 @@ namespace kag {
   void FileExecutor::Pimpl::LocateTag(Parser::CommandToken & token)
   {
     Value<int> x, y;
-    auto& args = token.arguments();
-    using namespace converter;
-    args.ValTo(L"x", ToInt10, [&](int val) { x = val; });
-    args.ValTo(L"y", ToInt10, [&](int val) { y = val; });
-
-    args.IfNotEmptyException();
+    token.GET(x).GET(y);
     executor_.CommandLocate(x, y);
   }
 
@@ -141,9 +136,8 @@ namespace kag {
       Executor exe_;
       StyleVal(Parser::CommandToken& token, const Executor& exe) : exe_(exe)
       {
-        auto& args = token.arguments();
         Optional<SnapShotSpan> linesize;
-        args.GET(linesize).GET(linespacing);
+        token.GET(linesize).GET(linespacing);
         if ( linesize )
         {
           if ( *linesize == L"default" )
@@ -182,8 +176,7 @@ namespace kag {
       Executor exe_;
       ImageVal(Parser::CommandToken& token, const Executor& exe) :exe_(exe)
       {
-        auto& args = token.arguments();
-        args.GET(layer).GET(page).GET(storage).GET(left).GET(top)
+        token.GET(layer).GET(page).GET(storage).GET(left).GET(top)
           .GET(opacity).GET(index).GET(visible);
       }
       void attach() const
@@ -213,8 +206,7 @@ namespace kag {
       std::function<void()> func;
       MoveVal(Parser::CommandToken& token, const Executor& exe)
       {
-        auto& args = token.arguments();
-        args.GET(layer).GET(page).GET(time).GET(path);
+        token.GET(layer).GET(page).GET(time).GET(path);
 
         auto buf = path->Str();
         int n = static_cast<int>(std::count(buf, buf + path->Length(), L'('));
@@ -255,11 +247,10 @@ namespace kag {
 
       TransVal(Parser::CommandToken& token, const Executor& exe)
       {
-        auto& args = token.arguments();
-        args.GET(layer).GET(time).GET(method);
+        token.GET(layer).GET(time).GET(method);
         if ( method == L"universal" )
         {
-          args.GET(rule).GET(vague);
+          token.GET(rule).GET(vague);
           TransUniversalData data;
           data.rule_tex = Texture(rule->ToStr());
           data.vague = *vague;
@@ -288,8 +279,7 @@ namespace kag {
       MMDVal(Parser::CommandToken& token, const Executor& exe)
       {
         exe_ = exe;
-        auto& args = token.arguments();
-        args.GET(storage).GET(vmd).GET(loop).GET(start_time).GET(visible).GET(page);
+        token.GET(storage).GET(vmd).GET(loop).GET(start_time).GET(visible).GET(page);
       }
       Optional<SnapShotSpan> storage, vmd;
       LayerPage page = LayerPage::Fore;
@@ -317,9 +307,8 @@ namespace kag {
       Optional<Vec3> pos_, lookat_;
       CameraVal(Parser::CommandToken& token)
       {
-        auto& args = token.arguments();
         Optional<SnapShotSpan> pos, lookat;
-        args.GET(pos).GET(lookat);
+        token.GET(pos).GET(lookat);
         Vec3 tmp;
         if ( pos && swscanf(pos->Str(), L"(%lf,%lf,%lf)", &tmp.x, &tmp.y, &tmp.z) == 3 )
           pos_ = tmp;
@@ -351,27 +340,29 @@ namespace kag {
 
   void FileExecutor::Pimpl::DelayTag(Parser::CommandToken & token)
   {
-    auto& args = token.arguments();
-    args.Val(L"speed", [&](const SnapShotSpan& val)
+    Parser::Must<SnapShotSpan> speed;
+    token.GET(speed);
+    if ( *speed == L"user" )
     {
-      if ( val == L"user" )
+      executor_.CommandDelay(30);
+    }
+    else if ( *speed == L"nowait" )
+    {
+      executor_.CommandNoWait();
+    }
+    else
+    {
+      int val;
+      if ( converter::TryConvert(*speed, val) )
       {
-        executor_.CommandDelay(30);
-      }
-      else if ( val == L"nowait" )
-      {
-        executor_.CommandNoWait();
+        executor_.CommandDelay(val);
       }
       else
       {
-        executor_.CommandDelay(converter::ToInt10(val));
+        token.AddIllegalException(L"speed", *speed);
       }
-    }, []()
-    {
-      throw std::runtime_error("[delay] にはspeed属性が必須");
-    });
+    }
 
-    args.IfNotEmptyException();
   }
 
   void FileExecutor::Pimpl::EndIndentTag(Parser::CommandToken &)
@@ -401,15 +392,12 @@ namespace kag {
 
   void FileExecutor::Pimpl::CurrentTag(Parser::CommandToken & token)
   {
-    Value<int> layer;
+    std::pair<converter::LayerType, int> layer = { converter::LayerType::Message,Define::default };
     LayerPage page = LayerPage::Fore;
 
-    auto& args = token.arguments();
     using namespace converter;
-    args.ValTo(L"layer", ToMessageLayerNum, [&](int val) { layer = val; });
-    args.ValTo(L"page", ToPage, [&](LayerPage val) { page = val; });
-    args.IfNotEmptyException();
-    executor_.CommandCurrent(layer(), page);
+    token.GET(layer).GET(page);
+    executor_.CommandCurrent(layer.second, page);
   }
 
   namespace {
@@ -452,8 +440,7 @@ namespace kag {
       }
       FontVal(Parser::CommandToken& token, Executor exe)
       {
-        auto& args = token.arguments();
-        args.GET(face).GET(size).GET(italic).GET(bold).GET(shadow).GET(color).GET(shadowcolor);
+        token.GET(face).GET(size).GET(italic).GET(bold).GET(shadow).GET(color).GET(shadowcolor);
         exe_ = exe;
       }
     };
@@ -478,8 +465,7 @@ namespace kag {
     {
       DefStyleVal(Parser::CommandToken & token, const Executor& exe)
       {
-        auto& args = token.arguments();
-        args.GET(linesize).GET(linespacing).GET(pitch);
+        token.GET(linesize).GET(linespacing).GET(pitch);
         exe_ = exe;
       }
       void attach() const
@@ -514,8 +500,7 @@ namespace kag {
     {
       PositionVal(Parser::CommandToken & token, const Executor& exe) :exe_(exe)
       {
-        auto& args = token.arguments();
-        args.GET(layer).GET(page).GET(left).GET(top).GET(width).GET(height)
+        token.GET(layer).GET(page).GET(left).GET(top).GET(width).GET(height)
           .GET(marginl).GET(margint).GET(marginr).GET(marginb)
           .GET(color).GET(frame).GET(opacity).GET(visible);
         if ( layer.first != converter::LayerType::Message )
@@ -556,7 +541,9 @@ namespace kag {
 
   void FileExecutor::Pimpl::CHTag(Parser::CommandToken & token)
   {
-    executor_.CommandTextNoDelay(token.arguments().find_or_throw(L"text"));
+    Parser::Must<SnapShotSpan> text;
+    token.GET(text);
+    executor_.CommandTextNoDelay(*text);
   }
 
 }
