@@ -106,7 +106,6 @@
     <ClCompile Include="kag_executor\layer.cpp" />
     <ClCompile Include="kag_executor\message\message_layer.cpp" />
     <ClCompile Include="kag_executor\imanager.cpp" />
-    <ClCompile Include="kag_executor\mmd\mmd_layer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Engine\Splash.png" />
