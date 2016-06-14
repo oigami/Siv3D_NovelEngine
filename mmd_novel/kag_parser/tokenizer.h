@@ -2,7 +2,8 @@
 #include <Siv3D.hpp>
 #include <unordered_map>
 #include <MmdNovel/message/snapshotspan.h>
-namespace kag {
+namespace kag
+{
   enum class KAGTokenType
   {
     EndOfStream = -1,            /// <summary>  </summary>

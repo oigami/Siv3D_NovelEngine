@@ -1,7 +1,7 @@
 ﻿#include "kag_parser.h"
 
-namespace kag {
-
+namespace kag
+{
   Parser::Parser(const FilePath & path)
   {
     TextReader reader(path);
@@ -90,8 +90,8 @@ namespace kag {
   void Parser::ShowErrorMsg(const Tokenizer::Token & token) const
   {
     String text = Format(L"構文エラー\n",
-                         token.Span().Start(), L"文字目\n syntax error:\n",
-                         StringView(token.Span().Str(), token.Span().Length()));
+      token.Span().Start(), L"文字目\n syntax error:\n",
+      StringView(token.Span().Str(), token.Span().Length()));
     MessageBox::Show(text);
   }
 
@@ -126,8 +126,8 @@ namespace kag {
     : arg_name(name), arg_val(val), type(Type::IllegalArgument)
   {
   }
-  namespace converter {
-
+  namespace converter
+  {
     bool TryBool(const SnapShotSpan & span, bool & out)
     {
       if ( span == L"true" )

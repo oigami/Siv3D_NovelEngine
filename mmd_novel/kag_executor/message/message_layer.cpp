@@ -1,8 +1,10 @@
 #include <MmdNovel/message/message_layer.h>
-namespace kag {
-  namespace message {
-    namespace pimpl {
-
+namespace kag
+{
+  namespace message
+  {
+    namespace pimpl
+    {
       MessageLayerPimpl::MessageLayerPimpl()
       {
         SetPositionLeft(16);

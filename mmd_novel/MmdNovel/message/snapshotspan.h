@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include <Siv3D.hpp>
-namespace kag {
-
+namespace kag
+{
   class SnapShotSpan
   {
   public:

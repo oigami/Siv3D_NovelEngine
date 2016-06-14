@@ -4,8 +4,8 @@
 #include <MmdNovel/default_value.h>
 #include <MmdNovel/layer.h>
 
-namespace kag {
-
+namespace kag
+{
   class MessageManager
   {
   public:

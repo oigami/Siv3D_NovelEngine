@@ -2,10 +2,12 @@
 #include <Siv3D.hpp>
 #include <MmdNovel/layer.h>
 #include <MmdNovel/message/message_text.h>
-namespace kag {
-  namespace message {
-    namespace pimpl {
-
+namespace kag
+{
+  namespace message
+  {
+    namespace pimpl
+    {
       // TODO: opacityを全体に反映させるための処理を追加する
       class MessageLayerPimpl : public Layer
       {

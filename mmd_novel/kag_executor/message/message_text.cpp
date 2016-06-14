@@ -1,7 +1,8 @@
 ﻿#include <MmdNovel/message/message_text.h>
-namespace kag {
-  namespace message {
-
+namespace kag
+{
+  namespace message
+  {
     TextLine::TextLine(int x, const Text & text)
       : max_height_(0)
     {

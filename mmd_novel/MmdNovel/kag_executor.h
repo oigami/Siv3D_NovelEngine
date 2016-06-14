@@ -5,8 +5,8 @@
 #include <MmdNovel/default_value.h>
 #include <kag_parser/kag_parser.h>
 #include <MmdNovel/mmd/mmd_layer.h>
-namespace kag {
-
+namespace kag
+{
   /// <summary>
   /// kagの実行クラス
   /// <para>シャローコピーされるのでコピーをしてもデータが共有される</para>

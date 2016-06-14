@@ -1,10 +1,11 @@
 ﻿#include <MmdNovel/layer.h>
 
-namespace kag {
+namespace kag
+{
   LayerPage const kag::LayerPage::Fore(LayerPage::Type::Fore);
   LayerPage const kag::LayerPage::Back(LayerPage::Type::Back);
-  namespace {
-
+  namespace
+  {
     struct MoveEffect : IEffect
     {
       using Data = MoveEffectData;
@@ -177,7 +178,8 @@ namespace kag {
       i.Draw();
     }
   }
-  namespace {
+  namespace
+  {
     auto comp = [](const PageLayer<LayerPtr>& a, const PageLayer<LayerPtr>& b)
     {
       return a[LayerPage::Fore] < b[LayerPage::Fore];
@@ -217,8 +219,8 @@ namespace kag {
     std::sort(list_.begin(), list_.end(), comp);
   }
 
-  namespace detail {
-
+  namespace detail
+  {
     struct Transition
     {
     public:
@@ -236,7 +238,6 @@ namespace kag {
 
       void update(double mini, double maxi, Layer* fore, Layer* back)
       {
-
         constant->x = static_cast<float>(mini);
         constant->y = static_cast<float>(maxi);
 
@@ -251,7 +252,6 @@ namespace kag {
 
       void Draw(Color color)const
       {
-
         Graphics2D::SetBlendState(BlendState::Default);
         Graphics2D::SetRenderTarget(Graphics::GetSwapChainTexture());
 
@@ -283,8 +283,8 @@ namespace kag {
         Texture().draw();
 
         constexpr BlendState blend(true,
-                                   Blend::One, Blend::Zero, BlendOp::Add,
-                                   Blend::One, Blend::Zero, BlendOp::Add);
+          Blend::One, Blend::Zero, BlendOp::Add,
+          Blend::One, Blend::Zero, BlendOp::Add);
 
         Graphics2D::SetBlendState(blend);
         layer->draw();

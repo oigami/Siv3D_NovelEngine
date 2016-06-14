@@ -1,8 +1,8 @@
 #pragma once
 #include <Siv3D.hpp>
 #include <MmdNovel/layer.h>
-namespace kag {
-
+namespace kag
+{
   class ImageLayerPimpl : public Layer
   {
     friend LayerHelper<ImageLayerPimpl>;

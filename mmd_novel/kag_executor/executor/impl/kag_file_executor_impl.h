@@ -1,7 +1,8 @@
 ﻿#pragma once
 #include <MmdNovel/kag_file_executor.h>
 #include <kag_parser/kag_parser.h>
-namespace kag {
+namespace kag
+{
   class FileExecutor::Pimpl
   {
   public:

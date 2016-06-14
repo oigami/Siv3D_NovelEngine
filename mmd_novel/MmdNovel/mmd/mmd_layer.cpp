@@ -1,7 +1,8 @@
 #include "mmd_layer.h"
-namespace kag {
-  namespace pimpl {
-
+namespace kag
+{
+  namespace pimpl
+  {
     void MMDLayerPimpl::SetModel(s3d_mmd::MMD model)
     {
       model_ = model;

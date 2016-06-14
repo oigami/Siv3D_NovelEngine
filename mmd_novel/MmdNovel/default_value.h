@@ -1,8 +1,10 @@
 ﻿#pragma once
 #include <limits>
-namespace kag {
+namespace kag
+{
   template<class Type> class Value;
-  namespace detail {
+  namespace detail
+  {
     struct Default
     {
       constexpr Default() = default;
@@ -21,8 +23,8 @@ namespace kag {
   /// <summary>
   /// kagで使用する各種定数値
   /// </summary>
-  namespace Define {
-
+  namespace Define
+  {
     // 背景レイヤのインデックス値
     // 前景レイヤは1から始める
     constexpr int base_image = 0;

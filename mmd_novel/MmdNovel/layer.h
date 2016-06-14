@@ -1,7 +1,8 @@
 ﻿#pragma once
 #include <Siv3D.hpp>
 #include <MmdNovel/default_value.h>
-namespace kag {
+namespace kag
+{
   struct Layer;
   using LayerPtr = std::shared_ptr<Layer>;
 
@@ -34,9 +35,9 @@ namespace kag {
       using EaseInOutFunc = T(*)(const T& s, const T& e, std::function<double(double)>, double t);
 
       static const EaseInOutFunc func[3] = {
-        (EaseInOutFunc) EaseIn<T>,
-        (EaseInOutFunc) EaseOut<T>,
-        (EaseInOutFunc) EaseInOut<T>
+        (EaseInOutFunc)EaseIn<T>,
+        (EaseInOutFunc)EaseOut<T>,
+        (EaseInOutFunc)EaseInOut<T>
       };
       int t = static_cast<int>(type);
       return func[t](start, end, f, now_timeMillisec);
@@ -190,7 +191,6 @@ namespace kag {
   };
   class ITransEffect
   {
-
     /// <summary>
     /// 更新処理
     /// </summary>
@@ -216,7 +216,8 @@ namespace kag {
 
   };
 
-  namespace detail {
+  namespace detail
+  {
     void PageLayerTrans(int time_millisec, const LayerPtr& fore_layer, const LayerPtr& back_layer);
     void PageLayerTrans(const TransUniversalData& data, const LayerPtr& fore_layer, const LayerPtr& back_layer);
   }

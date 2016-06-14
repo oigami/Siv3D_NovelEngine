@@ -1,8 +1,10 @@
 #pragma once
 #include <MmdNovel/layer.h>
 #include <MMD.h>
-namespace kag {
-  namespace pimpl {
+namespace kag
+{
+  namespace pimpl
+  {
     class MMDLayerPimpl : public  Layer
     {
       friend LayerHelper<MMDLayerPimpl>;

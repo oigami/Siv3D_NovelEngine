@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include <MmdNovel/message/message_manager.h>
-namespace kag {
-
+namespace kag
+{
   class Executor;
   class FontCommandEditor
   {

@@ -1,6 +1,7 @@
 #include "kag_executor_impl.h"
 #pragma comment(lib,"d3d11.lib")
-namespace kag {
+namespace kag
+{
   Executor::Pimpl::Pimpl()
   {
     layer_manager_ = std::make_shared<LayerManagerImpl>();

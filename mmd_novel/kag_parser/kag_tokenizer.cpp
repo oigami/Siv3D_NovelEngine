@@ -1,7 +1,7 @@
 ﻿#include<string>
 #include <kag_parser/tokenizer.h>
-namespace kag {
-
+namespace kag
+{
   Tokenizer::Tokenizer()
   {
   }

@@ -1,7 +1,7 @@
 ﻿#include "kag_file_executor_impl.h"
 #define GET(name) get(L#name, name)
-namespace kag {
-
+namespace kag
+{
   FileExecutor::Pimpl::Pimpl(const Executor& exe) :executor_(exe)
   {
     /* メッセージ関連 */
@@ -88,14 +88,14 @@ namespace kag {
             if ( i.type == Parser::Error::Type::IllegalArgument )
             {
               String error = Format(LR"(  {}行目: "{}"属性 "{}" は不正な値です)"_fmt,
-                                   i.arg_val.Line(), i.arg_name.ToStr(), i.arg_val.ToStr());
+                i.arg_val.Line(), i.arg_name.ToStr(), i.arg_val.ToStr());
               Println(error);
               LOG_ERROR(error);
             }
             else
             {
               String error = Format(LR"(  {}行目 :"{}"属性は必須です)"_fmt,
-                             token.name().Line(), i.arg_name.ToStr());
+                token.name().Line(), i.arg_name.ToStr());
               Println(error);
               LOG_ERROR(error);
             }
@@ -433,7 +433,8 @@ namespace kag {
     executor_.CommandCurrent(layer.second, page);
   }
 
-  namespace {
+  namespace
+  {
     struct FontVal
     {
       Executor exe_;

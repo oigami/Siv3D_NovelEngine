@@ -1,6 +1,7 @@
 #include <MmdNovel/image/image_layer.h>
 
-namespace kag {
+namespace kag
+{
   void ImageLayerPimpl::SetTex(const Texture & tex)
   {
     texture_ = tex;

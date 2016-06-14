@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include <MmdNovel/kag_executor.h>
-namespace kag {
+namespace kag
+{
   class FileExecutor : public Executor
   {
   public:

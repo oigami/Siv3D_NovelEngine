@@ -1,7 +1,8 @@
 #pragma once
 #include <MmdNovel/image/image_layer.h>
 #include <MmdNovel/default_value.h>
-namespace kag {
+namespace kag
+{
   template<class Impl> class ManagerHelper
   {
   public:
@@ -13,7 +14,8 @@ namespace kag {
 
     std::shared_ptr<Impl> manager_;
   };
-  namespace pimpl {
+  namespace pimpl
+  {
     class ImageManagerImpl
     {
     public:

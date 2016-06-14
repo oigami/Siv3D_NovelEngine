@@ -3,7 +3,8 @@
 #include "tokenizer.h"
 #include <MmdNovel/default_value.h>
 #include <MmdNovel/layer.h>
-namespace kag {
+namespace kag
+{
   enum class FindAttributeResult
   {
     NotName,
@@ -11,7 +12,8 @@ namespace kag {
     Ok,
   };
 
-  namespace converter {
+  namespace converter
+  {
     enum class LayerType
     {
       Message,
@@ -277,7 +279,7 @@ namespace kag {
           if ( !converter::TryConvert<T>(v, *val) )
             error_func(name, v);
         },
-            [&error_func, &name]() { error_func(name); });
+          [&error_func, &name]() { error_func(name); });
         return *this;
       }
 

@@ -1,7 +1,9 @@
 ﻿#pragma once
 #include <MmdNovel/layer.h>
-namespace kag {
-  namespace message {
+namespace kag
+{
+  namespace message
+  {
     enum AlignType
     {
       Left,
@@ -42,7 +44,6 @@ namespace kag {
 
     struct Style : DefaultStyle
     {
-
       //TODO: 未実装
       AlignType align_type_;
       bool auto_return_;
