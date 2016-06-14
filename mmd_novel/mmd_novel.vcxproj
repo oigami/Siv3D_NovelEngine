@@ -44,7 +44,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(SIV3D_20160110)\Inc;D:\VisualStudio\gitlab\Siv3d_MMD\Siv3D_MMD\include;$(ProjectDir);$(IncludePath)</IncludePath>
+    <IncludePath>$(SIV3D_20160110)\Inc;D:\VisualStudio\gitlab\Siv3d_MMD\Siv3D_MMD\include;$(ProjectDir);C:\VisualStudio\git\siv3d_mmdmodel\Siv3D_MMD\include;$(IncludePath)</IncludePath>
     <LibraryPath>$(SIV3D_20160110)\Lib;A:\x64\debug_lib;D:\VisualStudio\gitlab\mmd_novel\mmd_novel\lib\Siv3d_MMD;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -97,13 +97,16 @@
     <ClCompile Include="kag_executor\message\message_manager.cpp" />
     <ClCompile Include="kag_executor\executor\tag_editor.cpp" />
     <ClCompile Include="kag_executor\executor\kag_file_executor.cpp" />
+    <ClCompile Include="kag_executor\mmd\mmd_layer.cpp" />
+    <ClCompile Include="kag_executor\mmd\mmd_manager.cpp" />
     <ClCompile Include="kag_parser\kag_parser.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="kag_parser\kag_tokenizer.cpp" />
     <ClCompile Include="kag_executor\image\image_layer.cpp" />
     <ClCompile Include="kag_executor\layer.cpp" />
     <ClCompile Include="kag_executor\message\message_layer.cpp" />
-    <ClCompile Include="MmdNovel\mmd\mmd_layer.cpp" />
+    <ClCompile Include="kag_executor\imanager.cpp" />
+    <ClCompile Include="kag_executor\mmd\mmd_layer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Engine\Splash.png" />
@@ -174,6 +177,8 @@
   <ItemGroup>
     <ClInclude Include="kag_executor\executor\impl\kag_executor_impl.h" />
     <ClInclude Include="kag_executor\executor\impl\kag_file_executor_impl.h" />
+    <ClInclude Include="kag_executor\mmd\mmd_manager.h" />
+    <ClInclude Include="MmdNovel\imanager.h" />
     <ClInclude Include="MmdNovel\mmd\mmd_layer.h" />
     <ClInclude Include="MmdNovel\layer.h" />
     <ClInclude Include="MmdNovel.h" />

@@ -1,4 +1,4 @@
-#include "imanager.h"
+#include <MmdNovel/imanager.h>
 namespace kag
 {
   PageLayer<LayerPtr>& IManager::GetLayer(int index)

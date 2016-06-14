@@ -117,7 +117,10 @@ namespace kag
   {
   public:
     LayerHelper() : pimpl_(Pimpl::create()) {}
+    LayerHelper(const std::shared_ptr<Pimpl>& p) : pimpl_(p) {}
+
     operator LayerPtr() const { return pimpl_; }
+    operator std::shared_ptr<Pimpl>() const { return pimpl_; }
     std::shared_ptr<Pimpl> operator->() const { return pimpl_; }
 
     Pimpl& operator()() const;

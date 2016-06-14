@@ -35,5 +35,5 @@ namespace kag
     };
   }
 
-  using MMDLayer = LayerHelper<pimpl::MMDLayerPimpl>;
+  using MMDLayer = std::shared_ptr<pimpl::MMDLayerPimpl>;
 }
