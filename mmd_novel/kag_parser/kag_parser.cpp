@@ -32,7 +32,7 @@ namespace kag
     }
   }
 
-  Parser::CommandToken Parser::readCommand()
+  CommandToken Parser::readCommand()
   {
     kag::Tokenizer::Token token = tokenizer_.Read();
     SnapShotSpan name;
@@ -95,34 +95,34 @@ namespace kag
     MessageBox::Show(text);
   }
 
-  Parser::CommandToken::CommandToken(const SnapShotSpan & n, Arguments && args)
+  CommandToken::CommandToken(const SnapShotSpan & n, Arguments && args)
     :name_(n), arguments_(std::move(args))
   {
   }
 
-  void Parser::CommandToken::AddIllegalException(const SnapShotSpan & arg_name, const SnapShotSpan & arg_val)
+  void CommandToken::AddIllegalException(const SnapShotSpan & arg_name, const SnapShotSpan & arg_val)
   {
     errors_.push_back({ arg_name,arg_val });
   }
 
-  void Parser::CommandToken::AddNotFoundException(const SnapShotSpan & arg_name)
+  void CommandToken::AddNotFoundException(const SnapShotSpan & arg_name)
   {
     errors_.push_back({ arg_name });
   }
 
-  void Parser::CommandToken::AddException(const SnapShotSpan & arg_name, const SnapShotSpan & arg_val)
+  void CommandToken::AddException(const SnapShotSpan & arg_name, const SnapShotSpan & arg_val)
   {
     AddIllegalException(arg_name, arg_val);
   }
 
-  void Parser::CommandToken::AddException(const SnapShotSpan & arg_name)
+  void CommandToken::AddException(const SnapShotSpan & arg_name)
   {
     AddNotFoundException(arg_name);
   }
 
-  Parser::Error::Error(const SnapShotSpan & name) :arg_name(name), type(Type::NotFoundArgument) {}
+  Error::Error(const SnapShotSpan & name) :arg_name(name), type(Type::NotFoundArgument) {}
 
-  Parser::Error::Error(const SnapShotSpan & name, const SnapShotSpan & val)
+  Error::Error(const SnapShotSpan & name, const SnapShotSpan & val)
     : arg_name(name), arg_val(val), type(Type::IllegalArgument)
   {
   }
@@ -354,8 +354,8 @@ namespace kag
 
   }
 
-  std::pair<Parser::Arguments::arguments_type::iterator, bool>
-    Parser::Arguments::insert(std::pair<SnapShotSpan, SnapShotSpan>&& p)
+  std::pair<Arguments::arguments_type::iterator, bool>
+    Arguments::insert(std::pair<SnapShotSpan, SnapShotSpan>&& p)
   {
     return args.insert(std::move(p));
   }

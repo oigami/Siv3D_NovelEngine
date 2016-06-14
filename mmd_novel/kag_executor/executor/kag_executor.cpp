@@ -1,6 +1,7 @@
 ﻿#include <MmdNovel/kag_executor.h>
 #include <MmdNovel/tag_editor.h>
 #include <kag_executor/executor/impl/kag_executor_impl.h>
+#include <MmdNovel/imanager.h>
 namespace kag
 {
   Executor::Executor() :pimpl_(std::make_shared<Pimpl>()) {}
@@ -18,7 +19,7 @@ namespace kag
     case LayerType::Foreground:
       return imageManager()->GetLayer(layer_num.second);
     case LayerType::MMD:
-      return mmdLayer();
+      throw std::runtime_error("Executor::Getlayer() mmd");
     default:
       throw std::runtime_error("Executor::Getlayer() other");
       break;
@@ -33,10 +34,7 @@ namespace kag
   {
     return pimpl_->imageManager();
   }
-  PageLayer<MMDLayer> Executor::mmdLayer()const
-  {
-    return pimpl_->mmdLayer();
-  }
+
   void Executor::Clear()
   {
     pimpl_->Clear();
@@ -165,6 +163,11 @@ namespace kag
   void Executor::CommandImage(int layer, const Value<LayerPage>& page, const Texture & tex)
   {
     pimpl_->CommandImage(layer, page, tex);
+  }
+
+  void Executor::AddManager(const SnapShotSpan & name, const IManagerPtr & manager)
+  {
+    manager_[name] = manager;
   }
 
   void Executor::ShowErrorMsg(const String & str) const

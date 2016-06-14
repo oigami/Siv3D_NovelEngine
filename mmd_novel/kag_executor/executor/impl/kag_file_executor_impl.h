@@ -10,63 +10,63 @@ namespace kag
     void Load(const FilePath& path);
     void Update();
     int NowFileLine() const;
+
+    using TagFunction = IManager::FuncList;
+    TagFunction tag_func_;
   private:
     Executor executor_;
 
     Parser parser_;
-    using TagFunction = void(FileExecutor::Pimpl::*)(Parser::CommandToken&);
-    std::map<SnapShotSpan, TagFunction> tag_func_;
 
     //タグリファレンス
     //http://devdoc.kikyou.info/tvp/docs/kag3doc/contents/index.html
 
     //メッセージ関連
 
-    //void CancelAutoModeTag(Parser::CommandToken& token);
-    //void CancelSkipTag(Parser::CommandToken& token);
-    void CHTag(Parser::CommandToken& token);
-    void CMTag(Parser::CommandToken& token);
-    void CTTag(Parser::CommandToken& token);
-    void CurrentTag(Parser::CommandToken& token);
-    void DefFontTag(Parser::CommandToken& token);
-    void DefStyleTag(Parser::CommandToken& token);
-    void DelayTag(Parser::CommandToken& token);
-    void EndIndentTag(Parser::CommandToken& token);
-    void EndNoWaitTag(Parser::CommandToken& token);
-    void ERTag(Parser::CommandToken& token);
-    void FontTTag(Parser::CommandToken& token);
+    //void CancelAutoModeTag(CommandToken& token);
+    //void CancelSkipTag(CommandToken& token);
+    void CHTag(CommandToken& token);
+    void CMTag(CommandToken& token);
+    void CTTag(CommandToken& token);
+    void CurrentTag(CommandToken& token);
+    void DefFontTag(CommandToken& token);
+    void DefStyleTag(CommandToken& token);
+    void DelayTag(CommandToken& token);
+    void EndIndentTag(CommandToken& token);
+    void EndNoWaitTag(CommandToken& token);
+    void ERTag(CommandToken& token);
+    void FontTTag(CommandToken& token);
 
-    //void GlyphTag(Parser::CommandToken& token);
-    //void GraphTag(Parser::CommandToken& token);
-    //void HCHTag(Parser::CommandToken& token);
-    void IndentTag(Parser::CommandToken& token);
-    void LTag(Parser::CommandToken& token);
-    void LocateTag(Parser::CommandToken& token);
+    //void GlyphTag(CommandToken& token);
+    //void GraphTag(CommandToken& token);
+    //void HCHTag(CommandToken& token);
+    void IndentTag(CommandToken& token);
+    void LTag(CommandToken& token);
+    void LocateTag(CommandToken& token);
 
-    //void LockLinkTag(Parser::CommandToken& token);
-    void NoWaitTag(Parser::CommandToken& token);
-    void PTag(Parser::CommandToken& token);
-    void PositionTTag(Parser::CommandToken& token);
-    void RTag(Parser::CommandToken& token);
-    void ResetFontTag(Parser::CommandToken& token);
-    void ResetStyleTag(Parser::CommandToken& token);
+    //void LockLinkTag(CommandToken& token);
+    void NoWaitTag(CommandToken& token);
+    void PTag(CommandToken& token);
+    void PositionTTag(CommandToken& token);
+    void RTag(CommandToken& token);
+    void ResetFontTag(CommandToken& token);
+    void ResetStyleTag(CommandToken& token);
 
-    //void RubyTag(Parser::CommandToken& token);
-    void StyleTag(Parser::CommandToken& token);
+    //void RubyTag(CommandToken& token);
+    void StyleTag(CommandToken& token);
 
-    //void UnlockLinkTag(Parser::CommandToken& token);
+    //void UnlockLinkTag(CommandToken& token);
 
     /* 画像関連 */
 
-    void ImageTag(Parser::CommandToken& token);
+    void ImageTag(CommandToken& token);
 
     /* レイヤ関連 */
-    void MoveTag(Parser::CommandToken& token);
-    void TransTag(Parser::CommandToken& token);
+    void MoveTag(CommandToken& token);
+    void TransTag(CommandToken& token);
 
     /* MMD関連 */
-    void MMDTag(Parser::CommandToken& token);
-    void CameraTag(Parser::CommandToken& token);
+    void CameraTag(CommandToken& token);
 
   };
 

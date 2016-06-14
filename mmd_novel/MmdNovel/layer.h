@@ -35,9 +35,9 @@ namespace kag
       using EaseInOutFunc = T(*)(const T& s, const T& e, std::function<double(double)>, double t);
 
       static const EaseInOutFunc func[3] = {
-        (EaseInOutFunc)EaseIn<T>,
-        (EaseInOutFunc)EaseOut<T>,
-        (EaseInOutFunc)EaseInOut<T>
+        (EaseInOutFunc) EaseIn<T>,
+        (EaseInOutFunc) EaseOut<T>,
+        (EaseInOutFunc) EaseInOut<T>
       };
       int t = static_cast<int>(type);
       return func[t](start, end, f, now_timeMillisec);
@@ -230,6 +230,7 @@ namespace kag
   public:
     PageLayer(std::array<LayerPtr, 2>& l) : layer_(l) {}
     PageLayer() = default;
+    PageLayer(const Pimpl& fore, const Pimpl& back) : layer_({ fore,back }) {}
 
     Pimpl& operator[](LayerPage page)
     {

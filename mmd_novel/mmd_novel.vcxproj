@@ -176,8 +176,9 @@
   <ItemGroup>
     <ClInclude Include="kag_executor\executor\impl\kag_executor_impl.h" />
     <ClInclude Include="kag_executor\executor\impl\kag_file_executor_impl.h" />
-    <ClInclude Include="kag_executor\mmd\mmd_manager.h" />
+    <ClInclude Include="MmdNovel\mmd\mmd_manager.h" />
     <ClInclude Include="MmdNovel\imanager.h" />
+    <ClInclude Include="MmdNovel\kag_token.h" />
     <ClInclude Include="MmdNovel\mmd\mmd_layer.h" />
     <ClInclude Include="MmdNovel\layer.h" />
     <ClInclude Include="MmdNovel.h" />

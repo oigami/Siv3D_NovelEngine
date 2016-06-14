@@ -1,10 +1,12 @@
 ﻿# include <Siv3D.hpp>
 # include <HamFramework.hpp>
 #include <MmdNovel.h>
+#include <MmdNovel/mmd/mmd_manager.h>
 void Main()
 {
   TextureAsset::Register(L"siv3d-kun", L"Data/siv3d-kun.png");
   kag::FileExecutor executor(L"test.txt");
+  executor.AddManager<kag::MMDManager>(L"mmd");
   TextReader reader(L"test.txt");
   Window::SetFullscreen(false, Size(1024, 768));
   Array<String> file_line;

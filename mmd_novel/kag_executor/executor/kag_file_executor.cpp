@@ -19,4 +19,10 @@ namespace kag
     return pimpl_->NowFileLine();
   }
 
+  void FileExecutor::AddManager(const SnapShotSpan & name, const std::shared_ptr<IManager>& manager)
+  {
+    Executor::AddManager(name, manager);
+    manager->AddTag(pimpl_->tag_func_);
+  }
+
 }

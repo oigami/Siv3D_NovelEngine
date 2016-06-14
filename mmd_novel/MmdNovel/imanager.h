@@ -1,5 +1,6 @@
-#pragma once
+ï»¿#pragma once
 #include <MmdNovel/layer.h>
+#include <MmdNovel/kag_executor.h>
 namespace kag
 {
   namespace type_traits
@@ -16,11 +17,13 @@ namespace kag
     };
   }
 
-  class IManager
+  struct IManager
   {
-    IManager() = default;
-
   public:
+    using FuncList = std::map<SnapShotSpan, std::function<void(CommandToken&)>>;
+    virtual void AddTag(FuncList& func_list) = 0;
+
+    IManager(const Executor& executor);
 
     virtual ~IManager() = default;
 
@@ -38,15 +41,18 @@ namespace kag
     template<class Type> static typename type_traits::GetType<Type>::shared Cast(LayerPtr& layer)
     {
       using Ptr = typename type_traits::GetType<Type>::type;
-      static_assert(std::is_base_of<Layer, Ptr>::value, "Œ^‚ÍƒŒƒCƒ„‚ğŒp³‚µ‚Ä‚¢‚é•K—v‚ª‚ ‚è‚Ü‚·");
+      static_assert(std::is_base_of<Layer, Ptr>::value, "å‹ã¯ãƒ¬ã‚¤ãƒ¤ã‚’ç¶™æ‰¿ã—ã¦ã„ã‚‹å¿…è¦ãŒã‚ã‚Šã¾ã™");
       return std::dynamic_pointer_cast<Ptr>(layer);
     }
 
-    void resize(int num, PageLayer<LayerPtr>& val);
+    void resize(int num, const LayerPtr& fore, const LayerPtr& back);
+
+    Executor executor_;
 
   private:
 
     Array<PageLayer<LayerPtr>> layer_;
   };
 
+  using IManagerPtr = std::shared_ptr<IManager>;
 }

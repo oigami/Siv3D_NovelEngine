@@ -5,8 +5,12 @@
 #include <MmdNovel/default_value.h>
 #include <kag_parser/kag_parser.h>
 #include <MmdNovel/mmd/mmd_layer.h>
+
 namespace kag
 {
+  struct IManager;
+  using IManagerPtr = std::shared_ptr<IManager>;
+
   /// <summary>
   /// kagの実行クラス
   /// <para>シャローコピーされるのでコピーをしてもデータが共有される</para>
@@ -25,7 +29,6 @@ namespace kag
     PageLayer<LayerPtr> GetLayer(std::pair<kag::converter::LayerType, int> layer_num) const;
     MessageManager messageManager()const;
     ImageManager imageManager()const;
-    PageLayer<MMDLayer> mmdLayer()const;
 
     /// <summary>
     /// 次のコマンドに進める時にtrueを返す
@@ -92,6 +95,9 @@ namespace kag
 
     void CommandImage(int layer, const Value<LayerPage>& page, const Texture& tex);
 
+
+    void AddManager(const SnapShotSpan& name, const IManagerPtr& manager);
+
   protected:
 
     void ShowErrorMsg(const String& str) const;
@@ -100,5 +106,6 @@ namespace kag
     class Pimpl;
     std::shared_ptr<Pimpl> pimpl_;
 
+    std::map<SnapShotSpan, IManagerPtr> manager_;
   };
 }
