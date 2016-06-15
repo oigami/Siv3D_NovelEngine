@@ -10,11 +10,7 @@ namespace kag
       SetPositionWidth(tex.width);
       SetPositionHeight(tex.height);
     }
-    std::shared_ptr<ImageLayerPimpl> ImageLayerPimpl::create()
-    {
-      struct i :ImageLayerPimpl {};
-      return std::make_shared<i>();
-    }
+
     void ImageLayerPimpl::draw() const
     {
       if ( !texture_ ) return;

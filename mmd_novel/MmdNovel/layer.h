@@ -7,6 +7,32 @@ namespace kag
   struct Layer;
   using LayerPtr = std::shared_ptr<Layer>;
 
+  class LayerPage
+  {
+    friend Value<LayerPage>;
+    constexpr LayerPage(detail::Default) :page(-1)
+    {
+    }
+  public:
+
+    enum class Type
+    {
+      Fore,
+      Back
+    };
+    constexpr LayerPage() :page(Define::fore_page) {}
+
+    constexpr LayerPage(Type type) : page(type == Type::Fore ? Define::fore_page : Define::back_page)
+    {
+    }
+
+    constexpr operator int() const { return page; }
+    int page;
+    static const LayerPage Fore;
+    static const LayerPage Back;
+  };
+
+
   struct EasingType
   {
     enum class Type
@@ -55,117 +81,6 @@ namespace kag
   using ScaleEffectData = EasingType::Data<double>;
   class ITransEffect;
 
-  struct Layer : s3d::Uncopyable
-  {
-    virtual void update() {};
-
-  public:
-
-    /// <summary>
-    /// 描画処理
-    /// </summary>
-    /// <remarks>トランジションはこちらのdrawを呼ぶ</remarks>
-    virtual void draw() const = 0;
-
-    virtual ~Layer() = default;
-
-    Layer();
-
-    void Update();
-
-    void DrawPhase() const;
-    void SetOpacity(int opacity);
-    void SetPositionLeft(int left);
-    void SetPositionTop(int top);
-    void SetPositionWidth(int width);
-    void SetPositionHeight(int height);
-
-    void SetScale(double s);
-
-    void IsVisible(bool visible);
-
-    void SetZIndex(uint16 index);
-
-    void MoveEffect(const MoveEffectData& data);
-    void MoveEffect(const MoveEffectData::Array& data);
-
-    void ScaleEffect(const ScaleEffectData& data);
-    void ScaleEffect(const ScaleEffectData::Array& data);
-
-    bool operator<(const Layer& layer) const { return z_index_ < layer.z_index_; }
-    bool operator<=(const Layer& layer) const { return z_index_ <= layer.z_index_; }
-
-    const Rect& position()const { return position_; }
-    const uint8& opacity()const { return opacity_; }
-
-    void AddTrans(std::shared_ptr<ITransEffect> trans);
-
-  private:
-
-    // トランジション用のエフェクト
-    std::shared_ptr<ITransEffect> trans_effect;
-
-    Effect effect;
-    Size normal_size_;
-    Rect position_;
-    uint16 z_index_;
-    uint8 opacity_;
-    bool visible_;
-  };
-
-  template<class layer, class...Args> std::shared_ptr<typename type_traits::GetType<layer>::type> MakeLayer(Args&&...args)
-  {
-    return std::make_shared<typename type_traits::GetType<layer>::type>(std::forward(args)...);
-  }
-
-  template<class Pimpl> class LayerHelper
-  {
-  public:
-    LayerHelper() : pimpl_(Pimpl::create()) {}
-    LayerHelper(const std::shared_ptr<Pimpl>& p) : pimpl_(p) {}
-
-    operator LayerPtr() const { return pimpl_; }
-    operator std::shared_ptr<Pimpl>() const { return pimpl_; }
-    std::shared_ptr<Pimpl> operator->() const { return pimpl_; }
-
-    Pimpl& operator()() const;
-
-    template<class T, class ...Args>
-    auto bind(T(Layer::* f)(Args...))
-    {
-      return [this, f](Args...args) { return (static_cast<Layer*>(pimpl_.get())->*f)(std::forward<Args>(args)...); };
-    }
-
-  private:
-
-    std::shared_ptr<Pimpl> pimpl_;
-  };
-
-  class LayerPage
-  {
-    friend Value<LayerPage>;
-    constexpr LayerPage(detail::Default) :page(-1)
-    {
-    }
-  public:
-
-    enum class Type
-    {
-      Fore,
-      Back
-    };
-    constexpr LayerPage() :page(Define::fore_page) {}
-
-    constexpr LayerPage(Type type) : page(type == Type::Fore ? Define::fore_page : Define::back_page)
-    {
-    }
-
-    constexpr operator int() const { return page; }
-    int page;
-    static const LayerPage Fore;
-    static const LayerPage Back;
-  };
-
   struct TransUniversalData
   {
     int time_millisec;
@@ -197,38 +112,6 @@ namespace kag
     Stay stay;
 
   };
-  class ITransEffect
-  {
-    /// <summary>
-    /// 更新処理
-    /// </summary>
-    /// <param name="t"> 現在の裏画面の不透明度 </param>
-    virtual void update(double opacity) = 0;
-
-    virtual void draw()const = 0;
-
-  public:
-
-    ITransEffect(int time_millisec, Layer* fore, Layer* back);
-
-    bool Update();
-
-    void Draw() const;
-
-  protected:
-
-    Layer *fore_, *back_;
-
-  private:
-    EasingController<double> t;
-
-  };
-
-  namespace detail
-  {
-    void PageLayerTrans(int time_millisec, const LayerPtr& fore_layer, const LayerPtr& back_layer);
-    void PageLayerTrans(const TransUniversalData& data, const LayerPtr& fore_layer, const LayerPtr& back_layer);
-  }
 
   template<class Pimpl> class PageLayer
   {
@@ -291,6 +174,66 @@ namespace kag
 
     std::array<Pimpl, 2> layer_;
   };
+  class LayerManagerImpl;
+  using LayerManager = std::shared_ptr<LayerManagerImpl>;
+
+  struct Layer : s3d::Uncopyable
+  {
+    virtual void update() {};
+
+  public:
+
+    /// <summary>
+    /// 描画処理
+    /// </summary>
+    /// <remarks>トランジションはこちらのdrawを呼ぶ</remarks>
+    virtual void draw() const = 0;
+
+    virtual ~Layer() = default;
+
+    Layer(const LayerManager& manager);
+
+    void Update();
+
+    void DrawPhase() const;
+    void SetOpacity(int opacity);
+    void SetPositionLeft(int left);
+    void SetPositionTop(int top);
+    void SetPositionWidth(int width);
+    void SetPositionHeight(int height);
+
+    void SetScale(double s);
+
+    void IsVisible(bool visible);
+
+    void SetZIndex(uint16 index);
+
+    void MoveEffect(const MoveEffectData& data);
+    void MoveEffect(const MoveEffectData::Array& data);
+
+    void ScaleEffect(const ScaleEffectData& data);
+    void ScaleEffect(const ScaleEffectData::Array& data);
+
+    bool operator<(const Layer& layer) const { return z_index_ < layer.z_index_; }
+    bool operator<=(const Layer& layer) const { return z_index_ <= layer.z_index_; }
+
+    const Rect& position()const { return position_; }
+    const uint8& opacity()const { return opacity_; }
+
+    void AddTrans(std::shared_ptr<ITransEffect> trans);
+
+  private:
+
+    // トランジション用のエフェクト
+    std::shared_ptr<ITransEffect> trans_effect;
+    LayerManager layer_manager_;
+    Effect effect;
+    Size normal_size_;
+    Rect position_;
+    uint16 z_index_;
+    uint8 opacity_;
+    bool visible_;
+  };
 
   class LayerManagerImpl
   {
@@ -315,6 +258,42 @@ namespace kag
     void Sort();
   };
 
-  using LayerManager = std::shared_ptr<LayerManagerImpl>;
+
+
+  class ITransEffect
+  {
+    /// <summary>
+    /// 更新処理
+    /// </summary>
+    /// <param name="t"> 現在の裏画面の不透明度 </param>
+    virtual void update(double opacity) = 0;
+
+    virtual void draw()const = 0;
+
+  public:
+
+    ITransEffect(int time_millisec, Layer* fore, Layer* back);
+
+    bool Update();
+
+    void Draw() const;
+
+  protected:
+
+    Layer *fore_, *back_;
+
+  private:
+    EasingController<double> t;
+
+  };
+
+  namespace detail
+  {
+    void PageLayerTrans(int time_millisec, const LayerPtr& fore_layer, const LayerPtr& back_layer);
+    void PageLayerTrans(const TransUniversalData& data, const LayerPtr& fore_layer, const LayerPtr& back_layer);
+  }
+
+
+
 
 }

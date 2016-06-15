@@ -7,9 +7,8 @@ namespace kag
   {
     class ImageLayerPimpl : public Layer
     {
-      friend LayerHelper<ImageLayerPimpl>;
     public:
-      ImageLayerPimpl() = default;
+      using Layer::Layer;
 
       void SetTex(const Texture& tex);
 
@@ -18,8 +17,6 @@ namespace kag
       Texture texture_;
 
     protected:
-
-      static std::shared_ptr<ImageLayerPimpl> create();
 
       void draw() const;
     };

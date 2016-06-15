@@ -27,6 +27,7 @@ namespace kag
 
     PageLayer<LayerPtr> GetLayer(std::pair<kag::converter::LayerType, int> layer_num) const;
     MessageManager messageManager()const;
+    LayerManager layerManager()const;
 
     /// <summary>
     /// 次のコマンドに進める時にtrueを返す
@@ -91,6 +92,12 @@ namespace kag
 
     void AddManager(const SnapShotSpan& name, const IManagerPtr& manager);
 
+
+    template<class layer, class...Args> std::shared_ptr<typename type_traits::GetType<layer>::type> MakeLayer(Args&&...args)
+    {
+      return std::make_shared<typename type_traits::GetType<layer>::type>(layerManager(), std::forward(args)...);
+    }
+
   protected:
 
     void ShowErrorMsg(const String& str) const;
@@ -100,5 +107,7 @@ namespace kag
     std::shared_ptr<Pimpl> pimpl_;
 
     std::map<SnapShotSpan, IManagerPtr> manager_;
+
+
   };
 }

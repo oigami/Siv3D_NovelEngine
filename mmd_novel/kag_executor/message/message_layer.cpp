@@ -5,7 +5,7 @@ namespace kag
   {
     namespace pimpl
     {
-      MessageLayerPimpl::MessageLayerPimpl()
+      MessageLayerPimpl::MessageLayerPimpl(const LayerManager & manager) :Layer(manager)
       {
         SetPositionLeft(16);
         SetPositionTop(16);

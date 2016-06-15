@@ -116,7 +116,9 @@ namespace kag
     }
   }
 
-  Layer::Layer() :opacity_(255), visible_(true), z_index_(0) {}
+  Layer::Layer(const LayerManager & manager) :layer_manager_(manager), opacity_(255), visible_(true), z_index_(0)
+  {
+  }
 
   void Layer::Update()
   {

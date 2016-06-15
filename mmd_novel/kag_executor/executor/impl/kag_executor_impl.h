@@ -22,6 +22,12 @@ namespace kag
     Pimpl();
 
     MessageManager messageManager() { return message_manager_; }
+    LayerManager layerManager() { return layer_manager_; }
+
+    template<class layer, class...Args> std::shared_ptr<typename type_traits::GetType<layer>::type> MakeLayer(Args&&...args)
+    {
+      return std::make_shared<typename type_traits::GetType<layer>::type>(layer_manager_, std::forward(args)...);
+    }
 
     void Clear();
 

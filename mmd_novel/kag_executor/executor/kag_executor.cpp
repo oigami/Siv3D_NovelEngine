@@ -22,6 +22,11 @@ namespace kag
     return pimpl_->messageManager();
   }
 
+  LayerManager Executor::layerManager() const
+  {
+    return pimpl_->layerManager();
+  }
+
   void Executor::Clear()
   {
     pimpl_->Clear();

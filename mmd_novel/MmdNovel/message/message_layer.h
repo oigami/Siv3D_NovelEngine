@@ -12,11 +12,8 @@ namespace kag
       class MessageLayerPimpl : public Layer
       {
       public:
-        static std::shared_ptr<MessageLayerPimpl> create()
-        {
-          return std::make_shared<MessageLayerPimpl>();
-        }
-        MessageLayerPimpl();
+
+        MessageLayerPimpl(const LayerManager& manager);
 
         /// <summary>
         /// メッセージボックスをクリアする
@@ -212,5 +209,5 @@ namespace kag
     }
   }
 
-  using MessageLayer = LayerHelper<message::pimpl::MessageLayerPimpl>;
+  using MessageLayer = std::shared_ptr<message::pimpl::MessageLayerPimpl>;
 }

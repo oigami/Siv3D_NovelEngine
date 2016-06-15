@@ -20,7 +20,7 @@ namespace kag
 
   void ImageManager::resize(int num)
   {
-    static const ImageLayer fore = MakeLayer<ImageLayer>();
+    static const ImageLayer fore = executor_.MakeLayer<ImageLayer>();
     IFileManager::resize(num, fore, fore);
   }
 

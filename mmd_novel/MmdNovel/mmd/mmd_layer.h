@@ -7,13 +7,8 @@ namespace kag
   {
     class MMDLayerPimpl : public Layer
     {
-      friend LayerHelper<MMDLayerPimpl>;
     public:
-      MMDLayerPimpl() = default;
-      static std::shared_ptr<MMDLayerPimpl> create()
-      {
-        return std::make_shared<MMDLayerPimpl>();
-      }
+      MMDLayerPimpl(const LayerManager& manager);
 
       void SetModel(s3d_mmd::MMD model);
 

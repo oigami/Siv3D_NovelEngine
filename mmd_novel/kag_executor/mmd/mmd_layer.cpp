@@ -5,6 +5,8 @@ namespace kag
 {
   namespace pimpl
   {
+    MMDLayerPimpl::MMDLayerPimpl(const LayerManager & manager) :Layer(manager) {}
+
     void MMDLayerPimpl::SetModel(s3d_mmd::MMD model)
     {
       model_ = model;
