@@ -9,25 +9,9 @@ namespace kag
   PageLayer<LayerPtr> Executor::GetLayer(std::pair<kag::converter::LayerType, int> layer_num) const
   {
     using namespace converter;
-    SnapShotSpan layer_name;
-    switch ( layer_num.first )
-    {
-    case LayerType::Message:
+    if ( layer_num.first == L"message" )
       return messageManager().GetLayer(layer_num.second);
-    case LayerType::Background:
-      assert(0);
-      throw std::runtime_error("Executor::Getlayer() Background");
-    case LayerType::Foreground:
-      layer_name = L"image";
-      break;
-    case LayerType::MMD:
-      layer_name = L"mmd";
-      break;
-    default:
-      throw std::runtime_error("Executor::Getlayer() other");
-      break;
-    }
-    auto it = manager_.find(layer_name);
+    auto it = manager_.find(layer_num.first);
     if ( it == manager_.end() )
       throw std::invalid_argument("Executor::GetLayer()");
     return it->second->GetLayer(layer_num.second);

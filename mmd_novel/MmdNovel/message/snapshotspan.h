@@ -64,6 +64,7 @@ namespace kag
     bool TextEqual(const SnapShotSpan& span) const
     {
       if ( span.Length() != Length() ) return false;
+      if ( c_ == span.c_ ) return true;
       return StrCmp(c_, span.c_, Length()) == 0;
     }
     bool operator<(const SnapShotSpan& r) const

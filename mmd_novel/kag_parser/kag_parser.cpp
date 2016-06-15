@@ -258,17 +258,17 @@ namespace kag
       {
         if ( span == L"base" )
         {
-          out = { LayerType::Background,0 };
+          out = { L"span", 0 };
           return true;
         }
         else if ( span == L"mmd" )
         {
-          out = { LayerType::MMD,0 };
+          out = { L"mmd",0 };
           return true;
         }
         int num = 0;
         bool ok = TryInt10(span, num);
-        out = { LayerType::Foreground,num };
+        out = { L"image", num };
         return ok;
       }
       if ( 7 <= len )
@@ -277,12 +277,12 @@ namespace kag
         {
           if ( len == 7 )
           {
-            out = { LayerType::Message, Define::default };
+            out = { L"message", Define::default };
             return true;
           }
           int num = 0;
           bool ok = TryInt10(span.substr(7, len - 7), num);
-          out = { LayerType::Message,num };
+          out = { L"message", num };
           return ok;
         }
       }

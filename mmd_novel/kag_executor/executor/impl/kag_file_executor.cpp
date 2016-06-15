@@ -105,7 +105,8 @@ namespace kag
         }
         else
         {
-          throw std::runtime_error(token.name().ToNarrow());
+          Println(L'[', token.name(), L"]タグは存在しません");
+          LOG_ERROR(L'[', token.name(), L"]タグは存在しません");
         }
         break;
       }
@@ -241,7 +242,7 @@ namespace kag
   {
     struct TransVal
     {
-      std::pair<converter::LayerType, int> layer = { converter::LayerType::Background,0 };
+      std::pair<converter::LayerType, int> layer = { L"base", 0 };
       Must<int> time;
       SnapShotSpan method = L"universal";
       Must<SnapShotSpan> rule;
@@ -371,7 +372,7 @@ namespace kag
 
   void FileExecutor::CurrentTag(CommandToken & token)
   {
-    std::pair<converter::LayerType, int> layer = { converter::LayerType::Message,Define::default };
+    std::pair<converter::LayerType, int> layer = { L"message", Define::default };
     LayerPage page = LayerPage::Fore;
 
     using namespace converter;
@@ -486,7 +487,7 @@ namespace kag
         token.GET(layer).GET(page).GET(left).GET(top).GET(width).GET(height)
           .GET(marginl).GET(margint).GET(marginr).GET(marginb)
           .GET(color).GET(frame).GET(opacity).GET(visible);
-        if ( layer && layer->first != converter::LayerType::Message )
+        if ( layer && layer->first != L"message" )
           token.AddIllegalException(L"layer", L""); // TODO:パースした元の値を取得する方法を考える
       }
       Optional<std::pair<converter::LayerType, int>> layer;

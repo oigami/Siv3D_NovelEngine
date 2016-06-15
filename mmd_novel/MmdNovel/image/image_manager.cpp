@@ -38,7 +38,7 @@ namespace kag
   }
 
   ImageManager::ImageVal::ImageVal(const std::shared_ptr<ImageManager>& manager, int layer_index, const SnapShotSpan & storage)
-    :manager_(manager), layer({ converter::LayerType::Foreground,layer_index }), storage(storage)
+    :manager_(manager), layer({ L"image", layer_index }), storage(storage)
   {
   }
 

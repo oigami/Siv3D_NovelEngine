@@ -5,13 +5,7 @@ namespace kag
 {
   namespace converter
   {
-    enum class LayerType
-    {
-      Message,
-      Foreground,
-      Background,
-      MMD,
-    };
+    using LayerType = SnapShotSpan;
 
 
     /// <summary>
