@@ -1,15 +1,16 @@
+#ifdef USE_MMD_LAYER
+
 #include <MmdNovel/mmd/mmd_manager.h>
 #include <MmdNovel/kag_executor.h>
 #define GET(name) get(L#name,name)
 namespace kag
 {
-
   void MMDManager::AddTag(FuncList & func_list)
   {
     func_list[L"mmd"] = [this_ = shared_from_this()](CommandToken& token) { this_->MMDTag(token); };
   }
 
-  MMDManager::MMDManager(const Executor & exe) :IManager(exe)
+  MMDManager::MMDManager(const Executor & exe) :IFileManager(exe)
   {
     resize(1);
 
@@ -66,3 +67,4 @@ namespace kag
     layer->SetTime(start_time);
   }
 }
+#endif // USE_MMD_LAYER

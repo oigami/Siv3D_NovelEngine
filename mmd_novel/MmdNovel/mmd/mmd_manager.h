@@ -1,10 +1,10 @@
 #pragma once
-#include <MmdNovel/imanager.h>
+#include <MmdNovel/kag_file_executor.h>
 #include <MmdNovel/mmd/mmd_layer.h>
 #include <MmdNovel/kag_token.h>
 namespace kag
 {
-  struct MMDManager : IManager, std::enable_shared_from_this<MMDManager>
+  struct MMDManager : IFileManager, std::enable_shared_from_this<MMDManager>
   {
     void AddTag(FuncList& func_list) override;
 

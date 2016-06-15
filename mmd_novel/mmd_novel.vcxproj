@@ -90,13 +90,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="kag_executor\executor\impl\kag_file_executor_impl.cpp" />
+    <ClCompile Include="kag_executor\executor\impl\kag_file_executor.cpp" />
     <ClCompile Include="kag_executor\message\message_text.cpp" />
     <ClCompile Include="kag_executor\executor\kag_executor.cpp" />
     <ClCompile Include="kag_executor\executor\impl\kag_executor_impl.cpp" />
     <ClCompile Include="kag_executor\message\message_manager.cpp" />
     <ClCompile Include="kag_executor\executor\tag_editor.cpp" />
-    <ClCompile Include="kag_executor\executor\kag_file_executor.cpp" />
     <ClCompile Include="kag_executor\mmd\mmd_layer.cpp" />
     <ClCompile Include="kag_executor\mmd\mmd_manager.cpp" />
     <ClCompile Include="kag_parser\kag_parser.cpp" />
@@ -175,7 +174,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="kag_executor\executor\impl\kag_executor_impl.h" />
-    <ClInclude Include="kag_executor\executor\impl\kag_file_executor_impl.h" />
+    <ClInclude Include="MmdNovel\kag_file_executor.h" />
     <ClInclude Include="MmdNovel\mmd\mmd_manager.h" />
     <ClInclude Include="MmdNovel\imanager.h" />
     <ClInclude Include="MmdNovel\kag_token.h" />
@@ -192,7 +191,6 @@
     <ClInclude Include="MmdNovel\message\message_manager.h" />
     <ClInclude Include="MmdNovel\message\snapshotspan.h" />
     <ClInclude Include="MmdNovel\tag_editor.h" />
-    <ClInclude Include="MmdNovel\kag_file_executor.h" />
     <ClInclude Include="kag_parser\kag_parser.h" />
     <ClInclude Include="kag_parser\tokenizer.h" />
   </ItemGroup>

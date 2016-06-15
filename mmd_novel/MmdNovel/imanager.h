@@ -20,8 +20,6 @@ namespace kag
   struct IManager
   {
   public:
-    using FuncList = std::map<SnapShotSpan, std::function<void(CommandToken&)>>;
-    virtual void AddTag(FuncList& func_list) = 0;
 
     IManager(const Executor& executor);
 

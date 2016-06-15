@@ -78,13 +78,7 @@
     <ClCompile Include="kag_executor\executor\kag_executor.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="kag_executor\executor\kag_file_executor.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="kag_executor\executor\impl\kag_executor_impl.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="kag_executor\executor\impl\kag_file_executor_impl.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="kag_executor\image\image_layer.cpp">
@@ -106,6 +100,9 @@
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="kag_executor\mmd\mmd_manager.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="kag_executor\executor\impl\kag_file_executor.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
@@ -292,9 +289,6 @@
     </Text>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="MmdNovel\kag_file_executor.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="MmdNovel\kag_executor.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
@@ -322,12 +316,6 @@
     <ClInclude Include="kag_executor\message\impl\message_manager_impl.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="kag_executor\executor\impl\kag_executor_impl.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="kag_executor\executor\impl\kag_file_executor_impl.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="MmdNovel.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
@@ -353,6 +341,12 @@
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="MmdNovel\mmd\mmd_manager.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="kag_executor\executor\impl\kag_executor_impl.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="MmdNovel\kag_file_executor.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>

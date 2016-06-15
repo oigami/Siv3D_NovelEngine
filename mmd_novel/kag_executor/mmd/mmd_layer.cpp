@@ -1,3 +1,5 @@
+#ifdef USE_MMD_LAYER
+
 #include <MmdNovel/mmd/mmd_layer.h>
 namespace kag
 {
@@ -37,3 +39,4 @@ namespace kag
     }
   }
 }
+#endif /* USE_MMD_LAYER */

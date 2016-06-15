@@ -1,73 +1,78 @@
-﻿#include "kag_file_executor_impl.h"
+﻿#include <MmdNovel/kag_file_executor.h>
 #define GET(name) get(L#name, name)
 namespace kag
 {
-  FileExecutor::Pimpl::Pimpl(const Executor& exe) :executor_(exe)
+  FileExecutor::FileExecutor(const FilePath& path) :FileExecutor()
+  {
+    Load(path);
+  }
+
+  FileExecutor::FileExecutor()
   {
     /* メッセージ関連 */
 
     //tag_func_[SnapShotSpan(L"cancelautomode")] = &FileExecutor::CancelAutoModeTag;
     //tag_func_[SnapShotSpan(L"cancelskip")] = &FileExecutor::CancelSkipTag;
     auto bind = [this](auto func) { return [=](CommandToken& token) { return (this->*func)(token); }; };
-    tag_func_[SnapShotSpan(L"ch")] = bind(&Pimpl::CHTag);
-    tag_func_[SnapShotSpan(L"cm")] = bind(&Pimpl::CMTag);
-    tag_func_[SnapShotSpan(L"ct")] = bind(&Pimpl::CTTag);
-    tag_func_[SnapShotSpan(L"current")] = bind(&Pimpl::CurrentTag);
-    tag_func_[SnapShotSpan(L"deffont")] = bind(&Pimpl::DefFontTag);
-    tag_func_[SnapShotSpan(L"defstyle")] = bind(&Pimpl::DefStyleTag);
-    tag_func_[SnapShotSpan(L"delay")] = bind(&Pimpl::DelayTag);
-    tag_func_[SnapShotSpan(L"endindent")] = bind(&Pimpl::EndIndentTag);
-    tag_func_[SnapShotSpan(L"endnowait")] = bind(&Pimpl::EndNoWaitTag);
-    tag_func_[SnapShotSpan(L"er")] = bind(&Pimpl::ERTag);
-    tag_func_[SnapShotSpan(L"font")] = bind(&Pimpl::FontTTag);
+    tag_func_[SnapShotSpan(L"ch")] = bind(&FileExecutor::CHTag);
+    tag_func_[SnapShotSpan(L"cm")] = bind(&FileExecutor::CMTag);
+    tag_func_[SnapShotSpan(L"ct")] = bind(&FileExecutor::CTTag);
+    tag_func_[SnapShotSpan(L"current")] = bind(&FileExecutor::CurrentTag);
+    tag_func_[SnapShotSpan(L"deffont")] = bind(&FileExecutor::DefFontTag);
+    tag_func_[SnapShotSpan(L"defstyle")] = bind(&FileExecutor::DefStyleTag);
+    tag_func_[SnapShotSpan(L"delay")] = bind(&FileExecutor::DelayTag);
+    tag_func_[SnapShotSpan(L"endindent")] = bind(&FileExecutor::EndIndentTag);
+    tag_func_[SnapShotSpan(L"endnowait")] = bind(&FileExecutor::EndNoWaitTag);
+    tag_func_[SnapShotSpan(L"er")] = bind(&FileExecutor::ERTag);
+    tag_func_[SnapShotSpan(L"font")] = bind(&FileExecutor::FontTTag);
 
-    //tag_func_[SnapShotSpan(L"glyph")] = &Pimpl::GlyphTag;
-    //tag_func_[SnapShotSpan(L"graph")] = &Pimpl::GraphTag;
-    //tag_func_[SnapShotSpan(L"hch")] = &Pimpl::HCH;
-    tag_func_[SnapShotSpan(L"indent")] = bind(&Pimpl::IndentTag);
-    tag_func_[SnapShotSpan(L"l")] = bind(&Pimpl::LTag);
-    tag_func_[SnapShotSpan(L"locate")] = bind(&Pimpl::LocateTag);
+    //tag_func_[SnapShotSpan(L"glyph")] = &GlyphTag;
+    //tag_func_[SnapShotSpan(L"graph")] = &GraphTag;
+    //tag_func_[SnapShotSpan(L"hch")] = &HCH;
+    tag_func_[SnapShotSpan(L"indent")] = bind(&FileExecutor::IndentTag);
+    tag_func_[SnapShotSpan(L"l")] = bind(&FileExecutor::LTag);
+    tag_func_[SnapShotSpan(L"locate")] = bind(&FileExecutor::LocateTag);
 
-    //tag_func_[SnapShotSpan(L"locklink")] = &Pimpl::LockLinkTag;
-    tag_func_[SnapShotSpan(L"nowait")] = bind(&Pimpl::NoWaitTag);
-    tag_func_[SnapShotSpan(L"p")] = bind(&Pimpl::PTag);
-    tag_func_[SnapShotSpan(L"position")] = bind(&Pimpl::PositionTTag);
-    tag_func_[SnapShotSpan(L"r")] = bind(&Pimpl::RTag);
-    tag_func_[SnapShotSpan(L"resetfont")] = bind(&Pimpl::ResetFontTag);
-    tag_func_[SnapShotSpan(L"resetstyle")] = bind(&Pimpl::ResetStyleTag);
+    //tag_func_[SnapShotSpan(L"locklink")] = &LockLinkTag;
+    tag_func_[SnapShotSpan(L"nowait")] = bind(&FileExecutor::NoWaitTag);
+    tag_func_[SnapShotSpan(L"p")] = bind(&FileExecutor::PTag);
+    tag_func_[SnapShotSpan(L"position")] = bind(&FileExecutor::PositionTTag);
+    tag_func_[SnapShotSpan(L"r")] = bind(&FileExecutor::RTag);
+    tag_func_[SnapShotSpan(L"resetfont")] = bind(&FileExecutor::ResetFontTag);
+    tag_func_[SnapShotSpan(L"resetstyle")] = bind(&FileExecutor::ResetStyleTag);
 
-    //tag_func_[SnapShotSpan(L"ruby")] = &Pimpl::RubyTag;
-    tag_func_[SnapShotSpan(L"style")] = bind(&Pimpl::StyleTag);
+    //tag_func_[SnapShotSpan(L"ruby")] = &RubyTag;
+    tag_func_[SnapShotSpan(L"style")] = bind(&FileExecutor::StyleTag);
 
-    //tag_func_[SnapShotSpan(L"unlocklink")] = &Pimpl::UnlockLinkTag;
+    //tag_func_[SnapShotSpan(L"unlocklink")] = &UnlockLinkTag;
 
     /* 画像関連 */
-    tag_func_[SnapShotSpan(L"image")] = bind(&Pimpl::ImageTag);
+    tag_func_[SnapShotSpan(L"image")] = bind(&FileExecutor::ImageTag);
 
     /* レイヤ関連 */
-    tag_func_[L"move"] = bind(&Pimpl::MoveTag);
-    tag_func_[L"trans"] = bind(&Pimpl::TransTag);
+    tag_func_[L"move"] = bind(&FileExecutor::MoveTag);
+    tag_func_[L"trans"] = bind(&FileExecutor::TransTag);
 
     /* MMD関連 */
-    tag_func_[L"camera"] = bind(&Pimpl::CameraTag);
+    tag_func_[L"camera"] = bind(&FileExecutor::CameraTag);
 
   }
 
-  void FileExecutor::Pimpl::Load(const FilePath & path)
+  void FileExecutor::Load(const FilePath & path)
   {
     parser_ = Parser(path);
   }
 
-  void FileExecutor::Pimpl::Update()
+  void FileExecutor::Update()
   {
-    if ( !executor_.Update() ) return;
+    if ( !Executor::Update() ) return;
 
-    while ( executor_.CommandUpdate() )
+    while ( Executor::CommandUpdate() )
     {
       switch ( parser_.nextType() )
       {
       case  kag::Parser::Type::Text:
-        executor_.CommandText(parser_.readText());
+        Executor::CommandText(parser_.readText());
         break;
 
       case  kag::Parser::Type::Command:
@@ -114,42 +119,48 @@ namespace kag
     }
   }
 
-  int FileExecutor::Pimpl::NowFileLine() const
+  int FileExecutor::NowFileLine() const
   {
     return parser_.NowLine();
+  }
+
+  void FileExecutor::AddManager(const SnapShotSpan & name, const std::shared_ptr<IFileManager>& manager)
+  {
+    Executor::AddManager(name, manager);
+    manager->AddTag(tag_func_);
   }
 
   /* - - - -  - - -  - - - - -  - - -  - - - - -  - - -  - - - - -  - - -  - - - - -  - - -  -
   タグの実装
   - - - -  - - -  - - - - -  - - -  - - - - -  - - -  - - - - -  - - -  - - - - -  - - -  - */
-  void FileExecutor::Pimpl::LTag(CommandToken &)
+  void FileExecutor::LTag(CommandToken &)
   {
-    executor_.CommandL();
+    Executor::CommandL();
   }
 
-  void FileExecutor::Pimpl::LocateTag(CommandToken & token)
+  void FileExecutor::LocateTag(CommandToken & token)
   {
     Value<int> x, y;
     if ( token.GET(x).GET(y).HasError() ) return;
-    executor_.CommandLocate(x, y);
+    Executor::CommandLocate(x, y);
   }
 
-  void FileExecutor::Pimpl::RTag(CommandToken &)
+  void FileExecutor::RTag(CommandToken &)
   {
-    executor_.CommandR();
+    Executor::CommandR();
   }
 
-  void FileExecutor::Pimpl::ResetFontTag(CommandToken &)
+  void FileExecutor::ResetFontTag(CommandToken &)
   {
-    executor_.CommandResetFont();
+    Executor::CommandResetFont();
   }
 
-  void FileExecutor::Pimpl::ResetStyleTag(CommandToken &)
+  void FileExecutor::ResetStyleTag(CommandToken &)
   {
-    executor_.CommandResetStyle();
+    Executor::CommandResetStyle();
   }
 
-  void FileExecutor::Pimpl::StyleTag(CommandToken & token)
+  void FileExecutor::StyleTag(CommandToken & token)
   {
     struct StyleVal
     {
@@ -179,14 +190,14 @@ namespace kag
         if ( linesize_ ) layer->SetLineSize(*linesize_);
       }
     };
-    StyleVal tag(token, executor_);
+    StyleVal tag(token, *this);
     if ( token.HasError() ) return;
-    executor_.Command([tag = std::move(tag)]() { tag.attach(); });
+    Executor::Command([tag = std::move(tag)]() { tag.attach(); });
   }
 
   /* レイヤ関連 */
 
-  void FileExecutor::Pimpl::ImageTag(CommandToken & token)
+  void FileExecutor::ImageTag(CommandToken & token)
   {
     struct ImageVal
     {
@@ -214,14 +225,14 @@ namespace kag
         if ( visible ) ptr->IsVisible(*visible);
       }
     };
-    ImageVal tag(token, executor_);
+    ImageVal tag(token, *this);
     if ( token.HasError() ) return;
-    executor_.Command([tag = std::move(tag)](){
+    Executor::Command([tag = std::move(tag)](){
       tag.attach();
     });
   }
 
-  void FileExecutor::Pimpl::MoveTag(CommandToken & token)
+  void FileExecutor::MoveTag(CommandToken & token)
   {
     struct MoveVal
     {
@@ -257,12 +268,12 @@ namespace kag
         };
       }
     };
-    MoveVal tag(token, executor_);
+    MoveVal tag(token, *this);
     if ( token.HasError() ) return;
-    executor_.Command(tag.func);
+    Executor::Command(tag.func);
   }
 
-  void FileExecutor::Pimpl::TransTag(CommandToken & token)
+  void FileExecutor::TransTag(CommandToken & token)
   {
     struct TransVal
     {
@@ -296,15 +307,15 @@ namespace kag
         }
       }
     };
-    TransVal tag(token, executor_);
+    TransVal tag(token, *this);
     if ( token.HasError() )return;
-    executor_.Command(tag.func);
+    Executor::Command(tag.func);
   }
 
   /* MMD関連 */
 
 
-  void FileExecutor::Pimpl::CameraTag(CommandToken & token)
+  void FileExecutor::CameraTag(CommandToken & token)
   {
     struct CameraVal
     {
@@ -329,37 +340,37 @@ namespace kag
         Graphics3D::SetCamera(camera);
       }
     };
-    executor_.Command([tag = CameraVal(token)](){ tag.attach(); });
+    Executor::Command([tag = CameraVal(token)](){ tag.attach(); });
   }
 
-  void FileExecutor::Pimpl::NoWaitTag(CommandToken &)
+  void FileExecutor::NoWaitTag(CommandToken &)
   {
-    executor_.CommandNoWait();
+    Executor::CommandNoWait();
   }
 
-  void FileExecutor::Pimpl::PTag(CommandToken &)
+  void FileExecutor::PTag(CommandToken &)
   {
-    executor_.CommandP();
+    Executor::CommandP();
   }
 
-  void FileExecutor::Pimpl::DelayTag(CommandToken & token)
+  void FileExecutor::DelayTag(CommandToken & token)
   {
     Must<SnapShotSpan> speed;
     if ( token.GET(speed).HasError() ) return;
     if ( *speed == L"user" )
     {
-      executor_.CommandDelay(30);
+      Executor::CommandDelay(30);
     }
     else if ( *speed == L"nowait" )
     {
-      executor_.CommandNoWait();
+      Executor::CommandNoWait();
     }
     else
     {
       int val;
       if ( converter::TryConvert(*speed, val) )
       {
-        executor_.CommandDelay(val);
+        Executor::CommandDelay(val);
       }
       else
       {
@@ -369,32 +380,32 @@ namespace kag
 
   }
 
-  void FileExecutor::Pimpl::EndIndentTag(CommandToken &)
+  void FileExecutor::EndIndentTag(CommandToken &)
   {
-    executor_.CommandEndIndent();
+    Executor::CommandEndIndent();
   }
 
-  void FileExecutor::Pimpl::EndNoWaitTag(CommandToken &)
+  void FileExecutor::EndNoWaitTag(CommandToken &)
   {
-    executor_.CommandEndNoWait();
+    Executor::CommandEndNoWait();
   }
 
-  void FileExecutor::Pimpl::ERTag(CommandToken &)
+  void FileExecutor::ERTag(CommandToken &)
   {
-    executor_.CommandER();
+    Executor::CommandER();
   }
 
-  void FileExecutor::Pimpl::CMTag(CommandToken &)
+  void FileExecutor::CMTag(CommandToken &)
   {
-    executor_.CommandCM();
+    Executor::CommandCM();
   }
 
-  void FileExecutor::Pimpl::CTTag(CommandToken &)
+  void FileExecutor::CTTag(CommandToken &)
   {
-    executor_.CommandCT();
+    Executor::CommandCT();
   }
 
-  void FileExecutor::Pimpl::CurrentTag(CommandToken & token)
+  void FileExecutor::CurrentTag(CommandToken & token)
   {
     std::pair<converter::LayerType, int> layer = { converter::LayerType::Message,Define::default };
     LayerPage page = LayerPage::Fore;
@@ -402,7 +413,7 @@ namespace kag
     using namespace converter;
     if ( token.GET(layer).GET(page).HasError() )
       return;
-    executor_.CommandCurrent(layer.second, page);
+    Executor::CommandCurrent(layer.second, page);
   }
 
   namespace
@@ -460,14 +471,14 @@ namespace kag
     };
   }
 
-  void FileExecutor::Pimpl::DefFontTag(CommandToken & token)
+  void FileExecutor::DefFontTag(CommandToken & token)
   {
-    DefFont tag(token, executor_);
+    DefFont tag(token, *this);
     if ( token.HasError() ) return;
-    executor_.Command([tag = std::move(tag)]() { tag.attach(); });
+    Executor::Command([tag = std::move(tag)]() { tag.attach(); });
   }
 
-  void FileExecutor::Pimpl::DefStyleTag(CommandToken & token)
+  void FileExecutor::DefStyleTag(CommandToken & token)
   {
     struct DefStyleVal
     {
@@ -489,20 +500,20 @@ namespace kag
       int pitch;
       Executor exe_;
     };
-    executor_.Command([tag = DefStyleVal(token, executor_)](){ tag.attach(); });
+    Executor::Command([tag = DefStyleVal(token, *this)](){ tag.attach(); });
   }
 
-  void FileExecutor::Pimpl::FontTTag(CommandToken & token)
+  void FileExecutor::FontTTag(CommandToken & token)
   {
-    executor_.Command([tag = FontVal(token, executor_)]() { tag.attach(); });
+    Executor::Command([tag = FontVal(token, *this)]() { tag.attach(); });
   }
 
-  void FileExecutor::Pimpl::IndentTag(CommandToken &)
+  void FileExecutor::IndentTag(CommandToken &)
   {
-    executor_.CommandIndent();
+    Executor::CommandIndent();
   }
 
-  void FileExecutor::Pimpl::PositionTTag(CommandToken & token)
+  void FileExecutor::PositionTTag(CommandToken & token)
   {
     struct PositionVal
     {
@@ -554,16 +565,21 @@ namespace kag
         }
       }
     };
-    PositionVal tag(token, executor_);
+    PositionVal tag(token, *this);
     if ( token.HasError() ) return;
-    executor_.Command([tag = std::move(tag)]() { tag.attach(); });
+    Executor::Command([tag = std::move(tag)]() { tag.attach(); });
   }
 
-  void FileExecutor::Pimpl::CHTag(CommandToken & token)
+  int FileExecutor::NowLine() const
+  {
+    return parser_.NowLine();
+  }
+
+  void FileExecutor::CHTag(CommandToken & token)
   {
     Must<SnapShotSpan> text;
     if ( token.GET(text).HasError() ) return;
-    executor_.CommandTextNoDelay(*text);
+    Executor::CommandTextNoDelay(*text);
   }
 
 }
