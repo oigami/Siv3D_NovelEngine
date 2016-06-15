@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include <Siv3D.hpp>
 #include <MmdNovel/default_value.h>
+#include <MmdNovel/type_traits.h>
 namespace kag
 {
   struct Layer;
@@ -112,6 +113,10 @@ namespace kag
     bool visible_;
   };
 
+  template<class layer, class...Args> std::shared_ptr<typename type_traits::GetType<layer>::type> MakeLayer(Args&&...args)
+  {
+    return std::make_shared<typename type_traits::GetType<layer>::type>(std::forward(args)...);
+  }
 
   template<class Pimpl> class LayerHelper
   {

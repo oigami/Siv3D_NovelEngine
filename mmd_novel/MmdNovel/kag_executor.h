@@ -1,6 +1,5 @@
 ﻿#pragma once
 #include <MmdNovel/message/message_manager.h>
-#include <MmdNovel/image/image_manager.h>
 #include <MmdNovel/tag_editor.h>
 #include <MmdNovel/default_value.h>
 #include <kag_parser/kag_parser.h>
@@ -28,7 +27,6 @@ namespace kag
 
     PageLayer<LayerPtr> GetLayer(std::pair<kag::converter::LayerType, int> layer_num) const;
     MessageManager messageManager()const;
-    ImageManager imageManager()const;
 
     /// <summary>
     /// 次のコマンドに進める時にtrueを返す
@@ -90,11 +88,6 @@ namespace kag
     void CommandResetFont();
 
     void CommandPosition(Value<int> layer, const Value<LayerPage>& page, const CommandFunc<PositionCommandEditor>& f);
-
-    /* 画像関係 */
-
-    void CommandImage(int layer, const Value<LayerPage>& page, const Texture& tex);
-
 
     void AddManager(const SnapShotSpan& name, const IManagerPtr& manager);
 

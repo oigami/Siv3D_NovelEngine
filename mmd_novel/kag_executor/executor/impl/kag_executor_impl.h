@@ -13,7 +13,6 @@ namespace kag
     std::queue<std::function<void()>> command_;
     LayerManager layer_manager_;
     MessageManager message_manager_;
-    ImageManager image_manager_;
 
     Pimpl(const Pimpl&) = delete;
     void operator=(const Pimpl&) = delete;
@@ -22,7 +21,6 @@ namespace kag
 
     Pimpl();
 
-    ImageManager imageManager() { return image_manager_; }
     MessageManager messageManager() { return message_manager_; }
 
     void Clear();
@@ -74,8 +72,6 @@ namespace kag
     void CommandResetFont();
 
     void CommandPosition(Value<int> layer, const Value<LayerPage>& page, const CommandFunc<PositionCommandEditor>& f);
-
-    void CommandImage(int layer, const Value<LayerPage>& page, const Texture& tex);
 
     bool Update();
 

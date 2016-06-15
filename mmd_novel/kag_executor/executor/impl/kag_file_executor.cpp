@@ -46,9 +46,6 @@ namespace kag
 
     //tag_func_[SnapShotSpan(L"unlocklink")] = &UnlockLinkTag;
 
-    /* 画像関連 */
-    tag_func_[SnapShotSpan(L"image")] = bind(&FileExecutor::ImageTag);
-
     /* レイヤ関連 */
     tag_func_[L"move"] = bind(&FileExecutor::MoveTag);
     tag_func_[L"trans"] = bind(&FileExecutor::TransTag);
@@ -197,40 +194,7 @@ namespace kag
 
   /* レイヤ関連 */
 
-  void FileExecutor::ImageTag(CommandToken & token)
-  {
-    struct ImageVal
-    {
-      Must<std::pair<converter::LayerType, int>> layer;
-      LayerPage page = LayerPage::Fore;
-      Must<SnapShotSpan> storage;
-      Optional<int> left, top;
-      Optional<int> opacity;
-      Optional<int> index;
-      Optional<bool> visible;
 
-      Executor exe_;
-      ImageVal(CommandToken& token, const Executor& exe) :exe_(exe)
-      {
-        token.GET(layer).GET(page).GET(storage).GET(left).GET(top)
-          .GET(opacity).GET(index).GET(visible);
-      }
-      void attach() const
-      {
-        auto ptr = exe_.imageManager()->GetLayer(layer->second)[page];
-        ptr->SetTex(Texture(storage->ToStr()));
-        if ( left ) ptr->SetPositionLeft(*left);
-        if ( top ) ptr->SetPositionLeft(*top);
-        if ( index ) ptr->SetZIndex(*index);
-        if ( visible ) ptr->IsVisible(*visible);
-      }
-    };
-    ImageVal tag(token, *this);
-    if ( token.HasError() ) return;
-    Executor::Command([tag = std::move(tag)](){
-      tag.attach();
-    });
-  }
 
   void FileExecutor::MoveTag(CommandToken & token)
   {

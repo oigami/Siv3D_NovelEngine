@@ -6,7 +6,6 @@ namespace kag
   {
     layer_manager_ = std::make_shared<LayerManagerImpl>();
     message_manager_.SetLayerManager(layer_manager_);
-    image_manager_->SetLayerManager(layer_manager_);
     Clear();
   }
 
@@ -223,14 +222,6 @@ namespace kag
       PositionCommandEditor editor(message_manager_.GetLayer(new_layer, l_page));
       f(editor);
       editor.Commit();
-    });
-  }
-
-  void Executor::Pimpl::CommandImage(int layer, const Value<LayerPage>& page, const Texture & tex)
-  {
-    command_.push([tex, layer, page, this]
-    {
-      image_manager_->GetLayer(layer, page(LayerPage::Fore))->SetTex(tex);
     });
   }
 

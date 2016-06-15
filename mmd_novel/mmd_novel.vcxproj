@@ -105,6 +105,7 @@
     <ClCompile Include="kag_executor\layer.cpp" />
     <ClCompile Include="kag_executor\message\message_layer.cpp" />
     <ClCompile Include="kag_executor\imanager.cpp" />
+    <ClCompile Include="MmdNovel\image\image_manager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Engine\Splash.png" />
@@ -193,6 +194,7 @@
     <ClInclude Include="MmdNovel\tag_editor.h" />
     <ClInclude Include="kag_parser\kag_parser.h" />
     <ClInclude Include="kag_parser\tokenizer.h" />
+    <ClInclude Include="MmdNovel\type_traits.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

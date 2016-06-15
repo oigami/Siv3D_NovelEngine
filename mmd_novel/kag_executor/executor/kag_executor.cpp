@@ -9,6 +9,7 @@ namespace kag
   PageLayer<LayerPtr> Executor::GetLayer(std::pair<kag::converter::LayerType, int> layer_num) const
   {
     using namespace converter;
+    SnapShotSpan layer_name;
     switch ( layer_num.first )
     {
     case LayerType::Message:
@@ -17,22 +18,24 @@ namespace kag
       assert(0);
       throw std::runtime_error("Executor::Getlayer() Background");
     case LayerType::Foreground:
-      return imageManager()->GetLayer(layer_num.second);
+      layer_name = L"image";
+      break;
     case LayerType::MMD:
-      throw std::runtime_error("Executor::Getlayer() mmd");
+      layer_name = L"mmd";
+      break;
     default:
       throw std::runtime_error("Executor::Getlayer() other");
       break;
     }
+    auto it = manager_.find(layer_name);
+    if ( it == manager_.end() )
+      throw std::invalid_argument("Executor::GetLayer()");
+    return it->second->GetLayer(layer_num.second);
 
   }
   MessageManager Executor::messageManager() const
   {
     return pimpl_->messageManager();
-  }
-  ImageManager Executor::imageManager() const
-  {
-    return pimpl_->imageManager();
   }
 
   void Executor::Clear()
@@ -158,11 +161,6 @@ namespace kag
   void Executor::CommandPosition(Value<int> layer, const Value<LayerPage>& page, const CommandFunc<PositionCommandEditor>& f)
   {
     pimpl_->CommandPosition(layer, page, f);
-  }
-
-  void Executor::CommandImage(int layer, const Value<LayerPage>& page, const Texture & tex)
-  {
-    pimpl_->CommandImage(layer, page, tex);
   }
 
   void Executor::AddManager(const SnapShotSpan & name, const IManagerPtr & manager)

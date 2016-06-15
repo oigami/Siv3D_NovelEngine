@@ -77,10 +77,6 @@ namespace kag
 
     //void UnlockLinkTag(CommandToken& token);
 
-    /* 画像関連 */
-
-    void ImageTag(CommandToken& token);
-
     /* レイヤ関連 */
     void MoveTag(CommandToken& token);
     void TransTag(CommandToken& token);

@@ -1,53 +1,39 @@
 #pragma once
 #include <MmdNovel/image/image_layer.h>
 #include <MmdNovel/default_value.h>
+#include <MmdNovel/kag_file_executor.h>
 namespace kag
 {
-  template<class Impl> class ManagerHelper
+  struct ImageManager : public IFileManager, std::enable_shared_from_this<ImageManager>
   {
+    virtual void AddTag(FuncList& list)override;
   public:
-    ManagerHelper() :manager_(Impl::create()) {}
 
-    std::shared_ptr<Impl>& operator->() { return manager_; }
+    ImageManager(const Executor& exe);
 
+    void resize(int num);
+
+    ImageLayer GetLayer(int layer, LayerPage page) { return IFileManager::GetLayer<ImageLayer>(layer, page); }
+
+    struct ImageVal
+    {
+      Must<std::pair<converter::LayerType, int>> layer;
+      LayerPage page = LayerPage::Fore;
+      Must<SnapShotSpan> storage;
+      Optional<int> left, top;
+      Optional<int> opacity;
+      Optional<int> index;
+      Optional<bool> visible;
+
+      std::shared_ptr<ImageManager> manager_;
+      ImageVal(const std::shared_ptr<ImageManager>& manager, CommandToken& token);
+      ImageVal(const std::shared_ptr<ImageManager>& manager, int layer_index, const SnapShotSpan& storage);
+
+      void attach() const;
+    };
+
+    void ImageTag(CommandToken & token);
   private:
 
-    std::shared_ptr<Impl> manager_;
   };
-  namespace pimpl
-  {
-    class ImageManagerImpl
-    {
-    public:
-      static std::shared_ptr<ImageManagerImpl> create()
-      {
-        return std::make_shared<ImageManagerImpl>();
-      }
-      ImageManagerImpl() :layer_(2)
-      {
-        for ( auto& i : step(layer_.size()) )
-        {
-          const short index = static_cast<short>((i + 1) * 10);
-          layer_[i][LayerPage::Fore]->SetZIndex(index);
-          layer_[i][LayerPage::Back]->SetZIndex(index);
-        }
-      }
-
-      ImageLayer& GetLayer(int layer, LayerPage page) { return layer_[layer][page]; }
-      PageLayer<ImageLayer>& GetLayer(int layer) { return layer_[layer]; }
-      void SetLayerManager(LayerManager& manager)
-      {
-        layer_manager_ = manager;
-        for ( auto& i : layer_ )
-        {
-          layer_manager_->Set(i);
-        }
-      }
-    private:
-
-      LayerManager layer_manager_;
-      Array<PageLayer<ImageLayer>> layer_;
-    };
-  }
-  using ImageManager = ManagerHelper<pimpl::ImageManagerImpl>;
 }

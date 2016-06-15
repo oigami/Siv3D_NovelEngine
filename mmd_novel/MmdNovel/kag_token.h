@@ -3,7 +3,6 @@
 #include <MmdNovel/message/snapshotspan.h>
 namespace kag
 {
-
   namespace converter
   {
     enum class LayerType
@@ -149,6 +148,9 @@ namespace kag
 
   template<class T>struct Must
   {
+    Must() = default;
+    Must(const T& t) :val(t) {}
+
     T& operator*() { return val; }
     T* operator->() { return &val; }
 
@@ -258,7 +260,7 @@ namespace kag
         if ( !converter::TryConvert<T>(v, *val) )
           error_func(name, v);
       },
-          [&error_func, &name]() { error_func(name); });
+        [&error_func, &name]() { error_func(name); });
       return *this;
     }
 

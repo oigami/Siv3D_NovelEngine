@@ -3,23 +3,26 @@
 #include <MmdNovel/layer.h>
 namespace kag
 {
-  class ImageLayerPimpl : public Layer
+  namespace pimpl
   {
-    friend LayerHelper<ImageLayerPimpl>;
-  public:
+    class ImageLayerPimpl : public Layer
+    {
+      friend LayerHelper<ImageLayerPimpl>;
+    public:
+      ImageLayerPimpl() = default;
 
-    void SetTex(const Texture& tex);
+      void SetTex(const Texture& tex);
 
-  private:
+    private:
 
-    Texture texture_;
+      Texture texture_;
 
-  protected:
-    ImageLayerPimpl() = default;
+    protected:
 
-    static std::shared_ptr<ImageLayerPimpl> create();
+      static std::shared_ptr<ImageLayerPimpl> create();
 
-    void draw() const;
-  };
-  using ImageLayer = LayerHelper<ImageLayerPimpl>;
+      void draw() const;
+    };
+  }
+  using ImageLayer = std::shared_ptr<pimpl::ImageLayerPimpl>;
 }
