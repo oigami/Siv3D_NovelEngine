@@ -1,6 +1,4 @@
 ﻿#pragma once
-#include <MmdNovel/message/message_manager.h>
-#include <MmdNovel/tag_editor.h>
 #include <MmdNovel/default_value.h>
 #include <kag_parser/kag_parser.h>
 #include <MmdNovel/mmd/mmd_layer.h>
@@ -26,8 +24,12 @@ namespace kag
     }
 
     PageLayer<LayerPtr> GetLayer(std::pair<kag::converter::LayerType, int> layer_num) const;
-    MessageManager messageManager()const;
     LayerManager layerManager()const;
+
+    template<class Manager>typename  type_traits::GetType<Manager>::shared GetManager(const SnapShotSpan& name)
+    {
+      return std::dynamic_pointer_cast<typename type_traits::GetType<Manager>::type>(manager_[name]);
+    }
 
     /// <summary>
     /// 次のコマンドに進める時にtrueを返す
@@ -44,51 +46,6 @@ namespace kag
     /* コマンド */
 
     void Command(const std::function<void()>& f);
-
-    void CommandL();
-
-    void CommandR();
-
-    void CommandP();
-
-    void CommandDelay(int delay_time);
-
-    void CommandNoWait();
-    void CommandEndNoWait();
-
-    void CommandER();
-
-    void CommandCM();
-
-    void CommandCT();
-
-    /// <summary>
-    /// テキストをメッセージレイヤに送る
-    /// </summary>
-    void CommandText(const SnapShotSpan& str);
-
-    void CommandTextNoDelay(const SnapShotSpan& str);
-
-    void CommandCurrent(int index, const LayerPage& page);
-
-    void CommandIndent();
-    void CommandEndIndent();
-
-    void CommandLocate(Value<int> x, Value<int> y);
-
-    template<class Editor>
-    using CommandFunc = std::function<void(Editor&)>;
-
-    void CommandStyle(const CommandFunc<StyleCommandEditor>& f);
-    void CommandDefStyle(const CommandFunc<DefaultStyleCommandEditor>&f);
-    void CommandResetStyle();
-
-    void CommandFont(const CommandFunc<FontCommandEditor>& f);
-    void CommandDefFont(const CommandFunc<DefFontCommandEditor>& f);
-
-    void CommandResetFont();
-
-    void CommandPosition(Value<int> layer, const Value<LayerPage>& page, const CommandFunc<PositionCommandEditor>& f);
 
     void AddManager(const SnapShotSpan& name, const IManagerPtr& manager);
 

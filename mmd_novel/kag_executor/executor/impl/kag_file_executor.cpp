@@ -1,4 +1,5 @@
 ﻿#include <MmdNovel/kag_file_executor.h>
+#include <MmdNovel/message/message_manager.h>
 #define GET(name) get(L#name, name)
 namespace kag
 {
@@ -13,39 +14,10 @@ namespace kag
 
     //tag_func_[SnapShotSpan(L"cancelautomode")] = &FileExecutor::CancelAutoModeTag;
     //tag_func_[SnapShotSpan(L"cancelskip")] = &FileExecutor::CancelSkipTag;
-    auto bind = [this](auto func) { return [=](CommandToken& token) { return (this->*func)(token); }; };
-    tag_func_[SnapShotSpan(L"ch")] = bind(&FileExecutor::CHTag);
-    tag_func_[SnapShotSpan(L"cm")] = bind(&FileExecutor::CMTag);
-    tag_func_[SnapShotSpan(L"ct")] = bind(&FileExecutor::CTTag);
-    tag_func_[SnapShotSpan(L"current")] = bind(&FileExecutor::CurrentTag);
-    tag_func_[SnapShotSpan(L"deffont")] = bind(&FileExecutor::DefFontTag);
-    tag_func_[SnapShotSpan(L"defstyle")] = bind(&FileExecutor::DefStyleTag);
-    tag_func_[SnapShotSpan(L"delay")] = bind(&FileExecutor::DelayTag);
-    tag_func_[SnapShotSpan(L"endindent")] = bind(&FileExecutor::EndIndentTag);
-    tag_func_[SnapShotSpan(L"endnowait")] = bind(&FileExecutor::EndNoWaitTag);
-    tag_func_[SnapShotSpan(L"er")] = bind(&FileExecutor::ERTag);
-    tag_func_[SnapShotSpan(L"font")] = bind(&FileExecutor::FontTTag);
 
-    //tag_func_[SnapShotSpan(L"glyph")] = &GlyphTag;
-    //tag_func_[SnapShotSpan(L"graph")] = &GraphTag;
-    //tag_func_[SnapShotSpan(L"hch")] = &HCH;
-    tag_func_[SnapShotSpan(L"indent")] = bind(&FileExecutor::IndentTag);
-    tag_func_[SnapShotSpan(L"l")] = bind(&FileExecutor::LTag);
-    tag_func_[SnapShotSpan(L"locate")] = bind(&FileExecutor::LocateTag);
-
-    //tag_func_[SnapShotSpan(L"locklink")] = &LockLinkTag;
-    tag_func_[SnapShotSpan(L"nowait")] = bind(&FileExecutor::NoWaitTag);
-    tag_func_[SnapShotSpan(L"p")] = bind(&FileExecutor::PTag);
-    tag_func_[SnapShotSpan(L"position")] = bind(&FileExecutor::PositionTTag);
-    tag_func_[SnapShotSpan(L"r")] = bind(&FileExecutor::RTag);
-    tag_func_[SnapShotSpan(L"resetfont")] = bind(&FileExecutor::ResetFontTag);
-    tag_func_[SnapShotSpan(L"resetstyle")] = bind(&FileExecutor::ResetStyleTag);
-
-    //tag_func_[SnapShotSpan(L"ruby")] = &RubyTag;
-    tag_func_[SnapShotSpan(L"style")] = bind(&FileExecutor::StyleTag);
 
     //tag_func_[SnapShotSpan(L"unlocklink")] = &UnlockLinkTag;
-
+    auto bind = [this](auto func) { return [&](CommandToken& token) { (this->*func)(token); }; };
     /* レイヤ関連 */
     tag_func_[L"move"] = bind(&FileExecutor::MoveTag);
     tag_func_[L"trans"] = bind(&FileExecutor::TransTag);
@@ -69,7 +41,7 @@ namespace kag
       switch ( parser_.nextType() )
       {
       case  kag::Parser::Type::Text:
-        Executor::CommandText(parser_.readText());
+        GetManager<MessageManager>(L"message")->Append(parser_.readText());
         break;
 
       case  kag::Parser::Type::Command:
@@ -131,71 +103,8 @@ namespace kag
   /* - - - -  - - -  - - - - -  - - -  - - - - -  - - -  - - - - -  - - -  - - - - -  - - -  -
   タグの実装
   - - - -  - - -  - - - - -  - - -  - - - - -  - - -  - - - - -  - - -  - - - - -  - - -  - */
-  void FileExecutor::LTag(CommandToken &)
-  {
-    Executor::CommandL();
-  }
-
-  void FileExecutor::LocateTag(CommandToken & token)
-  {
-    Value<int> x, y;
-    if ( token.GET(x).GET(y).HasError() ) return;
-    Executor::CommandLocate(x, y);
-  }
-
-  void FileExecutor::RTag(CommandToken &)
-  {
-    Executor::CommandR();
-  }
-
-  void FileExecutor::ResetFontTag(CommandToken &)
-  {
-    Executor::CommandResetFont();
-  }
-
-  void FileExecutor::ResetStyleTag(CommandToken &)
-  {
-    Executor::CommandResetStyle();
-  }
-
-  void FileExecutor::StyleTag(CommandToken & token)
-  {
-    struct StyleVal
-    {
-      Optional<int> linesize_;
-      Optional<int> linespacing;
-
-      Executor exe_;
-      StyleVal(CommandToken& token, const Executor& exe) : exe_(exe)
-      {
-        Optional<SnapShotSpan> linesize;
-        if ( token.GET(linesize).GET(linespacing).HasError() ) return;
-        if ( linesize )
-        {
-          if ( *linesize == L"default" )
-          {
-            linesize_ = message::Style::default_line_size;
-          }
-          else
-          {
-            linesize_ = converter::ToInt10(*linesize);
-          }
-        }
-      }
-      void attach() const
-      {
-        auto& layer = exe_.messageManager().Current();
-        if ( linesize_ ) layer->SetLineSize(*linesize_);
-      }
-    };
-    StyleVal tag(token, *this);
-    if ( token.HasError() ) return;
-    Executor::Command([tag = std::move(tag)]() { tag.attach(); });
-  }
 
   /* レイヤ関連 */
-
-
 
   void FileExecutor::MoveTag(CommandToken & token)
   {
@@ -308,243 +217,11 @@ namespace kag
     Executor::Command([tag = CameraVal(token)](){ tag.attach(); });
   }
 
-  void FileExecutor::NoWaitTag(CommandToken &)
-  {
-    Executor::CommandNoWait();
-  }
-
-  void FileExecutor::PTag(CommandToken &)
-  {
-    Executor::CommandP();
-  }
-
-  void FileExecutor::DelayTag(CommandToken & token)
-  {
-    Must<SnapShotSpan> speed;
-    if ( token.GET(speed).HasError() ) return;
-    if ( *speed == L"user" )
-    {
-      Executor::CommandDelay(30);
-    }
-    else if ( *speed == L"nowait" )
-    {
-      Executor::CommandNoWait();
-    }
-    else
-    {
-      int val;
-      if ( converter::TryConvert(*speed, val) )
-      {
-        Executor::CommandDelay(val);
-      }
-      else
-      {
-        token.AddIllegalException(L"speed", *speed);
-      }
-    }
-
-  }
-
-  void FileExecutor::EndIndentTag(CommandToken &)
-  {
-    Executor::CommandEndIndent();
-  }
-
-  void FileExecutor::EndNoWaitTag(CommandToken &)
-  {
-    Executor::CommandEndNoWait();
-  }
-
-  void FileExecutor::ERTag(CommandToken &)
-  {
-    Executor::CommandER();
-  }
-
-  void FileExecutor::CMTag(CommandToken &)
-  {
-    Executor::CommandCM();
-  }
-
-  void FileExecutor::CTTag(CommandToken &)
-  {
-    Executor::CommandCT();
-  }
-
-  void FileExecutor::CurrentTag(CommandToken & token)
-  {
-    std::pair<converter::LayerType, int> layer = { L"message", Define::default };
-    LayerPage page = LayerPage::Fore;
-
-    using namespace converter;
-    if ( token.GET(layer).GET(page).HasError() )
-      return;
-    Executor::CommandCurrent(layer.second, page);
-  }
-
-  namespace
-  {
-    struct FontVal
-    {
-      Executor exe_;
-      Optional<SnapShotSpan> face;
-      Optional<int> size;
-      Optional<bool> italic, bold, shadow;
-      Optional<Color> color, shadowcolor;
-      virtual void commit(const MessageLayer& layer, message::TextFont new_font) const
-      {
-        layer->SetFont(new_font);
-      }
-      void attach()const
-      {
-        auto manager = exe_.messageManager();
-        auto now_font = manager.Current()->NowFont();
-        FontProperty prop;
-        prop.name = face ? face->ToStr() : now_font.font_.name();
-        prop.size = size ? *size : now_font.font_.size();
-        prop.style = CreateStyle();
-        message::TextFont new_font = now_font;
-        new_font.font_ = Font(prop);
-        if ( color ) new_font.color_ = *color;
-        if ( shadow ) new_font.is_shadow_ = *shadow;
-        if ( shadowcolor ) new_font.shadow_color_ = *shadowcolor;
-        commit(manager.Current(), new_font);
-      }
-      FontStyle CreateStyle() const
-      {
-        int style_cnt = (italic == true) + (bold == true) * 2;
-        switch ( style_cnt )
-        {
-        case 1: return FontStyle::Italic;
-        case 2: return FontStyle::Bold;
-        case 3: return FontStyle::BoldItalic;
-        default:return FontStyle::Regular;
-        }
-      }
-      FontVal(CommandToken& token, Executor exe)
-      {
-        token.GET(face).GET(size).GET(italic).GET(bold).GET(shadow).GET(color).GET(shadowcolor);
-        exe_ = exe;
-      }
-    };
-    struct DefFont : FontVal
-    {
-      using FontVal::FontVal;
-      void commit(const MessageLayer& layer, message::TextFont new_font) const override
-      {
-        layer->SetDefaultFont(new_font);
-      }
-    };
-  }
-
-  void FileExecutor::DefFontTag(CommandToken & token)
-  {
-    DefFont tag(token, *this);
-    if ( token.HasError() ) return;
-    Executor::Command([tag = std::move(tag)]() { tag.attach(); });
-  }
-
-  void FileExecutor::DefStyleTag(CommandToken & token)
-  {
-    struct DefStyleVal
-    {
-      DefStyleVal(CommandToken & token, const Executor& exe)
-      {
-        token.GET(linesize).GET(linespacing).GET(pitch);
-        exe_ = exe;
-      }
-      void attach() const
-      {
-        message::DefaultStyle style;
-        style.line_size_ = linesize;
-        style.line_spacing_ = linespacing;
-        style.pitch_ = pitch;
-        exe_.messageManager().Current()->SetDefaultStyle(style);
-      }
-      int linesize;
-      int linespacing;
-      int pitch;
-      Executor exe_;
-    };
-    Executor::Command([tag = DefStyleVal(token, *this)](){ tag.attach(); });
-  }
-
-  void FileExecutor::FontTTag(CommandToken & token)
-  {
-    Executor::Command([tag = FontVal(token, *this)]() { tag.attach(); });
-  }
-
-  void FileExecutor::IndentTag(CommandToken &)
-  {
-    Executor::CommandIndent();
-  }
-
-  void FileExecutor::PositionTTag(CommandToken & token)
-  {
-    struct PositionVal
-    {
-      PositionVal(CommandToken & token, const Executor& exe) :exe_(exe)
-      {
-        token.GET(layer).GET(page).GET(left).GET(top).GET(width).GET(height)
-          .GET(marginl).GET(margint).GET(marginr).GET(marginb)
-          .GET(color).GET(frame).GET(opacity).GET(visible);
-        if ( layer && layer->first != L"message" )
-          token.AddIllegalException(L"layer", L""); // TODO:パースした元の値を取得する方法を考える
-      }
-      Optional<std::pair<converter::LayerType, int>> layer;
-      Optional<LayerPage> page; // 省略時 カレントページ
-      Optional<int> left, top, width, height;
-      Optional<int> marginl, margint, marginr, marginb;
-      Optional<Color> color;
-      Optional<SnapShotSpan> frame;
-      Optional<int> opacity;
-      Optional<bool> visible;
-      Executor exe_;
-      void attach()const
-      {
-        auto manager = exe_.messageManager();
-        int start = layer ? layer->second : manager.CurrentLayerNum();
-        int end = start + 1;
-        if ( start == Define::default )
-        {
-          end = manager.size();
-          start = 0;
-        }
-        const LayerPage p = page ? *page : manager.CurrentPage();
-        for ( int i = start; i < end; i++ )
-        {
-          MessageLayer ptr = manager.GetLayer(i, p);
-          if ( left ) ptr->SetPositionLeft(*left);
-          if ( top ) ptr->SetPositionTop(*top);
-          if ( width ) ptr->SetPositionWidth(*width);
-          if ( height ) ptr->SetPositionHeight(*height);
-
-          if ( marginl ) ptr->SetMarginLeft(*marginl);
-          if ( margint ) ptr->SetMarginLeft(*margint);
-          if ( marginr ) ptr->SetMarginLeft(*marginr);
-          if ( marginb ) ptr->SetMarginLeft(*marginb);
-
-          if ( color ) ptr->SetBackgroundRGB(color->r, color->g, color->b);
-          if ( frame ) ptr->SetBackgroundTex(Texture(frame->ToStr()));
-          if ( opacity ) ptr->SetBackgroundOpacity(*opacity);
-          if ( visible ) ptr->IsVisible(*visible);
-        }
-      }
-    };
-    PositionVal tag(token, *this);
-    if ( token.HasError() ) return;
-    Executor::Command([tag = std::move(tag)]() { tag.attach(); });
-  }
-
   int FileExecutor::NowLine() const
   {
     return parser_.NowLine();
   }
 
-  void FileExecutor::CHTag(CommandToken & token)
-  {
-    Must<SnapShotSpan> text;
-    if ( token.GET(text).HasError() ) return;
-    Executor::CommandTextNoDelay(*text);
-  }
+
 
 }

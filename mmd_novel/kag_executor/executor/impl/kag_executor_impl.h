@@ -12,16 +12,14 @@ namespace kag
     /// </summary>
     std::queue<std::function<void()>> command_;
     LayerManager layer_manager_;
-    MessageManager message_manager_;
 
     Pimpl(const Pimpl&) = delete;
     void operator=(const Pimpl&) = delete;
 
   public:
 
-    Pimpl();
+    Pimpl() {}
 
-    MessageManager messageManager() { return message_manager_; }
     LayerManager layerManager() { return layer_manager_; }
 
     template<class layer, class...Args> std::shared_ptr<typename type_traits::GetType<layer>::type> MakeLayer(Args&&...args)
@@ -29,61 +27,9 @@ namespace kag
       return std::make_shared<typename type_traits::GetType<layer>::type>(layer_manager_, std::forward(args)...);
     }
 
-    void Clear();
-
-    bool IsWait() const;
-
-    void Command(const std::function<void()>& f);
-
-    void CommandL();
-
-    void CommandR();
-
-    void CommandP();
-
-    void CommandDelay(int delay_time);
-
-    void CommandNoWait();
-
-    void CommandEndNoWait();
-
-    void CommandER();
-
-    void CommandCM();
-
-    void CommandCT();
-
-    void CommandText(const SnapShotSpan& str);
-
-    void CommandTextNoDelay(const SnapShotSpan & str);
-
-    void CommandCurrent(int index, const LayerPage& page);
-
-    void CommandIndent();
-
-    void CommandEndIndent();
-
-    void CommandLocate(Value<int> x, Value<int> y);
-
-    void CommandStyle(const CommandFunc<StyleCommandEditor>& f);
-
-    void CommandDefStyle(const CommandFunc<DefaultStyleCommandEditor>& f);
-
-    void CommandResetStyle();
-
-    void CommandFont(const CommandFunc<FontCommandEditor>& f);
-
-    void CommandDefFont(const CommandFunc<DefFontCommandEditor>& f);
-
-    void CommandResetFont();
-
-    void CommandPosition(Value<int> layer, const Value<LayerPage>& page, const CommandFunc<PositionCommandEditor>& f);
-
-    bool Update();
-
-    bool CommandUpdate();
-
-    void Draw();
-
+    void Command(const std::function<void()>& f)
+    {
+      command_.push(f);
+    }
   };
 }

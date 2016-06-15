@@ -1,16 +1,18 @@
 ﻿#pragma once
+#include <MmdNovel/kag_file_executor.h>
 #include <MmdNovel/message/snapshotspan.h>
 #include <MmdNovel/message/message_layer.h>
 #include <MmdNovel/default_value.h>
 #include <MmdNovel/layer.h>
-
 namespace kag
 {
-  class MessageManager
+  class MessageManager : public IFileManager, std::enable_shared_from_this<MessageManager>
   {
+    virtual void AddTag(FuncList& list);
+
   public:
 
-    MessageManager();
+    MessageManager(const Executor& exe);
 
     /// <summary>
     /// メッセージレイヤのレイヤ数を変更する
@@ -146,10 +148,93 @@ namespace kag
 
     bool IsWait() const;
 
-  private:
-    class Pimpl;
-    std::shared_ptr<Pimpl> pimpl_;
 
+
+    /* タグ一覧 */
+
+
+    //void CancelAutoModeTag(CommandToken& token);
+    //void CancelSkipTag(CommandToken& token);
+    void CHTag(CommandToken& token);
+    void CMTag(CommandToken& token);
+    void CTTag(CommandToken& token);
+    void CurrentTag(CommandToken& token);
+    void DefFontTag(CommandToken& token);
+    void DefStyleTag(CommandToken& token);
+    void DelayTag(CommandToken& token);
+    void EndIndentTag(CommandToken& token);
+    void EndNoWaitTag(CommandToken& token);
+    void ERTag(CommandToken& token);
+    void FontTTag(CommandToken& token);
+
+    //void GlyphTag(CommandToken& token);
+    //void GraphTag(CommandToken& token);
+    //void HCHTag(CommandToken& token);
+    void IndentTag(CommandToken& token);
+    void LTag(CommandToken& token);
+    void LocateTag(CommandToken& token);
+
+    //void LockLinkTag(CommandToken& token);
+    void NoWaitTag(CommandToken& token);
+    void PTag(CommandToken& token);
+    void PositionTTag(CommandToken& token);
+    void RTag(CommandToken& token);
+    void ResetFontTag(CommandToken& token);
+    void ResetStyleTag(CommandToken& token);
+
+    //void RubyTag(CommandToken& token);
+    void StyleTag(CommandToken& token);
+
+  private:
+
+    bool CheckClicked() const;
+
+    Stopwatch timer_;
+
+    /// <summary>
+    /// 表が0、裏が1の配列の配列
+    /// </summary>
+    Array<PageLayer<MessageLayer>> message_layer_;
+    static constexpr int message_fore_layer = 0;
+    static constexpr int message_back_layer = 1;
+
+    /// <summary>
+    /// 現在のレイヤ番号を表す
+    /// </summary>
+    int current_layer_;
+
+    /// <summary>
+    /// 現在のページを表す
+    /// </summary>
+    LayerPage current_page_;
+
+    /// <summary>遅延表示してるテキスト</summary>
+    SnapShotSpan delay_text_;
+
+    /// <summary>次に表示する遅延テキストの添字</summary>
+    int delay_index_;
+
+    /// <summary>一文字あたりに遅延する時間</summary>
+    int delay_time_;
+
+    /// <summary>クリック待ちするかどうか</summary>
+    bool is_wait_click_;
+
+    /// <summary>クリックした時に改ページに行くかどうか</summary>
+    bool is_click_new_page_;
+
+    /// <summary>クリックによるスキップをするかどうか</summary>
+    bool is_click_skip_;
+
+    bool is_no_wait_;
+
+    /// <summary>クリックに対応するキー</summary>
+    KeyCombination click_key_;
+
+    /// <summary>キー入力が有効かどうか</summary>
+    bool is_active_key_;
+
+    LayerManager layer_manager_;
   };
 
 }

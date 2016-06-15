@@ -36,9 +36,9 @@ void Main()
   {
     Circle(Mouse::Pos(), 50).draw({ 255, 0, 0, 127 });
     executor.Update();
-    if ( Input::MouseR.clicked )
+    /*if ( Input::MouseR.clicked )
       executor.CommandText(L"右クリックテスト");
-
+*/
     executor.Draw();
     if ( Input::KeyD.clicked )
     {
