@@ -17,6 +17,7 @@ namespace kag
     template<class Manager> void AddManager(const SnapShotSpan& name)
     {
       static_assert(std::is_base_of<IManager, Manager>::value, "ManagerはIManagerを継承している必要があります");
+      static_assert(std::is_convertible<Manager*, IManager*>::value, "Managerがpublic継承しているか確認してください");
       AddManager(name, std::make_shared<Manager>(*this));
     }
 

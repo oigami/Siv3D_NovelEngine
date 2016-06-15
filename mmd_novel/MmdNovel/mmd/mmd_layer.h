@@ -5,7 +5,7 @@ namespace kag
 {
   namespace pimpl
   {
-    class MMDLayerPimpl : public  Layer
+    class MMDLayerPimpl : public Layer
     {
       friend LayerHelper<MMDLayerPimpl>;
     public:

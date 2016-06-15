@@ -42,6 +42,8 @@ namespace kag
     {
       using Ptr = typename type_traits::GetType<Type>::type;
       static_assert(std::is_base_of<Layer, Ptr>::value, "型はレイヤを継承している必要があります");
+      static_assert(std::is_convertible<Ptr*, Layer*>::value, "型がpublic継承しているかを確認してください");
+
       return std::dynamic_pointer_cast<Ptr>(layer);
     }
 
