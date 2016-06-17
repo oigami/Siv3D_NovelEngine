@@ -179,6 +179,7 @@ namespace kag
 
   struct Layer : s3d::Uncopyable
   {
+  private:
     virtual void update() {};
 
   public:

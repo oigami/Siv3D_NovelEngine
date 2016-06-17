@@ -6,9 +6,10 @@ namespace kag
 {
   struct ImageManager : public IFileManager, std::enable_shared_from_this<ImageManager>
   {
+  private:
     virtual void AddTag(FuncList& list)override;
+    virtual void update() {}
   public:
-
     ImageManager(const Executor& exe);
 
     void resize(int num);

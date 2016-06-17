@@ -6,10 +6,10 @@
 #include <MmdNovel/layer.h>
 namespace kag
 {
-  class MessageManager : public IFileManager, std::enable_shared_from_this<MessageManager>
+  class MessageManager : public IFileManager, public std::enable_shared_from_this<MessageManager>
   {
     virtual void AddTag(FuncList& list);
-
+    virtual void update();
   public:
 
     MessageManager(const Executor& exe);
@@ -19,8 +19,6 @@ namespace kag
     /// </summary>
     /// <param name="size">レイヤ数</param>
     void resize(size_t size);
-
-    int size() const;
 
     /// <summary>
     /// カレントレイヤをクリアする
@@ -63,15 +61,6 @@ namespace kag
     void SetClickNextPage();
 
     /// <summary>
-    /// メッセージレイヤーの更新をする
-    /// <para>メッセージが貯まり改ページ待ちの時にfalseを返す</para>
-    /// </summary>
-    /// <returns></returns>
-    bool Update();
-
-    void Draw() const;
-
-    /// <summary>
     /// カレントレイヤを変更する
     /// <para>表画面が指定される</para>
     /// </summary>
@@ -99,20 +88,13 @@ namespace kag
     /// <param name="index">レイヤ番号</param>
     /// <param name="page"> ページ番号 </param>
     /// <returns></returns>
-    MessageLayer& GetLayer(int index, LayerPage page);
-
-    /// <summary>
-    /// メッセージレイヤを返す
-    /// </summary>
-    /// <param name="index">レイヤ番号</param>
-    /// <returns></returns>
-    PageLayer<MessageLayer>& GetLayer(int index);
+    MessageLayer GetLayer(int index, LayerPage page);
 
     /// <summary>
     /// カレントレイヤを返す
     /// </summary>
     /// <returns></returns>
-    MessageLayer& Current();
+    MessageLayer Current();
 
     /// <summary>
     /// 現在のレイヤ番号を返す
@@ -143,8 +125,6 @@ namespace kag
     /// <para>クリック待ちなどでクリックすると進むようになる</para>
     /// </summary>
     void SetValidKeyInput();
-
-    void SetLayerManager(LayerManager& manager);
 
     bool IsWait() const;
 
@@ -194,7 +174,6 @@ namespace kag
     /// <summary>
     /// 表が0、裏が1の配列の配列
     /// </summary>
-    Array<PageLayer<MessageLayer>> message_layer_;
     static constexpr int message_fore_layer = 0;
     static constexpr int message_back_layer = 1;
 

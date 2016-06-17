@@ -18,7 +18,7 @@ namespace kag
 
   public:
 
-    Pimpl() {}
+    Pimpl() :layer_manager_(std::make_shared<LayerManagerImpl>()) {}
 
     LayerManager layerManager() { return layer_manager_; }
 
@@ -30,6 +30,14 @@ namespace kag
     void Command(const std::function<void()>& f)
     {
       command_.push(f);
+    }
+
+    void CommandUpdate()
+    {
+      if ( command_.size() == 0 ) return;
+      auto& func = command_.front();
+      func();
+      command_.pop();
     }
   };
 }

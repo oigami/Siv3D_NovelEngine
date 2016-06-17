@@ -64,7 +64,7 @@ namespace kag
   {
     friend Executor;
     using This = PositionCommandEditor;
-    PositionCommandEditor(MessageLayer& layer) :layer_(layer)
+    PositionCommandEditor(MessageLayer layer) :layer_(layer)
     {
     }
     void Commit()
@@ -93,7 +93,7 @@ namespace kag
     This& vertical() {}
     This& framekey() {}
   private:
-    MessageLayer& layer_;
+    MessageLayer layer_;
   };
 
   class StyleCommandEditor
@@ -117,7 +117,7 @@ namespace kag
     //This& align(AlignType type) {}
     //This& pitch(int px) {}
 
-    MessageLayer& layer_;
+    MessageLayer layer_;
   };
   class DefaultStyleCommandEditor
   {
@@ -139,6 +139,6 @@ namespace kag
   private:
 
     message::DefaultStyle style_;
-    MessageLayer& layer_;
+    MessageLayer layer_;
   };
 }

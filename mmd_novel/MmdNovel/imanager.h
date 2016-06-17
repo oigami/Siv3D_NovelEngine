@@ -4,9 +4,13 @@
 #include <MmdNovel/type_traits.h>
 namespace kag
 {
+
   struct IManager
   {
+  private:
+    virtual void update() = 0;
   public:
+    virtual bool IsWait() const { return false; }
 
     IManager(const Executor& executor);
 
@@ -16,9 +20,13 @@ namespace kag
 
     LayerPtr& GetLayer(int index, LayerPage page);
 
+    int size() const;
+
+    void Update();
+
   protected:
 
-    template<class Type> Type GetLayer(int index, LayerPage& page)
+    template<class Type> typename type_traits::GetType<Type>::shared GetLayer(int index, LayerPage& page)
     {
       return Cast<Type>(GetLayer(index, page));
     }
@@ -29,7 +37,9 @@ namespace kag
       static_assert(std::is_base_of<Layer, Ptr>::value, "型はレイヤを継承している必要があります");
       static_assert(std::is_convertible<Ptr*, Layer*>::value, "型がpublic継承しているかを確認してください");
 
-      return std::dynamic_pointer_cast<Ptr>(layer);
+      auto res = std::dynamic_pointer_cast<Ptr>(layer);
+      assert(!!res);
+      return res;
     }
 
     void resize(int num, const LayerPtr& fore, const LayerPtr& back);

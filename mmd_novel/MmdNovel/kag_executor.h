@@ -41,7 +41,7 @@ namespace kag
     void Draw();
     void Clear();
 
-    bool IsWait() const;
+    bool IsWait();
 
     /* コマンド */
 
@@ -65,6 +65,7 @@ namespace kag
 
     std::map<SnapShotSpan, IManagerPtr> manager_;
 
+    bool is_wait_;
 
   };
 }

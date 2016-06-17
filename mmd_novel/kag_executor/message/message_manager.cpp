@@ -5,7 +5,10 @@ namespace kag
 {
   void MessageManager::AddTag(IFileManager::FuncList& tag_func_)
   {
-    auto bind = [this](auto func) { return [=](CommandToken& token) { return (this->*func)(token); }; };
+    auto bind = [this_ = shared_from_this()](auto func) {
+      return [this_, func](CommandToken& token) { return (this_.get()->*func)(token); };
+    };
+
     tag_func_[SnapShotSpan(L"ch")] = bind(&MessageManager::CHTag);
     tag_func_[SnapShotSpan(L"cm")] = bind(&MessageManager::CMTag);
     tag_func_[SnapShotSpan(L"ct")] = bind(&MessageManager::CTTag);
@@ -41,36 +44,33 @@ namespace kag
     click_key_ = Input::MouseL | Input::KeyEnter;
     is_active_key_ = true;
     resize(2);
-    message_layer_[0][LayerPage::Fore]->IsVisible(true);
+    GetLayer(0, LayerPage::Fore)->IsVisible(true);
     delay_time_ = 30;
     delay_index_ = 0;
     current_layer_ = 0;
     is_no_wait_ = false;
+    Clear();
   }
 
   void MessageManager::resize(size_t size)
   {
-    message_layer_.resize(size);
-  }
-
-  int MessageManager::size() const
-  {
-    return static_cast<int>(message_layer_.size());
+    static const MessageLayer fore = executor_.MakeLayer<MessageLayer>();
+    IFileManager::resize(size, fore, fore);
   }
 
   void MessageManager::Clear()
   {
     is_wait_click_ = false;
     is_click_new_page_ = false;
-    message_layer_[current_layer_][current_page_]->Clear();
+    GetLayer(current_layer_, current_page_)->Clear();
   }
 
   void MessageManager::AllClear()
   {
-    for ( auto& i : message_layer_ )
+    for ( auto& i : step(size()) )
     {
-      i[LayerPage::Fore]->Clear();
-      i[LayerPage::Back]->Clear();
+      GetLayer(i, LayerPage::Fore)->Clear();
+      GetLayer(i, LayerPage::Back)->Clear();
     }
   }
 
@@ -81,7 +81,7 @@ namespace kag
 
   void MessageManager::Flush()
   {
-    auto& current = Current();
+    auto current = Current();
     for ( int i = 0, len = delay_text_.Length() - delay_index_; i < len; i++ )
     {
       current->Append(delay_text_[delay_index_++]);
@@ -99,7 +99,7 @@ namespace kag
     assert(IsFlush());
     if ( is_no_wait_ )
     {
-      auto& current = Current();
+      auto current = Current();
       current->Append(text.ToStr());
       if ( current->IsLimitHeihgt() )
       {
@@ -131,7 +131,7 @@ namespace kag
 
   void MessageManager::SetClickNextPage() { is_click_new_page_ = true; }
 
-  bool MessageManager::Update()
+  void MessageManager::update()
   {
     if ( is_wait_click_ )
     {
@@ -142,9 +142,9 @@ namespace kag
         is_click_new_page_ = false;
         is_wait_click_ = false;
       }
-      return false;
+      return;
     }
-    auto& current = Current();
+    auto current = Current();
     int ms = timer_.ms();
     int loop = ms / delay_time_ - delay_index_;
     loop = std::min(loop, delay_text_.Length() - delay_index_);
@@ -155,7 +155,7 @@ namespace kag
       {
         is_click_new_page_ = true;
         is_wait_click_ = true;
-        return false;
+        return;
       }
     }
 
@@ -163,18 +163,9 @@ namespace kag
     {
       if ( CheckClicked() )
         Flush();
-      return false;
     }
 
-    return true;
-  }
-
-  void MessageManager::Draw() const
-  {
-    for ( auto& i : message_layer_ )
-    {
-      i.Draw();
-    }
+    return;
   }
 
   void MessageManager::SetCurrentLayer(int layer_index)
@@ -198,17 +189,12 @@ namespace kag
     is_no_wait_ = is_no_wait;
   }
 
-  MessageLayer & MessageManager::GetLayer(int index, LayerPage page)
+  MessageLayer MessageManager::GetLayer(int index, LayerPage page)
   {
-    return message_layer_[index][page];
+    return IFileManager::GetLayer<MessageLayer>(index, page);
   }
 
-  PageLayer<MessageLayer> & MessageManager::GetLayer(int index)
-  {
-    return message_layer_[index];
-  }
-
-  MessageLayer & MessageManager::Current() { return GetLayer(current_layer_, current_page_); }
+  MessageLayer MessageManager::Current() { return GetLayer(current_layer_, current_page_); }
 
   int MessageManager::CurrentLayerNum() const { return current_layer_; }
 
@@ -222,15 +208,6 @@ namespace kag
   void MessageManager::SetInvalidKeyInput() { is_active_key_ = false; }
 
   void MessageManager::SetValidKeyInput() { is_active_key_ = true; }
-
-  void MessageManager::SetLayerManager(LayerManager& manager)
-  {
-    layer_manager_ = manager;
-    for ( auto& i : message_layer_ )
-    {
-      layer_manager_->Set(i);
-    }
-  }
 
   bool MessageManager::IsWait() const { return is_wait_click_ || !IsFlush(); }
 
@@ -590,7 +567,7 @@ namespace kag
       }
       void attach() const
       {
-        auto& layer = exe_->Current();
+        auto layer = exe_->Current();
         if ( linesize_ ) layer->SetLineSize(*linesize_);
       }
     };

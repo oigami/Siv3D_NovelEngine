@@ -2,6 +2,7 @@
 # include <HamFramework.hpp>
 #include <MmdNovel.h>
 #include <MmdNovel/image/image_manager.h>
+#include <MmdNovel/message/message_manager.h>
 
 //#include <MmdNovel/mmd/mmd_manager.h>
 void Main()
@@ -9,6 +10,7 @@ void Main()
   TextureAsset::Register(L"siv3d-kun", L"Data/siv3d-kun.png");
   kag::FileExecutor executor(L"test.txt");
   executor.AddManager<kag::ImageManager>(L"image");
+  executor.AddManager<kag::MessageManager>(L"message");
 
   //executor.AddManager<kag::MMDManager>(L"mmd");
   TextReader reader(L"test.txt");

@@ -13,7 +13,6 @@ namespace kag
     if ( it == manager_.end() )
       throw std::invalid_argument("Executor::GetLayer()");
     return it->second->GetLayer(layer_num.second);
-
   }
 
   LayerManager Executor::layerManager() const
@@ -36,23 +35,39 @@ namespace kag
     MessageBox::Show(str);
   }
 
-  bool Executor::IsWait() const
+  bool Executor::IsWait()
   {
-    return true;
+    is_wait_ = false;
+    for ( auto& i : manager_ )
+    {
+      is_wait_ |= i.second->IsWait();
+    }
+    return is_wait_;
   }
+
+
   bool Executor::Update()
   {
-    return false;
+    is_wait_ = false;
+    for ( auto& i : manager_ )
+    {
+      i.second->Update();
+      is_wait_ |= i.second->IsWait();
+    }
+    layerManager()->Update();
+    return !is_wait_;
   }
 
   bool Executor::CommandUpdate()
   {
     if ( IsWait() )return false;
-    return false;
+    pimpl_->CommandUpdate();
+    return true;
   }
 
   void Executor::Draw()
   {
+    layerManager()->Draw();
   }
 
 

@@ -17,7 +17,7 @@ namespace kag
 
 
     //tag_func_[SnapShotSpan(L"unlocklink")] = &UnlockLinkTag;
-    auto bind = [this](auto func) { return [&](CommandToken& token) { (this->*func)(token); }; };
+    auto bind = [this](auto func) { return [this, func](CommandToken& token) { (this->*func)(token); }; };
     /* レイヤ関連 */
     tag_func_[L"move"] = bind(&FileExecutor::MoveTag);
     tag_func_[L"trans"] = bind(&FileExecutor::TransTag);
