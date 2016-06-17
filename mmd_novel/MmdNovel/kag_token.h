@@ -3,10 +3,10 @@
 #include <MmdNovel/message/snapshotspan.h>
 namespace kag
 {
+  class LayerPage;
   namespace converter
   {
     using LayerType = SnapShotSpan;
-
 
     /// <summary>
     /// 文字列をブール値に変換する

@@ -42,6 +42,22 @@ namespace kag
       return res;
     }
 
+    template<class Layer> void resize(int num, const Layer& fore, const Layer& back)
+    {
+      using type = typename type_traits::GetType<Layer>::type;
+      const int pre_size = size();
+      for ( int i = num; i < pre_size; i++ )
+      {
+        executor_.layerManager()->Remove(layer_[i]);
+      }
+      layer_.reserve(num);
+      for ( int i = pre_size; i < num; i++ )
+      {
+        layer_.push_back(PageLayer<LayerPtr>{ std::make_shared<type>(*fore), std::make_shared<type>(*back) });
+        executor_.layerManager()->Set(layer_[i]);
+      }
+    }
+
     void resize(int num, const LayerPtr& fore, const LayerPtr& back);
 
     Executor executor_;

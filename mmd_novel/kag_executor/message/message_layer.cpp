@@ -5,6 +5,11 @@ namespace kag
   {
     namespace pimpl
     {
+      void MessageLayerPimpl::clone(LayerPtr & out)
+      {
+        DefaultClone(*this, out);
+      }
+
       MessageLayerPimpl::MessageLayerPimpl(const LayerManager & manager) :Layer(manager)
       {
         SetPositionLeft(16);

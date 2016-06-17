@@ -346,5 +346,8 @@
     <ClInclude Include="MmdNovel\type_traits.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="MmdNovel\layer\page_layer.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

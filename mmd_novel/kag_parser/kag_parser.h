@@ -2,7 +2,6 @@
 #include <Siv3D.hpp>
 #include "tokenizer.h"
 #include <MmdNovel/default_value.h>
-#include <MmdNovel/layer.h>
 #include <MmdNovel/kag_token.h>
 namespace kag
 {

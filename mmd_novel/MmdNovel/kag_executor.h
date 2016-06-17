@@ -1,12 +1,16 @@
 ﻿#pragma once
 #include <MmdNovel/default_value.h>
 #include <kag_parser/kag_parser.h>
-#include <MmdNovel/mmd/mmd_layer.h>
-
+#include <MmdNovel/kag_token.h>
+#include <MmdNovel/layer/page_layer.h>
+#include <MmdNovel/type_traits.h>
 namespace kag
 {
   struct IManager;
   using IManagerPtr = std::shared_ptr<IManager>;
+  struct Layer;
+  using LayerPtr = std::shared_ptr<Layer>;
+  class LayerPage;
 
   /// <summary>
   /// kagの実行クラス
@@ -18,7 +22,7 @@ namespace kag
 
     Executor();
 
-    LayerPtr GetLayer(std::pair<kag::converter::LayerType, int> layer_num, LayerPage page) const
+    LayerPtr GetLayer(std::pair<kag::converter::LayerType, int> layer_num, const LayerPage& page) const
     {
       return GetLayer(layer_num)[page];
     }

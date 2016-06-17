@@ -4,6 +4,11 @@ namespace kag
 {
   namespace pimpl
   {
+    void ImageLayerPimpl::clone(LayerPtr & out)
+    {
+      DefaultClone(*this, out);
+    }
+
     void ImageLayerPimpl::SetTex(const Texture & tex)
     {
       texture_ = tex;

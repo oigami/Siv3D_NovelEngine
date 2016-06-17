@@ -1,5 +1,5 @@
 ﻿#include "kag_parser.h"
-
+#include <MmdNovel/layer/page_layer.h>
 namespace kag
 {
   Parser::Parser(const FilePath & path)

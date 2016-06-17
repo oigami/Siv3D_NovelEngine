@@ -11,6 +11,7 @@ namespace kag
       // TODO: opacityを全体に反映させるための処理を追加する
       class MessageLayerPimpl : public Layer
       {
+        virtual void clone(LayerPtr& out);
       public:
 
         MessageLayerPimpl(const LayerManager& manager);
