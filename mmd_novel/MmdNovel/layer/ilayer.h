@@ -13,8 +13,8 @@ namespace kag
   {
   private:
     virtual void update() {};
-    virtual void clone(LayerPtr& out) = 0;
   public:
+    virtual void clone(LayerPtr& out) = 0;
     template<class LayerType>
     static void DefaultClone(LayerType& this_, LayerPtr& out)
     {
@@ -25,7 +25,7 @@ namespace kag
       }
       else
       {
-        out_c = std::make_shared<LayerType>(this_);
+        out = std::make_shared<LayerType>(this_);
       }
     }
 
