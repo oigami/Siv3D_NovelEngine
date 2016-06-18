@@ -9,8 +9,8 @@ namespace kag
 {
   struct IManager;
   using IManagerPtr = std::shared_ptr<IManager>;
-  struct Layer;
-  using LayerPtr = std::shared_ptr<Layer>;
+  struct ILayer;
+  using LayerPtr = std::shared_ptr<ILayer>;
   class LayerPage;
 
   /// <summary>

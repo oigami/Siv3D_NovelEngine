@@ -10,7 +10,7 @@ namespace kag
         DefaultClone(*this, out);
       }
 
-      MessageLayerPimpl::MessageLayerPimpl(const LayerManager & manager) :Layer(manager)
+      MessageLayerPimpl::MessageLayerPimpl(const LayerManager & manager) :ILayer(manager)
       {
         SetPositionLeft(16);
         SetPositionTop(16);

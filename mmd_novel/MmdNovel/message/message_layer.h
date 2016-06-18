@@ -9,7 +9,7 @@ namespace kag
     namespace pimpl
     {
       // TODO: opacityを全体に反映させるための処理を追加する
-      class MessageLayerPimpl : public Layer
+      class MessageLayerPimpl : public ILayer
       {
         virtual void clone(LayerPtr& out);
       public:

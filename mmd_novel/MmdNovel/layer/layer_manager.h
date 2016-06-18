@@ -3,8 +3,8 @@
 #include <MmdNovel/layer/page_layer.h>
 namespace kag
 {
-  struct Layer;
-  using LayerPtr = std::shared_ptr<Layer>;
+  struct ILayer;
+  using LayerPtr = std::shared_ptr<ILayer>;
 
   class LayerManagerImpl
   {

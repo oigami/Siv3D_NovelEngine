@@ -5,12 +5,12 @@ namespace kag
 {
   namespace pimpl
   {
-    class ImageLayerPimpl : public Layer
+    class ImageLayerPimpl : public ILayer
     {
       virtual void clone(LayerPtr& out);
 
     public:
-      using Layer::Layer;
+      using ILayer::ILayer;
 
       void SetTex(const Texture& tex);
 

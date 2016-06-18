@@ -4,8 +4,8 @@
 #include <MmdNovel/default_value.h>
 namespace kag
 {
-  struct Layer;
-  using LayerPtr = std::shared_ptr<Layer>;
+  struct ILayer;
+  using LayerPtr = std::shared_ptr<ILayer>;
 
   struct EasingType
   {
@@ -102,7 +102,7 @@ namespace kag
 
   public:
 
-    ITransEffect(int time_millisec, Layer* fore, Layer* back);
+    ITransEffect(int time_millisec, ILayer* fore, ILayer* back);
 
     bool Update();
 
@@ -110,7 +110,7 @@ namespace kag
 
   protected:
 
-    Layer *fore_, *back_;
+    ILayer *fore_, *back_;
 
   private:
     EasingController<double> t;

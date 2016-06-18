@@ -5,11 +5,11 @@
 #include <MmdNovel/kag_executor.h>
 namespace kag
 {
-  struct Layer;
-  using LayerPtr = std::shared_ptr<Layer>;
+  struct ILayer;
+  using LayerPtr = std::shared_ptr<ILayer>;
 
 
-  struct Layer
+  struct ILayer
   {
   private:
     virtual void update() {};
@@ -35,9 +35,9 @@ namespace kag
     /// <remarks>トランジションはこちらのdrawを呼ぶ</remarks>
     virtual void draw() const = 0;
 
-    virtual ~Layer() = default;
+    virtual ~ILayer() = default;
 
-    Layer(const LayerManager& manager);
+    ILayer(const LayerManager& manager);
 
     void Update();
 
@@ -60,8 +60,8 @@ namespace kag
     void ScaleEffect(const ScaleEffectData& data);
     void ScaleEffect(const ScaleEffectData::Array& data);
 
-    bool operator<(const Layer& layer) const { return z_index_ < layer.z_index_; }
-    bool operator<=(const Layer& layer) const { return z_index_ <= layer.z_index_; }
+    bool operator<(const ILayer& layer) const { return z_index_ < layer.z_index_; }
+    bool operator<=(const ILayer& layer) const { return z_index_ <= layer.z_index_; }
 
     const Rect& position()const { return position_; }
     const uint8& opacity()const { return opacity_; }

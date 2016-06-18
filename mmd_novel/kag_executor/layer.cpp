@@ -10,11 +10,11 @@ namespace kag
     {
       using Data = MoveEffectData;
       using DataArray = Array<Data>;
-      MoveEffect(Layer* layer, const Array<Data>& data);
-      MoveEffect(Layer* layer, const Data& d);
+      MoveEffect(ILayer* layer, const Array<Data>& data);
+      MoveEffect(ILayer* layer, const Data& d);
     private:
       Array<Data> data_;
-      Layer* layer_;
+      ILayer* layer_;
       int now_easing_index_;
       double pre_ease_time_ = 0;
 
@@ -26,7 +26,7 @@ namespace kag
     struct ScaleEffect : IEffect
     {
       using Data = ScaleEffectData;
-      ScaleEffect(Layer* layer, const Array<Data>& data);
+      ScaleEffect(ILayer* layer, const Array<Data>& data);
 
     private:
       double GetScale(double t, const Data& d) const;
@@ -36,20 +36,20 @@ namespace kag
 
       // 親のメモリとEffectの寿命が同じなので生ポインタにする
       // しないとプログラム終了時にSiv3DがEffectを強制解放した時に2重解放が起きてエラーが出る
-      Layer* layer_;
+      ILayer* layer_;
       int now_easing_index_;
       double pre_ease_time = 0;
 
       bool update(double t) override;
     };
 
-    MoveEffect::MoveEffect(Layer * layer, const Array<Data>& data)
+    MoveEffect::MoveEffect(ILayer * layer, const Array<Data>& data)
       :layer_(layer), data_(data), now_easing_index_(0)
     {
       assert(layer);
     }
 
-    MoveEffect::MoveEffect(Layer * layer, const Data & d)
+    MoveEffect::MoveEffect(ILayer * layer, const Data & d)
       : MoveEffect(layer, Array<Data>(1, d))
     {
     }
@@ -92,7 +92,7 @@ namespace kag
       return Min<double>(t - pre_ease_time, timeMillisec) / timeMillisec;
     }
 
-    ScaleEffect::ScaleEffect(Layer * layer, const Array<Data>& data)
+    ScaleEffect::ScaleEffect(ILayer * layer, const Array<Data>& data)
       :layer_(layer), data_(data), now_easing_index_(0)
     {
       assert(layer);
@@ -116,11 +116,11 @@ namespace kag
     }
   }
 
-  Layer::Layer(const LayerManager & manager) :layer_manager_(manager), opacity_(255), visible_(true), z_index_(0)
+  ILayer::ILayer(const LayerManager & manager) :layer_manager_(manager), opacity_(255), visible_(true), z_index_(0)
   {
   }
 
-  void Layer::Update()
+  void ILayer::Update()
   {
     effect.update();
     if ( trans_effect )
@@ -131,7 +131,7 @@ namespace kag
     update();
   }
 
-  void Layer::DrawPhase() const
+  void ILayer::DrawPhase() const
   {
     if ( trans_effect )
     {
@@ -143,24 +143,24 @@ namespace kag
     }
   }
 
-  void Layer::SetOpacity(int opacity) { opacity_ = static_cast<uint8>(opacity); }
-  void Layer::SetPositionLeft(int left) { position_.x = left; }
-  void Layer::SetPositionTop(int top) { position_.y = top; }
-  void Layer::SetPositionWidth(int width) { normal_size_.x = position_.w = width; }
-  void Layer::SetPositionHeight(int height) { normal_size_.y = position_.h = height; }
-  void Layer::SetScale(double s)
+  void ILayer::SetOpacity(int opacity) { opacity_ = static_cast<uint8>(opacity); }
+  void ILayer::SetPositionLeft(int left) { position_.x = left; }
+  void ILayer::SetPositionTop(int top) { position_.y = top; }
+  void ILayer::SetPositionWidth(int width) { normal_size_.x = position_.w = width; }
+  void ILayer::SetPositionHeight(int height) { normal_size_.y = position_.h = height; }
+  void ILayer::SetScale(double s)
   {
     position_.w = static_cast<int>(normal_size_.x * s);
     position_.h = static_cast<int>(normal_size_.y * s);
   }
-  void Layer::IsVisible(bool visible) { visible_ = visible; }
-  void Layer::SetZIndex(uint16 index) { z_index_ = index; }
-  void Layer::MoveEffect(const MoveEffectData & data) { effect.add<kag::MoveEffect>(this, data); }
-  void Layer::MoveEffect(const MoveEffectData::Array & data) { effect.add<kag::MoveEffect>(this, data); }
-  void Layer::ScaleEffect(const ScaleEffectData& data) { ScaleEffect(Array<ScaleEffect::Data>(1, data)); }
-  void Layer::ScaleEffect(const ScaleEffectData::Array& data) { effect.add<kag::ScaleEffect>(this, data); }
+  void ILayer::IsVisible(bool visible) { visible_ = visible; }
+  void ILayer::SetZIndex(uint16 index) { z_index_ = index; }
+  void ILayer::MoveEffect(const MoveEffectData & data) { effect.add<kag::MoveEffect>(this, data); }
+  void ILayer::MoveEffect(const MoveEffectData::Array & data) { effect.add<kag::MoveEffect>(this, data); }
+  void ILayer::ScaleEffect(const ScaleEffectData& data) { ScaleEffect(Array<ScaleEffect::Data>(1, data)); }
+  void ILayer::ScaleEffect(const ScaleEffectData::Array& data) { effect.add<kag::ScaleEffect>(this, data); }
 
-  void Layer::AddTrans(std::shared_ptr<ITransEffect> trans)
+  void ILayer::AddTrans(std::shared_ptr<ITransEffect> trans)
   {
     trans_effect = trans;
     trans->Update();
@@ -183,7 +183,7 @@ namespace kag
         Transition::Init();
       }
 
-      void update(double mini, double maxi, Layer* fore, Layer* back)
+      void update(double mini, double maxi, ILayer* fore, ILayer* back)
       {
         constant->x = static_cast<float>(mini);
         constant->y = static_cast<float>(maxi);
@@ -220,7 +220,7 @@ namespace kag
 
 
 
-      void draw(RenderTexture& tex, Layer *layer)
+      void draw(RenderTexture& tex, ILayer *layer)
       {
         tex.clear(Color(0, 0, 0, 0));
         Graphics2D::SetRenderTarget(tex);
@@ -252,7 +252,7 @@ namespace kag
     public:
       RuleTrans() = default;
 
-      RuleTrans(int time_millisec, Layer* fore, Layer* back, Texture rule)
+      RuleTrans(int time_millisec, ILayer* fore, ILayer* back, Texture rule)
         :ITransEffect(time_millisec, fore, back), trans(rule)
       {
       }
@@ -277,7 +277,7 @@ namespace kag
     public:
       CrossFadeTrans() = default;
 
-      CrossFadeTrans(int time_millisec, Layer* fore, Layer* back)
+      CrossFadeTrans(int time_millisec, ILayer* fore, ILayer* back)
         :ITransEffect(time_millisec, fore, back), trans(Texture(Image(1, 1, Color(255, 0, 0, 255))))
       {
       }
@@ -313,7 +313,7 @@ namespace kag
 
   }
 
-  ITransEffect::ITransEffect(int time_millisec, Layer * fore, Layer * back)
+  ITransEffect::ITransEffect(int time_millisec, ILayer * fore, ILayer * back)
     : fore_(fore), back_(back), t(0.0, 1.0, Easing::Linear, time_millisec)
   {
     t.start();

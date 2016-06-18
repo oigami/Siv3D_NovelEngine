@@ -3,8 +3,8 @@
 #include <MmdNovel/type_traits.h>
 namespace kag
 {
-  struct Layer;
-  using LayerPtr = std::shared_ptr<Layer>;
+  struct ILayer;
+  using LayerPtr = std::shared_ptr<ILayer>;
 
   struct IManager
   {
@@ -35,8 +35,8 @@ namespace kag
     template<class Type> static typename type_traits::GetType<Type>::shared Cast(LayerPtr& layer)
     {
       using Ptr = typename type_traits::GetType<Type>::type;
-      static_assert(std::is_base_of<Layer, Ptr>::value, "型はレイヤを継承している必要があります");
-      static_assert(std::is_convertible<Ptr*, Layer*>::value, "型がpublic継承しているかを確認してください");
+      static_assert(std::is_base_of<ILayer, Ptr>::value, "型はレイヤを継承している必要があります");
+      static_assert(std::is_convertible<Ptr*, ILayer*>::value, "型がpublic継承しているかを確認してください");
 
       auto res = std::dynamic_pointer_cast<Ptr>(layer);
       assert(!!res);
