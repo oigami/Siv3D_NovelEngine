@@ -99,11 +99,11 @@
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="kag_parser\kag_tokenizer.cpp" />
     <ClCompile Include="kag_executor\image\image_layer.cpp" />
-    <ClCompile Include="kag_executor\layer.cpp" />
+    <ClCompile Include="kag_executor\layer\ilayer.cpp" />
     <ClCompile Include="kag_executor\message\message_layer.cpp" />
     <ClCompile Include="kag_executor\imanager.cpp" />
     <ClCompile Include="MmdNovel\image\image_manager.cpp" />
-    <ClCompile Include="MmdNovel\layer\layer_manager.cpp" />
+    <ClCompile Include="kag_executor\layer\layer_manager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Engine\Splash.png" />

@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include <map>
+#include <MmdNovel/default_value.h>
 #include <MmdNovel/message/snapshotspan.h>
 namespace kag
 {

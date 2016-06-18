@@ -2,7 +2,7 @@
 #include <MmdNovel/kag_executor.h>
 #include <kag_parser/kag_parser.h>
 #include <MmdNovel/imanager.h>
-#include <HamFramework.hpp>
+
 namespace kag
 {
   struct IFileManager : IManager

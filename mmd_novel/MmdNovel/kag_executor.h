@@ -1,10 +1,8 @@
 ﻿#pragma once
-#include <MmdNovel/default_value.h>
-#include <kag_parser/kag_parser.h>
 #include <MmdNovel/kag_token.h>
 #include <MmdNovel/layer/page_layer.h>
-#include <MmdNovel/type_traits.h>
 #include <MmdNovel/layer/layer_manager.h>
+#include <MmdNovel/type_traits.h>
 namespace kag
 {
   struct IManager;

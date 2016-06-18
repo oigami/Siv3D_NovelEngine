@@ -75,9 +75,6 @@
     <ClCompile Include="kag_executor\image\image_layer.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="kag_executor\layer.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="kag_executor\message\message_text.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
@@ -102,7 +99,10 @@
     <ClCompile Include="kag_executor\message\message_manager.cpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="MmdNovel\layer\layer_manager.cpp">
+    <ClCompile Include="kag_executor\layer\ilayer.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="kag_executor\layer\layer_manager.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
