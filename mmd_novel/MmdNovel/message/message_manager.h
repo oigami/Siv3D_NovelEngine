@@ -12,7 +12,7 @@ namespace kag
     virtual void update();
   public:
 
-    MessageManager(const Executor& exe);
+    MessageManager(const std::weak_ptr<Executor>& exe);
 
     /// <summary>
     /// メッセージレイヤのレイヤ数を変更する

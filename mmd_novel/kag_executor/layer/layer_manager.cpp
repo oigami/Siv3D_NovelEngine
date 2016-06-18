@@ -19,9 +19,9 @@ namespace kag
   }
   namespace
   {
-    auto comp = [](const PageLayer<LayerPtr>& a, const PageLayer<LayerPtr>& b)
+    auto comp = [](const auto& a, const auto& b)
     {
-      return a[LayerPage::Fore] < b[LayerPage::Fore];
+      return *a[LayerPage::Fore] < *b[LayerPage::Fore];
     };
   }
   void LayerManagerImpl::Set(const PageLayer<LayerPtr> & layer)
@@ -29,7 +29,7 @@ namespace kag
     auto b = list_.begin();
     auto it = std::lower_bound(b, list_.end(), layer, comp);
     if ( b != it ) --it;
-    list_.insert(it, layer);
+    list_.insert(it, PageLayer<ILayer*>(layer.Fore().get(), layer.Back().get()));
   }
   void LayerManagerImpl::Remove(const PageLayer<LayerPtr> & layer)
   {
@@ -38,7 +38,7 @@ namespace kag
 
     while ( it.first < it.second )
     {
-      if ( (*it.first)[LayerPage::Fore] == layer[LayerPage::Fore] )
+      if ( (*it.first)[LayerPage::Fore] == layer[LayerPage::Fore].get() )
       {
         list_.erase(it.first);
         break;

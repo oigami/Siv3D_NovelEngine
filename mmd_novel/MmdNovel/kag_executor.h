@@ -15,7 +15,7 @@ namespace kag
   /// kagの実行クラス
   /// <para>シャローコピーされるのでコピーをしてもデータが共有される</para>
   /// </summary>
-  class Executor
+  class Executor : public std::enable_shared_from_this<Executor>
   {
   public:
 

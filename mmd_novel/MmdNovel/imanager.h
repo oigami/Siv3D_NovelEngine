@@ -13,9 +13,9 @@ namespace kag
   public:
     virtual bool IsWait() const { return false; }
 
-    IManager(const Executor& executor);
+    IManager(const std::weak_ptr<Executor>& executor);
 
-    virtual ~IManager() = default;
+    virtual ~IManager();
 
     PageLayer<LayerPtr>& GetLayer(int index);
 
@@ -47,24 +47,27 @@ namespace kag
     {
       using type = typename type_traits::GetType<Layer>::type;
       const int pre_size = size();
+      auto manager = GetExecutor()->layerManager();
       for ( int i = num; i < pre_size; i++ )
       {
-        executor_.layerManager()->Remove(layer_[i]);
+        manager->Remove(layer_[i]);
       }
       layer_.reserve(num);
       for ( int i = pre_size; i < num; i++ )
       {
         layer_.push_back(PageLayer<LayerPtr>{ std::make_shared<type>(*fore), std::make_shared<type>(*back) });
-        executor_.layerManager()->Set(layer_[i]);
+        manager->Set(layer_[i]);
       }
     }
 
     void resize(int num, const LayerPtr& fore, const LayerPtr& back);
 
-    Executor executor_;
+    std::shared_ptr<Executor> GetExecutor();
 
   private:
+    std::weak_ptr<Executor> executor_;
 
+    LayerManager layer_manager_;
     Array<PageLayer<LayerPtr>> layer_;
   };
 

@@ -34,7 +34,7 @@ namespace kag
     {
       static_assert(std::is_base_of<IFileManager, Manager>::value, "ManagerはIFileManagerを継承している必要があります");
       static_assert(std::is_convertible<Manager*, IFileManager*>::value, "Managerがpublic継承しているか確認してください");
-      AddManager(name, std::make_shared<Manager>(*this));
+      AddManager(name, std::make_shared<Manager>(this->shared_from_this()));
     }
 
     int NowLine() const;

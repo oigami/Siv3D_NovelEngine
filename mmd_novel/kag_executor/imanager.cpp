@@ -2,8 +2,18 @@
 #include <MmdNovel/layer/ilayer.h>
 namespace kag
 {
-  IManager::IManager(const Executor& executor) :executor_(executor)
+  IManager::IManager(const std::weak_ptr<Executor>& executor)
+    :executor_(executor), layer_manager_(executor.lock()->layerManager())
   {
+  }
+
+  IManager::~IManager()
+  {
+    auto&& manager = layer_manager_;
+    for ( auto& i : layer_ )
+    {
+      manager->Remove(i);
+    }
   }
 
   PageLayer<LayerPtr>& IManager::GetLayer(int index)
@@ -29,16 +39,23 @@ namespace kag
   void IManager::resize(int num, const LayerPtr& fore, const LayerPtr& back)
   {
     const int pre_size = size();
+    auto&& manager = layer_manager_;
     for ( int i = num; i < pre_size; i++ )
     {
-      executor_.layerManager()->Remove(layer_[i]);
+      manager->Remove(layer_[i]);
     }
     layer_.resize(num, { fore, back });
     for ( int i = pre_size; i < num; i++ )
     {
-      executor_.layerManager()->Set(layer_[i]);
+      manager->Set(layer_[i]);
     }
 
+  }
+
+  std::shared_ptr<Executor> IManager::GetExecutor()
+  {
+    assert(!executor_.expired());
+    return executor_.lock();
   }
 
 }

@@ -38,7 +38,7 @@ namespace kag
     //tag_func_[SnapShotSpan(L"ruby")] = &RubyTag;
     tag_func_[SnapShotSpan(L"style")] = bind(&MessageManager::StyleTag);
   }
-  MessageManager::MessageManager(const Executor& exe) :IFileManager(exe), current_page_(LayerPage::Fore)
+  MessageManager::MessageManager(const std::weak_ptr<Executor>& exe) :IFileManager(exe), current_page_(LayerPage::Fore)
   {
     click_key_ = Input::MouseL | Input::KeyEnter;
     is_active_key_ = true;
@@ -53,7 +53,7 @@ namespace kag
 
   void MessageManager::resize(size_t size)
   {
-    static const MessageLayer fore = executor_.MakeLayer<MessageLayer>();
+    static const MessageLayer fore = GetExecutor()->MakeLayer<MessageLayer>();
     IFileManager::resize(size, fore, fore);
   }
 
@@ -218,7 +218,7 @@ namespace kag
 
   void MessageManager::NoWaitTag(CommandToken &)
   {
-    executor_.Command([manager = shared_from_this()]()
+    GetExecutor()->Command([manager = shared_from_this()]()
     {
       manager->SetNoWaitText(true);
     });
@@ -226,7 +226,7 @@ namespace kag
 
   void MessageManager::PTag(CommandToken &)
   {
-    executor_.Command([manager = shared_from_this()]()
+    GetExecutor()->Command([manager = shared_from_this()]()
     {
       manager->SetWaitClick();
     });
@@ -239,14 +239,14 @@ namespace kag
 
     if ( *speed == L"user" )
     {
-      executor_.Command([manager = shared_from_this()]()
+      GetExecutor()->Command([manager = shared_from_this()]()
       {
         manager->SetDelayTime(30);
       });
     }
     else if ( *speed == L"nowait" )
     {
-      executor_.Command([manager = shared_from_this()]()
+      GetExecutor()->Command([manager = shared_from_this()]()
       {
         manager->SetNoWaitText(true);
       });
@@ -256,7 +256,7 @@ namespace kag
       int val;
       if ( converter::TryConvert(*speed, val) )
       {
-        executor_.Command([val, manager = shared_from_this()]()
+        GetExecutor()->Command([val, manager = shared_from_this()]()
         {
           manager->SetDelayTime(val);
         });
@@ -271,7 +271,7 @@ namespace kag
 
   void MessageManager::EndIndentTag(CommandToken &)
   {
-    executor_.Command([manager = shared_from_this()]()
+    GetExecutor()->Command([manager = shared_from_this()]()
     {
       manager->Current()->EndIndent();
     });
@@ -279,7 +279,7 @@ namespace kag
 
   void MessageManager::EndNoWaitTag(CommandToken &)
   {
-    executor_.Command([manager = shared_from_this()]()
+    GetExecutor()->Command([manager = shared_from_this()]()
     {
       manager->SetNoWaitText(true);
     });
@@ -287,7 +287,7 @@ namespace kag
 
   void MessageManager::ERTag(CommandToken &)
   {
-    executor_.Command([manager = shared_from_this()]()
+    GetExecutor()->Command([manager = shared_from_this()]()
     {
       manager->Clear();
     });
@@ -295,7 +295,7 @@ namespace kag
 
   void MessageManager::CMTag(CommandToken &)
   {
-    executor_.Command([manager = shared_from_this()]()
+    GetExecutor()->Command([manager = shared_from_this()]()
     {
       manager->AllClear();
     });
@@ -303,7 +303,7 @@ namespace kag
 
   void MessageManager::CTTag(CommandToken &)
   {
-    executor_.Command([manager = shared_from_this()]()
+    GetExecutor()->Command([manager = shared_from_this()]()
     {
       manager->AllClear();
       manager->SetCurrent(0, LayerPage::Fore);
@@ -318,7 +318,7 @@ namespace kag
     using namespace converter;
     if ( token.GET(layer).GET(page).HasError() )
       return;
-    executor_.Command([layer, page, manager = shared_from_this()]()
+    GetExecutor()->Command([layer, page, manager = shared_from_this()]()
     {
       manager->SetCurrent(layer.second, page);
     });
@@ -382,7 +382,7 @@ namespace kag
   {
     DefFont tag(token, shared_from_this());
     if ( token.HasError() ) return;
-    executor_.Command([tag = std::move(tag)]() { tag.attach(); });
+    GetExecutor()->Command([tag = std::move(tag)]() { tag.attach(); });
   }
 
   void MessageManager::DefStyleTag(CommandToken & token)
@@ -407,17 +407,17 @@ namespace kag
       int pitch;
       std::shared_ptr<MessageManager> exe_;
     };
-    executor_.Command([tag = DefStyleVal(token, shared_from_this())](){ tag.attach(); });
+    GetExecutor()->Command([tag = DefStyleVal(token, shared_from_this())](){ tag.attach(); });
   }
 
   void MessageManager::FontTTag(CommandToken & token)
   {
-    executor_.Command([tag = FontVal(token, shared_from_this())]() { tag.attach(); });
+    GetExecutor()->Command([tag = FontVal(token, shared_from_this())]() { tag.attach(); });
   }
 
   void MessageManager::IndentTag(CommandToken &)
   {
-    executor_.Command([manager = shared_from_this()]()
+    GetExecutor()->Command([manager = shared_from_this()]()
     {
       manager->Current()->BeginIndent();
     });
@@ -476,20 +476,20 @@ namespace kag
     };
     PositionVal tag(token, shared_from_this());
     if ( token.HasError() ) return;
-    executor_.Command([tag = std::move(tag)]() { tag.attach(); });
+    GetExecutor()->Command([tag = std::move(tag)]() { tag.attach(); });
   }
   void MessageManager::CHTag(CommandToken & token)
   {
     Must<SnapShotSpan> text;
     if ( token.GET(text).HasError() ) return;
-    executor_.Command([manager = shared_from_this(), text]() mutable
+    GetExecutor()->Command([manager = shared_from_this(), text]() mutable
     {
       manager->Current()->Append(text->ToStr());
     });
   }
   void MessageManager::LTag(CommandToken &)
   {
-    executor_.Command([manager = shared_from_this()]()
+    GetExecutor()->Command([manager = shared_from_this()]()
     {
       manager->SetWaitClick();
     });
@@ -499,7 +499,7 @@ namespace kag
   {
     Value<int> x, y;
     if ( token.GET(x).GET(y).HasError() ) return;
-    executor_.Command([x, y, manager = shared_from_this()]()
+    GetExecutor()->Command([x, y, manager = shared_from_this()]()
     {
       if ( x == Define::default )
       {
@@ -518,7 +518,7 @@ namespace kag
 
   void MessageManager::RTag(CommandToken &)
   {
-    executor_.Command([manager = shared_from_this()]()
+    GetExecutor()->Command([manager = shared_from_this()]()
     {
       manager->AppendNewLine();
     });
@@ -526,7 +526,7 @@ namespace kag
 
   void MessageManager::ResetFontTag(CommandToken &)
   {
-    executor_.Command([manager = shared_from_this()]()
+    GetExecutor()->Command([manager = shared_from_this()]()
     {
       manager->Current()->ResetFont();
     });
@@ -534,7 +534,7 @@ namespace kag
 
   void MessageManager::ResetStyleTag(CommandToken &)
   {
-    executor_.Command([manager = shared_from_this()]()
+    GetExecutor()->Command([manager = shared_from_this()]()
     {
       manager->Current()->ResetStyle();
     });
@@ -572,7 +572,7 @@ namespace kag
     };
     StyleVal tag(token, shared_from_this());
     if ( token.HasError() ) return;
-    executor_.Command([tag = std::move(tag)]() { tag.attach(); });
+    GetExecutor()->Command([tag = std::move(tag)]() { tag.attach(); });
   }
 
 }

@@ -7,7 +7,7 @@ namespace kag
     list[L"image"] = [this_ = shared_from_this()](CommandToken& token) { this_->ImageTag(token); };
   }
 
-  ImageManager::ImageManager(const Executor & exe) :IFileManager(exe)
+  ImageManager::ImageManager(const std::weak_ptr<Executor> & exe) :IFileManager(exe)
   {
     resize(2);
     for ( auto& i : step(2) )
@@ -20,7 +20,7 @@ namespace kag
 
   void ImageManager::resize(int num)
   {
-    static const ImageLayer fore = executor_.MakeLayer<ImageLayer>();
+    static const ImageLayer fore = GetExecutor()->MakeLayer<ImageLayer>();
     IFileManager::resize(num, fore, fore);
   }
 
@@ -28,7 +28,7 @@ namespace kag
   {
     ImageVal tag(shared_from_this(), token);
     if ( token.HasError() ) return;
-    executor_.Command([tag = std::move(tag)]() { tag.attach(); });
+    GetExecutor()->Command([tag = std::move(tag)]() { tag.attach(); });
   }
 
   ImageManager::ImageVal::ImageVal(const std::shared_ptr<ImageManager>& manager, CommandToken & token) :manager_(manager)

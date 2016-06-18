@@ -8,9 +8,9 @@
 void Main()
 {
   TextureAsset::Register(L"siv3d-kun", L"Data/siv3d-kun.png");
-  kag::FileExecutor executor(L"test.txt");
-  executor.AddManager<kag::ImageManager>(L"image");
-  executor.AddManager<kag::MessageManager>(L"message");
+  auto executor = std::make_shared< kag::FileExecutor>(L"test.txt");
+  executor->AddManager<kag::ImageManager>(L"image");
+  executor->AddManager<kag::MessageManager>(L"message");
 
   //executor.AddManager<kag::MMDManager>(L"mmd");
   TextReader reader(L"test.txt");
@@ -37,11 +37,11 @@ void Main()
   while ( System::Update() )
   {
     Circle(Mouse::Pos(), 50).draw({ 255, 0, 0, 127 });
-    executor.Update();
+    executor->Update();
     /*if ( Input::MouseR.clicked )
       executor.CommandText(L"右クリックテスト");
 */
-    executor.Draw();
+    executor->Draw();
     if ( Input::KeyD.clicked )
     {
       isDebug = !isDebug;
@@ -49,7 +49,7 @@ void Main()
     if ( isDebug )
     {
       int y = Window::Size().y;
-      int line = executor.NowLine();
+      int line = executor->NowLine();
       while ( y > 0 && line >= 0 )
       {
         y -= log.height;

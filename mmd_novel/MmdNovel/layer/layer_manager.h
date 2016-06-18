@@ -8,7 +8,7 @@ namespace kag
 
   class LayerManagerImpl
   {
-    Array<PageLayer<LayerPtr>> list_;
+    Array<PageLayer<ILayer*>> list_;
 
   public:
     void Update();

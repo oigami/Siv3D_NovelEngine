@@ -10,7 +10,7 @@ namespace kag
     virtual void AddTag(FuncList& list)override;
     virtual void update() {}
   public:
-    ImageManager(const Executor& exe);
+    ImageManager(const std::weak_ptr<Executor>& exe);
 
     void resize(int num);
 

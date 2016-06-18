@@ -153,6 +153,7 @@ namespace kag
     PageLayer(std::array<LayerPtr, 2>& l) : layer_(l) {}
     PageLayer() = default;
     PageLayer(const Pimpl& fore, const Pimpl& back) : layer_({ fore,back }) {}
+    PageLayer(const PageLayer&) = default;
 
     Pimpl& operator[](const LayerPage& page)
     {
@@ -172,16 +173,16 @@ namespace kag
       return layer_[LayerPage::Back];
     }
 
-    operator PageLayer<LayerPtr>()const
-    {
-      std::array<LayerPtr, 2> ret;
-      for ( auto& i : step(2) )
-      {
-        ret[i] = layer_[i];
-      }
-      PageLayer<LayerPtr> tmp(ret);
-      return tmp;
-    }
+    //operator PageLayer<LayerPtr>()const
+    //{
+    //  std::array<LayerPtr, 2> ret;
+    //  for ( auto& i : step(2) )
+    //  {
+    //    ret[i] = layer_[i];
+    //  }
+    //  PageLayer<LayerPtr> tmp(ret);
+    //  return tmp;
+    //}
 
     void Update()
     {
