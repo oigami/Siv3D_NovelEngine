@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include <MmdNovel/layer.h>
+#include <Siv3D.hpp>
 namespace kag
 {
   namespace message

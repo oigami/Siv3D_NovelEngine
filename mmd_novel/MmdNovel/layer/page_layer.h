@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include <memory>
 #include <Siv3D.hpp>
+#include <MmdNovel/default_value.h>
 namespace kag
 {
   struct Layer;
@@ -208,22 +209,6 @@ namespace kag
     std::array<Pimpl, 2> layer_;
   };
 
-  class LayerManagerImpl
-  {
-    Array<PageLayer<LayerPtr>> list_;
 
-  public:
-    void Update();
-
-    void Draw() const;
-
-    void Set(const PageLayer<LayerPtr>& layer);
-
-    void Remove(const PageLayer<LayerPtr>& layer);
-
-    void Update(const PageLayer<LayerPtr>& layer);
-
-    void Sort();
-  };
 
 }

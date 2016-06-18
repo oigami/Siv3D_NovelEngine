@@ -2,6 +2,7 @@
 #include <MmdNovel/kag_executor.h>
 #include <kag_parser/kag_parser.h>
 #include <MmdNovel/imanager.h>
+#include <HamFramework.hpp>
 namespace kag
 {
   struct IFileManager : IManager
@@ -9,6 +10,11 @@ namespace kag
     using IManager::IManager;
     using FuncList = std::map<SnapShotSpan, std::function<void(CommandToken&)>>;
     virtual void AddTag(FuncList& func_list) = 0;
+    template<class Manager> static auto Bind(const std::shared_ptr<Manager>& this_,
+                                             void (Manager::*f)(CommandToken&))
+    {
+      return[this_, f](CommandToken& token) { (this_.get()->*f)(token); };
+    }
   };
 
   class FileExecutor : public Executor

@@ -1,4 +1,5 @@
 #include <MmdNovel/imanager.h>
+#include <MmdNovel/layer/ilayer.h>
 namespace kag
 {
   IManager::IManager(const Executor& executor) :executor_(executor)

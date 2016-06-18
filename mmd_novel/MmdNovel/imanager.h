@@ -1,9 +1,10 @@
 ﻿#pragma once
-#include <MmdNovel/layer.h>
 #include <MmdNovel/kag_executor.h>
 #include <MmdNovel/type_traits.h>
 namespace kag
 {
+  struct Layer;
+  using LayerPtr = std::shared_ptr<Layer>;
 
   struct IManager
   {

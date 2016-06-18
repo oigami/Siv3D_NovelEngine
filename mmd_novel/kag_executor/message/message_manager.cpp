@@ -6,9 +6,8 @@ namespace kag
   void MessageManager::AddTag(IFileManager::FuncList& tag_func_)
   {
     auto bind = [this_ = shared_from_this()](auto func) {
-      return [this_, func](CommandToken& token) { return (this_.get()->*func)(token); };
+      return Bind(this_, func);
     };
-
     tag_func_[SnapShotSpan(L"ch")] = bind(&MessageManager::CHTag);
     tag_func_[SnapShotSpan(L"cm")] = bind(&MessageManager::CMTag);
     tag_func_[SnapShotSpan(L"ct")] = bind(&MessageManager::CTTag);

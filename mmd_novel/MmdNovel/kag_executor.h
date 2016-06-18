@@ -4,6 +4,7 @@
 #include <MmdNovel/kag_token.h>
 #include <MmdNovel/layer/page_layer.h>
 #include <MmdNovel/type_traits.h>
+#include <MmdNovel/layer/layer_manager.h>
 namespace kag
 {
   struct IManager;

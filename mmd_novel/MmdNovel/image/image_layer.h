@@ -1,6 +1,6 @@
 #pragma once
 #include <Siv3D.hpp>
-#include <MmdNovel/layer.h>
+#include <MmdNovel/layer/ilayer.h>
 namespace kag
 {
   namespace pimpl

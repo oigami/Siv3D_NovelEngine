@@ -103,6 +103,7 @@
     <ClCompile Include="kag_executor\message\message_layer.cpp" />
     <ClCompile Include="kag_executor\imanager.cpp" />
     <ClCompile Include="MmdNovel\image\image_manager.cpp" />
+    <ClCompile Include="MmdNovel\layer\layer_manager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Engine\Splash.png" />
@@ -173,12 +174,13 @@
   <ItemGroup>
     <ClInclude Include="kag_executor\executor\impl\kag_executor_impl.h" />
     <ClInclude Include="MmdNovel\kag_file_executor.h" />
+    <ClInclude Include="MmdNovel\layer\layer_manager.h" />
     <ClInclude Include="MmdNovel\layer\page_layer.h" />
     <ClInclude Include="MmdNovel\mmd\mmd_manager.h" />
     <ClInclude Include="MmdNovel\imanager.h" />
     <ClInclude Include="MmdNovel\kag_token.h" />
     <ClInclude Include="MmdNovel\mmd\mmd_layer.h" />
-    <ClInclude Include="MmdNovel\layer.h" />
+    <ClInclude Include="MmdNovel\layer\ilayer.h" />
     <ClInclude Include="MmdNovel.h" />
     <ClInclude Include="MmdNovel\message\message_text.h" />
     <ClCompile Include="kag_executor\message\message_manager.cpp">

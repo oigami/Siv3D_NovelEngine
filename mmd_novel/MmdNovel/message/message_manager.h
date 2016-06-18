@@ -3,7 +3,7 @@
 #include <MmdNovel/message/snapshotspan.h>
 #include <MmdNovel/message/message_layer.h>
 #include <MmdNovel/default_value.h>
-#include <MmdNovel/layer.h>
+#include <MmdNovel/layer/page_layer.h>
 namespace kag
 {
   class MessageManager : public IFileManager, public std::enable_shared_from_this<MessageManager>
