@@ -14,5 +14,7 @@ namespace kag
       using type = T;
       using shared = std::shared_ptr<T>;
     };
+    template<class Type> using GetType_t = typename GetType<Type>::type;
+    template<class Type> using GetType_s = typename GetType<Type>::shared;
   }
 }

@@ -6,7 +6,7 @@ namespace kag
 {
   Executor::Executor() :pimpl_(std::make_shared<Pimpl>()) {}
 
-  PageLayer<LayerPtr> Executor::GetLayer(std::pair<kag::converter::LayerType, int> layer_num) const
+  PageLayer& Executor::GetLayer(std::pair<kag::converter::LayerType, int> layer_num) const
   {
     using namespace converter;
     auto it = manager_.find(layer_num.first);

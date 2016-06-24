@@ -13,6 +13,7 @@ namespace kag
       using ILayer::ILayer;
 
       void SetTex(const Texture& tex);
+      void SetTex();
 
     private:
 

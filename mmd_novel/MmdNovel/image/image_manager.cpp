@@ -45,7 +45,14 @@ namespace kag
   void ImageManager::ImageVal::attach() const
   {
     auto ptr = manager_->GetLayer(layer->second, page);
-    ptr->SetTex(Texture(storage->ToStr()));
+    if ( storage->Length() == 0 )
+    {
+      ptr->SetTex();
+    }
+    else
+    {
+      ptr->SetTex(Texture(storage->ToStr()));
+    }
     if ( left ) ptr->SetPositionLeft(*left);
     if ( top ) ptr->SetPositionLeft(*top);
     if ( index ) ptr->SetZIndex(*index);

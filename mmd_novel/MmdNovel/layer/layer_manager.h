@@ -8,18 +8,18 @@ namespace kag
 
   class LayerManagerImpl
   {
-    Array<PageLayer<ILayer*>> list_;
+    Array<std::array<ILayer*, 2>> list_;
 
   public:
     void Update();
 
     void Draw() const;
 
-    void Set(const PageLayer<LayerPtr>& layer);
+    void Set(const PageLayer& layer);
 
-    void Remove(const PageLayer<LayerPtr>& layer);
+    void Remove(const PageLayer& layer);
 
-    void Update(const PageLayer<LayerPtr>& layer);
+    void Update(const PageLayer& layer);
 
     void Sort();
   };

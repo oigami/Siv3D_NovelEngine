@@ -16,7 +16,7 @@ namespace kag
     }
   }
 
-  PageLayer<LayerPtr>& IManager::GetLayer(int index)
+  PageLayer& IManager::GetLayer(int index)
   {
     return layer_[index];
   }
@@ -44,12 +44,13 @@ namespace kag
     {
       manager->Remove(layer_[i]);
     }
-    layer_.resize(num, { fore, back });
+    layer_.resize(num);
     for ( int i = pre_size; i < num; i++ )
     {
+      fore->clone(layer_[i].Fore());
+      back->clone(layer_[i].Back());
       manager->Set(layer_[i]);
     }
-
   }
 
   std::shared_ptr<Executor> IManager::GetExecutor()

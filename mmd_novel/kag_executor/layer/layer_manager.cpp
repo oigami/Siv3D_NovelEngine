@@ -7,14 +7,14 @@ namespace kag
   {
     for ( auto& i : list_ )
     {
-      i.Update();
+      i[LayerPage::Fore]->Update();
     }
   }
   void LayerManagerImpl::Draw() const
   {
     for ( auto& i : list_ )
     {
-      i.Draw();
+      i[LayerPage::Fore]->DrawPhase();
     }
   }
   namespace
@@ -24,14 +24,14 @@ namespace kag
       return *a[LayerPage::Fore] < *b[LayerPage::Fore];
     };
   }
-  void LayerManagerImpl::Set(const PageLayer<LayerPtr> & layer)
+  void LayerManagerImpl::Set(const PageLayer & layer)
   {
     auto b = list_.begin();
     auto it = std::lower_bound(b, list_.end(), layer, comp);
     if ( b != it ) --it;
-    list_.insert(it, PageLayer<ILayer*>(layer.Fore().get(), layer.Back().get()));
+    list_.insert(it, std::array<ILayer*, 2>{layer.Fore().get(), layer.Back().get()});
   }
-  void LayerManagerImpl::Remove(const PageLayer<LayerPtr> & layer)
+  void LayerManagerImpl::Remove(const PageLayer& layer)
   {
     auto e = list_.end();
     auto it = std::equal_range(list_.begin(), e, layer, comp);
@@ -47,7 +47,7 @@ namespace kag
     }
   }
 
-  void LayerManagerImpl::Update(const PageLayer<LayerPtr> & layer)
+  void LayerManagerImpl::Update(const PageLayer& layer)
   {
     Remove(layer);
     Set(layer);

@@ -147,67 +147,35 @@ namespace kag
     static const LayerPage Back;
   };
 
-  template<class Pimpl> class PageLayer
+  class PageLayer
   {
   public:
     PageLayer(std::array<LayerPtr, 2>& l) : layer_(l) {}
     PageLayer() = default;
-    PageLayer(const Pimpl& fore, const Pimpl& back) : layer_({ fore,back }) {}
+    PageLayer(const LayerPtr& fore, const LayerPtr& back) : layer_({ fore,back }) {}
     PageLayer(const PageLayer&) = default;
 
-    Pimpl& operator[](const LayerPage& page)
-    {
-      return layer_[page];
-    }
-    const Pimpl& operator[](const LayerPage& page) const
-    {
-      return layer_[page];
-    }
-    const Pimpl& Fore() const
-    {
-      return layer_[LayerPage::Fore];
-    }
+    LayerPtr& operator[](const LayerPage& page);
+    const LayerPtr& operator[](const LayerPage& page) const;
 
-    const Pimpl& Back() const
-    {
-      return layer_[LayerPage::Back];
-    }
+    const LayerPtr& Fore() const;
+    LayerPtr& Fore();
 
-    //operator PageLayer<LayerPtr>()const
-    //{
-    //  std::array<LayerPtr, 2> ret;
-    //  for ( auto& i : step(2) )
-    //  {
-    //    ret[i] = layer_[i];
-    //  }
-    //  PageLayer<LayerPtr> tmp(ret);
-    //  return tmp;
-    //}
+    const LayerPtr& Back() const;
+    LayerPtr& Back();
 
-    void Update()
-    {
-      layer_[LayerPage::Fore]->Update();
-    }
+    void Update();
 
-    void Draw()const
-    {
-      layer_[LayerPage::Fore]->DrawPhase();
-    }
+    void Draw()const;
 
-    void Trans(int time_millisec)
-    {
-      detail::PageLayerTrans(time_millisec, layer_[LayerPage::Fore], layer_[LayerPage::Back]);
-    }
-    void Trans(const TransUniversalData& data)
-    {
-      detail::PageLayerTrans(data, layer_[LayerPage::Fore], layer_[LayerPage::Back]);
-    }
+    void Trans(int time_millisec);
+    void Trans(const TransUniversalData& data);
     void Trans(const TransScrollData& data);
 
   private:
 
 
-    std::array<Pimpl, 2> layer_;
+    std::array<LayerPtr, 2> layer_;
   };
 
 

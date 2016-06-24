@@ -26,7 +26,7 @@ namespace kag
       return GetLayer(layer_num)[page];
     }
 
-    PageLayer<LayerPtr> GetLayer(std::pair<kag::converter::LayerType, int> layer_num) const;
+    PageLayer& GetLayer(std::pair<kag::converter::LayerType, int> layer_num) const;
     LayerManager layerManager()const;
 
     template<class Manager>typename  type_traits::GetType<Manager>::shared GetManager(const SnapShotSpan& name)

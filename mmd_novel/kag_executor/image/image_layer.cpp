@@ -15,7 +15,10 @@ namespace kag
       SetPositionWidth(tex.width);
       SetPositionHeight(tex.height);
     }
-
+    void ImageLayerPimpl::SetTex()
+    {
+      texture_.release();
+    }
     void ImageLayerPimpl::draw() const
     {
       if ( !texture_ ) return;
