@@ -8,9 +8,9 @@
 void Main()
 {
   TextureAsset::Register(L"siv3d-kun", L"Data/siv3d-kun.png");
-  auto executor = std::make_shared< kag::FileExecutor>(L"test.txt");
-  executor->AddManager<kag::ImageManager>(L"image");
-  executor->AddManager<kag::MessageManager>(L"message");
+  auto executor = std::make_shared<kag::file::FileExecutor>(L"test.txt");
+  executor->AddManager<kag::file::ImageManager>(L"image");
+  executor->AddManager<kag::file::MessageManager>(L"message");
 
   //executor.AddManager<kag::MMDManager>(L"mmd");
   TextReader reader(L"test.txt");
@@ -32,7 +32,9 @@ void Main()
   camera.pos = { 0,12,-22 };
   camera.lookat = { 0,12,0 };
   Graphics3D::SetCamera(camera);
+
   Font log{ FontProperty(L"meiryo",16) };
+
   bool isDebug = true;
   while ( System::Update() )
   {

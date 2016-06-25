@@ -4,23 +4,25 @@
 namespace kag
 {
   struct ILayer;
-  using LayerPtr = std::shared_ptr<ILayer>;
-
-  class LayerManagerImpl
+  using ILayerPtr = std::shared_ptr<ILayer>;
+  namespace detail
   {
-    Array<std::array<ILayer*, 2>> list_;
+    class LayerManagerImpl
+    {
+      Array<std::array<ILayer*, 2>> list_;
 
-  public:
-    void Update();
+    public:
+      void Update();
 
-    void Draw() const;
+      void Draw() const;
 
-    void Set(const PageLayer& layer);
+      void Set(const PageLayer& layer);
 
-    void Remove(const PageLayer& layer);
+      void Remove(const PageLayer& layer);
 
-    void Update(const PageLayer& layer);
+      void Update(const PageLayer& layer);
 
-    void Sort();
-  };
+      void Sort();
+    };
+  }
 }

@@ -4,7 +4,7 @@
 namespace kag
 {
   struct ILayer;
-  using LayerPtr = std::shared_ptr<ILayer>;
+  using ILayerPtr = std::shared_ptr<ILayer>;
 
   struct IManager
   {
@@ -19,7 +19,7 @@ namespace kag
 
     PageLayer& GetLayer(int index);
 
-    LayerPtr& GetLayer(int index, LayerPage page);
+    ILayerPtr& GetLayer(int index, LayerPage page);
 
     int size() const;
 
@@ -32,7 +32,7 @@ namespace kag
       return Cast<Type>(GetLayer(index, page));
     }
 
-    template<class Type> static type_traits::GetType_s<Type> Cast(LayerPtr& layer)
+    template<class Type> static type_traits::GetType_s<Type> Cast(ILayerPtr& layer)
     {
       using Ptr = type_traits::GetType_t<Type>;
       static_assert(std::is_base_of<ILayer, Ptr>::value, "型はレイヤを継承している必要があります");
@@ -43,7 +43,7 @@ namespace kag
       return res;
     }
 
-    void resize(int num, const LayerPtr& fore, const LayerPtr& back);
+    void resize(int num, const ILayerPtr& fore, const ILayerPtr& back);
 
     std::shared_ptr<Executor> GetExecutor();
 

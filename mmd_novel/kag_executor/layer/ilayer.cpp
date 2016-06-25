@@ -299,13 +299,13 @@ namespace kag
       Transition trans;
     };
 
-    void PageLayerTrans(const TransUniversalData& data, const LayerPtr& fore_layer, const LayerPtr& back_layer)
+    void PageLayerTrans(const TransUniversalData& data, const ILayerPtr& fore_layer, const ILayerPtr& back_layer)
     {
       auto ptr = std::make_shared<RuleTrans>(data.time_millisec, fore_layer.get(), back_layer.get(), data.rule_tex);
       fore_layer->AddTrans(ptr);
     }
 
-    void PageLayerTrans(int time_millisec, const LayerPtr & fore_layer, const LayerPtr & back_layer)
+    void PageLayerTrans(int time_millisec, const ILayerPtr & fore_layer, const ILayerPtr & back_layer)
     {
       auto ptr = std::make_shared<CrossFadeTrans>(time_millisec, fore_layer.get(), back_layer.get());
       fore_layer->AddTrans(ptr);

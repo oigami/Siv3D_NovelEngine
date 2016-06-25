@@ -4,37 +4,39 @@
 #include <MmdNovel/kag_file_executor.h>
 namespace kag
 {
-  struct ImageManager : public IFileManager, std::enable_shared_from_this<ImageManager>
+  namespace file
   {
-  private:
-    virtual void AddTag(FuncList& list)override;
-    virtual void update() {}
-  public:
-    ImageManager(const std::weak_ptr<Executor>& exe);
-
-    void resize(int num);
-
-    ImageLayer GetLayer(int layer, LayerPage page) { return IFileManager::GetLayer<ImageLayer>(layer, page); }
-
-    struct ImageVal
+    struct ImageManager : public IFileManagerType<ImageManager>
     {
-      Must<std::pair<converter::LayerType, int>> layer;
-      LayerPage page = LayerPage::Fore;
-      Must<SnapShotSpan> storage;
-      Optional<int> left, top;
-      Optional<int> opacity;
-      Optional<int> index;
-      Optional<bool> visible;
+    private:
+      virtual void AddTag(FuncList& list)override;
+      virtual void update() {}
+    public:
+      ImageManager(const std::weak_ptr<Executor>& exe);
 
-      std::shared_ptr<ImageManager> manager_;
-      ImageVal(const std::shared_ptr<ImageManager>& manager, CommandToken& token);
-      ImageVal(const std::shared_ptr<ImageManager>& manager, int layer_index, const SnapShotSpan& storage);
+      void resize(int num);
 
-      void attach() const;
+      ImageLayer GetLayer(int layer, LayerPage page) { return IFileManager::GetLayer<ImageLayer>(layer, page); }
+      struct ImageVal
+      {
+        Must<std::pair<LayerType, int>> layer;
+        LayerPage page = LayerPage::Fore;
+        Must<SnapShotSpan> storage;
+        Optional<int> left, top;
+        Optional<int> opacity;
+        Optional<int> index;
+        Optional<bool> visible;
+
+        std::shared_ptr<ImageManager> manager_;
+        ImageVal(const std::shared_ptr<ImageManager>& manager, CommandToken& token);
+        ImageVal(const std::shared_ptr<ImageManager>& manager, int layer_index, const SnapShotSpan& storage);
+
+        void attach() const;
+      };
+
+      void ImageTag(CommandToken & token);
+    private:
+
     };
-
-    void ImageTag(CommandToken & token);
-  private:
-
-  };
+  }
 }

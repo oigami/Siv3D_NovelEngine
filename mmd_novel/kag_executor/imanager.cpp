@@ -21,7 +21,7 @@ namespace kag
     return layer_[index];
   }
 
-  LayerPtr & IManager::GetLayer(int index, LayerPage page)
+  ILayerPtr & IManager::GetLayer(int index, LayerPage page)
   {
     return GetLayer(index)[page];
   }
@@ -36,7 +36,7 @@ namespace kag
     update();
   }
 
-  void IManager::resize(int num, const LayerPtr& fore, const LayerPtr& back)
+  void IManager::resize(int num, const ILayerPtr& fore, const ILayerPtr& back)
   {
     const int pre_size = size();
     auto&& manager = layer_manager_;

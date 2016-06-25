@@ -295,9 +295,6 @@
     <ClInclude Include="MmdNovel\kag_executor.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="MmdNovel\tag_editor.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="MmdNovel\default_value.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>

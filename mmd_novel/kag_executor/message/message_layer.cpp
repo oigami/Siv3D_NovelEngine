@@ -5,7 +5,7 @@ namespace kag
   {
     namespace pimpl
     {
-      void MessageLayerPimpl::clone(LayerPtr & out)
+      void MessageLayerPimpl::clone(ILayerPtr & out)
       {
         DefaultClone(*this, out);
       }

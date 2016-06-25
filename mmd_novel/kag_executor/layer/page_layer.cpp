@@ -3,32 +3,32 @@
 
 namespace kag
 {
-  LayerPtr& PageLayer::operator[](const LayerPage& page)
+  ILayerPtr& PageLayer::operator[](const LayerPage& page)
   {
     return layer_[page];
   }
 
-  const LayerPtr& PageLayer::operator[](const LayerPage& page) const
+  const ILayerPtr& PageLayer::operator[](const LayerPage& page) const
   {
     return layer_[page];
   }
 
-  const LayerPtr & PageLayer::Fore() const
+  const ILayerPtr & PageLayer::Fore() const
   {
     return layer_[LayerPage::Fore];
   }
 
-  LayerPtr & PageLayer::Fore()
+  ILayerPtr & PageLayer::Fore()
   {
     return layer_[LayerPage::Fore];
   }
 
-  const LayerPtr & PageLayer::Back() const
+  const ILayerPtr & PageLayer::Back() const
   {
     return layer_[LayerPage::Back];
   }
 
-  LayerPtr & PageLayer::Back()
+  ILayerPtr & PageLayer::Back()
   {
     return layer_[LayerPage::Back];
   }

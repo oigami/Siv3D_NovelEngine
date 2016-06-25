@@ -6,7 +6,7 @@
 namespace kag
 {
   struct ILayer;
-  using LayerPtr = std::shared_ptr<ILayer>;
+  using ILayerPtr = std::shared_ptr<ILayer>;
 
 
   struct ILayer
@@ -14,9 +14,9 @@ namespace kag
   private:
     virtual void update() {};
   public:
-    virtual void clone(LayerPtr& out) = 0;
+    virtual void clone(ILayerPtr& out) = 0;
     template<class LayerType>
-    static void DefaultClone(LayerType& this_, LayerPtr& out)
+    static void DefaultClone(LayerType& this_, ILayerPtr& out)
     {
       auto out_c = std::dynamic_pointer_cast<LayerType>(out);
       if ( out_c )

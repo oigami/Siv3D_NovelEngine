@@ -7,7 +7,7 @@ namespace kag
   {
     class ImageLayerPimpl : public ILayer
     {
-      virtual void clone(LayerPtr& out);
+      virtual void clone(ILayerPtr& out);
 
     public:
       using ILayer::ILayer;

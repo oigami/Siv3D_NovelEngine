@@ -5,7 +5,7 @@
 namespace kag
 {
   struct ILayer;
-  using LayerPtr = std::shared_ptr<ILayer>;
+  using ILayerPtr = std::shared_ptr<ILayer>;
 
   struct EasingType
   {
@@ -86,9 +86,11 @@ namespace kag
     Stay stay;
 
   };
-
-  class LayerManagerImpl;
-  using LayerManager = std::shared_ptr<LayerManagerImpl>;
+  namespace detail
+  {
+    class LayerManagerImpl;
+  }
+  using LayerManager = std::shared_ptr<detail::LayerManagerImpl>;
 
   class ITransEffect
   {
@@ -118,8 +120,8 @@ namespace kag
   };
   namespace detail
   {
-    void PageLayerTrans(int time_millisec, const LayerPtr& fore_layer, const LayerPtr& back_layer);
-    void PageLayerTrans(const TransUniversalData& data, const LayerPtr& fore_layer, const LayerPtr& back_layer);
+    void PageLayerTrans(int time_millisec, const ILayerPtr& fore_layer, const ILayerPtr& back_layer);
+    void PageLayerTrans(const TransUniversalData& data, const ILayerPtr& fore_layer, const ILayerPtr& back_layer);
   }
 
   class LayerPage
@@ -150,19 +152,19 @@ namespace kag
   class PageLayer
   {
   public:
-    PageLayer(std::array<LayerPtr, 2>& l) : layer_(l) {}
+    PageLayer(std::array<ILayerPtr, 2>& l) : layer_(l) {}
     PageLayer() = default;
-    PageLayer(const LayerPtr& fore, const LayerPtr& back) : layer_({ fore,back }) {}
+    PageLayer(const ILayerPtr& fore, const ILayerPtr& back) : layer_({ fore,back }) {}
     PageLayer(const PageLayer&) = default;
 
-    LayerPtr& operator[](const LayerPage& page);
-    const LayerPtr& operator[](const LayerPage& page) const;
+    ILayerPtr& operator[](const LayerPage& page);
+    const ILayerPtr& operator[](const LayerPage& page) const;
 
-    const LayerPtr& Fore() const;
-    LayerPtr& Fore();
+    const ILayerPtr& Fore() const;
+    ILayerPtr& Fore();
 
-    const LayerPtr& Back() const;
-    LayerPtr& Back();
+    const ILayerPtr& Back() const;
+    ILayerPtr& Back();
 
     void Update();
 
@@ -175,7 +177,7 @@ namespace kag
   private:
 
 
-    std::array<LayerPtr, 2> layer_;
+    std::array<ILayerPtr, 2> layer_;
   };
 
 

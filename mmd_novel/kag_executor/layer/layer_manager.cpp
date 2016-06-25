@@ -2,60 +2,62 @@
 #include <MmdNovel/layer/ilayer.h>
 namespace kag
 {
-
-  void LayerManagerImpl::Update()
+  namespace detail
   {
-    for ( auto& i : list_ )
+    void LayerManagerImpl::Update()
     {
-      i[LayerPage::Fore]->Update();
-    }
-  }
-  void LayerManagerImpl::Draw() const
-  {
-    for ( auto& i : list_ )
-    {
-      i[LayerPage::Fore]->DrawPhase();
-    }
-  }
-  namespace
-  {
-    auto comp = [](const auto& a, const auto& b)
-    {
-      return *a[LayerPage::Fore] < *b[LayerPage::Fore];
-    };
-  }
-  void LayerManagerImpl::Set(const PageLayer & layer)
-  {
-    auto b = list_.begin();
-    auto it = std::lower_bound(b, list_.end(), layer, comp);
-    if ( b != it ) --it;
-    list_.insert(it, std::array<ILayer*, 2>{layer.Fore().get(), layer.Back().get()});
-  }
-  void LayerManagerImpl::Remove(const PageLayer& layer)
-  {
-    auto e = list_.end();
-    auto it = std::equal_range(list_.begin(), e, layer, comp);
-
-    while ( it.first < it.second )
-    {
-      if ( (*it.first)[LayerPage::Fore] == layer[LayerPage::Fore].get() )
+      for ( auto& i : list_ )
       {
-        list_.erase(it.first);
-        break;
+        i[LayerPage::Fore]->Update();
       }
-      ++it.first;
     }
-  }
+    void LayerManagerImpl::Draw() const
+    {
+      for ( auto& i : list_ )
+      {
+        i[LayerPage::Fore]->DrawPhase();
+      }
+    }
+    namespace
+    {
+      auto comp = [](const auto& a, const auto& b)
+      {
+        return *a[LayerPage::Fore] < *b[LayerPage::Fore];
+      };
+    }
+    void LayerManagerImpl::Set(const PageLayer & layer)
+    {
+      auto b = list_.begin();
+      auto it = std::lower_bound(b, list_.end(), layer, comp);
+      if ( b != it ) --it;
+      list_.insert(it, std::array<ILayer*, 2>{layer.Fore().get(), layer.Back().get()});
+    }
+    void LayerManagerImpl::Remove(const PageLayer& layer)
+    {
+      auto e = list_.end();
+      auto it = std::equal_range(list_.begin(), e, layer, comp);
 
-  void LayerManagerImpl::Update(const PageLayer& layer)
-  {
-    Remove(layer);
-    Set(layer);
-  }
+      while ( it.first < it.second )
+      {
+        if ( (*it.first)[LayerPage::Fore] == layer[LayerPage::Fore].get() )
+        {
+          list_.erase(it.first);
+          break;
+        }
+        ++it.first;
+      }
+    }
 
-  void LayerManagerImpl::Sort()
-  {
-    std::sort(list_.begin(), list_.end(), comp);
-  }
+    void LayerManagerImpl::Update(const PageLayer& layer)
+    {
+      Remove(layer);
+      Set(layer);
+    }
 
+    void LayerManagerImpl::Sort()
+    {
+      std::sort(list_.begin(), list_.end(), comp);
+    }
+
+  }
 }

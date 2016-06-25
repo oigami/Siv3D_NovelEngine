@@ -8,7 +8,7 @@ namespace kag
   struct IManager;
   using IManagerPtr = std::shared_ptr<IManager>;
   struct ILayer;
-  using LayerPtr = std::shared_ptr<ILayer>;
+  using ILayerPtr = std::shared_ptr<ILayer>;
   class LayerPage;
 
   /// <summary>
@@ -21,12 +21,12 @@ namespace kag
 
     Executor();
 
-    LayerPtr GetLayer(std::pair<kag::converter::LayerType, int> layer_num, const LayerPage& page) const
+    ILayerPtr GetLayer(std::pair<LayerType, int> layer_num, const LayerPage& page) const
     {
       return GetLayer(layer_num)[page];
     }
 
-    PageLayer& GetLayer(std::pair<kag::converter::LayerType, int> layer_num) const;
+    PageLayer& GetLayer(std::pair<LayerType, int> layer_num) const;
     LayerManager layerManager()const;
 
     template<class Manager>typename  type_traits::GetType<Manager>::shared GetManager(const SnapShotSpan& name)

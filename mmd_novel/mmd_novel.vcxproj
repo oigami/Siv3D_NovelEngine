@@ -194,7 +194,6 @@
     <ClInclude Include="MmdNovel\message\message_layer.h" />
     <ClInclude Include="MmdNovel\message\message_manager.h" />
     <ClInclude Include="MmdNovel\message\snapshotspan.h" />
-    <ClInclude Include="MmdNovel\tag_editor.h" />
     <ClInclude Include="kag_parser\kag_parser.h" />
     <ClInclude Include="kag_parser\tokenizer.h" />
     <ClInclude Include="MmdNovel\type_traits.h" />

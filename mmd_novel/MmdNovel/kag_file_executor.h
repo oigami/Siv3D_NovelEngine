@@ -5,59 +5,70 @@
 
 namespace kag
 {
-  struct IFileManager : IManager
+  namespace file
   {
-    using IManager::IManager;
-    using FuncList = std::map<SnapShotSpan, std::function<void(CommandToken&)>>;
-    virtual void AddTag(FuncList& func_list) = 0;
-    template<class Manager> static auto Bind(const std::shared_ptr<Manager>& this_,
-                                             void (Manager::*f)(CommandToken&))
+    namespace detail
     {
-      return[this_, f](CommandToken& token) { (this_.get()->*f)(token); };
+      struct IFileManager : IManager
+      {
+        using IManager::IManager;
+        using FuncList = std::map<SnapShotSpan, std::function<void(CommandToken&)>>;
+        virtual void AddTag(FuncList& func_list) = 0;
+      };
     }
-  };
-
-  class FileExecutor : public Executor
-  {
-  public:
-    FileExecutor();
-    FileExecutor(const FilePath& path);
-    void Load(const FilePath& path);
-    void Update();
-    int NowFileLine() const;
-
-    using TagFunction = IFileManager::FuncList;
-
-    void AddManager(const SnapShotSpan & name, const std::shared_ptr<IFileManager>& manager);
-
-    template<class Manager> void AddManager(const SnapShotSpan& name)
+    template<class T> struct IFileManagerType :public detail::IFileManager, public std::enable_shared_from_this<T>
     {
-      static_assert(std::is_base_of<IFileManager, Manager>::value, "ManagerはIFileManagerを継承している必要があります");
-      static_assert(std::is_convertible<Manager*, IFileManager*>::value, "Managerがpublic継承しているか確認してください");
-      AddManager(name, std::make_shared<Manager>(this->shared_from_this()));
-    }
+      using Ptr = std::shared_ptr<T>;
 
-    int NowLine() const;
+      using IFileManager::IFileManager;
+      template<class Manager> auto Bind(void (Manager::*f)(CommandToken&))
+      {
+        return[this_ = shared_from_this(), f](CommandToken& token){(this_.get()->*f)(token); };
+      }
+    };
 
-  private:
-    TagFunction tag_func_;
+    class  FileExecutor : public Executor
+    {
+    public:
+      FileExecutor();
+      FileExecutor(const FilePath& path);
+      void Load(const FilePath& path);
+      void Update();
+      int NowFileLine() const;
 
-    Parser parser_;
+      using TagFunction = detail::IFileManager::FuncList;
 
-    //タグリファレンス
-    //http://devdoc.kikyou.info/tvp/docs/kag3doc/contents/index.html
+      void AddManager(const SnapShotSpan & name, const std::shared_ptr<detail::IFileManager>& manager);
 
-    //メッセージ関連
+      template<class Manager> void AddManager(const SnapShotSpan& name)
+      {
+        static_assert(std::is_base_of<detail::IFileManager, Manager>::value, "ManagerはIFileManagerを継承している必要があります");
+        static_assert(std::is_convertible<Manager*, detail::IFileManager*>::value, "Managerがpublic継承しているか確認してください");
+        AddManager(name, std::make_shared<Manager>(this->shared_from_this()));
+      }
 
-    //void UnlockLinkTag(CommandToken& token);
+      int NowLine() const;
 
-    /* レイヤ関連 */
-    void MoveTag(CommandToken& token);
-    void TransTag(CommandToken& token);
+    private:
+      TagFunction tag_func_;
 
-    /* MMD関連 */
-    void CameraTag(CommandToken& token);
+      Parser parser_;
 
-  };
+      //タグリファレンス
+      //http://devdoc.kikyou.info/tvp/docs/kag3doc/contents/index.html
 
+      //メッセージ関連
+
+      //void UnlockLinkTag(CommandToken& token);
+
+      /* レイヤ関連 */
+      void MoveTag(CommandToken& token);
+      void TransTag(CommandToken& token);
+
+      /* MMD関連 */
+      void CameraTag(CommandToken& token);
+
+    };
+
+  }
 }

@@ -18,7 +18,7 @@ namespace kag
 
   public:
 
-    Pimpl() :layer_manager_(std::make_shared<LayerManagerImpl>()) {}
+    Pimpl() :layer_manager_(std::make_shared<detail::LayerManagerImpl>()) {}
 
     LayerManager layerManager() { return layer_manager_; }
 
