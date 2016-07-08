@@ -52,7 +52,7 @@ namespace kag
 
     void IsVisible(bool visible);
 
-    void SetZIndex(uint16 index);
+    void SetZIndex(int index);
 
     void MoveEffect(const MoveEffectData& data);
     void MoveEffect(const MoveEffectData::Array& data);
@@ -76,7 +76,7 @@ namespace kag
     Effect effect;
     Size normal_size_;
     Rect position_;
-    uint16 z_index_;
+    int z_index_;
     uint8 opacity_;
     bool visible_;
   };

@@ -174,12 +174,6 @@ namespace kag
       Stopwatch timer_;
 
       /// <summary>
-      /// 表が0、裏が1の配列の配列
-      /// </summary>
-      static constexpr int message_fore_layer = 0;
-      static constexpr int message_back_layer = 1;
-
-      /// <summary>
       /// 現在のレイヤ番号を表す
       /// </summary>
       int current_layer_;
@@ -207,6 +201,7 @@ namespace kag
       /// <summary>クリックによるスキップをするかどうか</summary>
       bool is_click_skip_;
 
+      /// <summary>文字の表示にウェイトをするかどうか</summary>
       bool is_no_wait_;
 
       /// <summary>クリックに対応するキー</summary>

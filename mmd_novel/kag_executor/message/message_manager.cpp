@@ -54,7 +54,7 @@ namespace kag
     void MessageManager::resize(size_t size)
     {
       static const MessageLayer fore = GetExecutor()->MakeLayer<MessageLayer>();
-      IFileManager::resize(size, fore, fore);
+      IFileManager::resize(static_cast<int>(size), fore, fore);
     }
 
     void MessageManager::Clear()

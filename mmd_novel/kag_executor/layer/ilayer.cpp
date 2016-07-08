@@ -154,7 +154,7 @@ namespace kag
     position_.h = static_cast<int>(normal_size_.y * s);
   }
   void ILayer::IsVisible(bool visible) { visible_ = visible; }
-  void ILayer::SetZIndex(uint16 index) { z_index_ = index; }
+  void ILayer::SetZIndex(int index) { z_index_ = index; }
   void ILayer::MoveEffect(const MoveEffectData & data) { effect.add<kag::MoveEffect>(this, data); }
   void ILayer::MoveEffect(const MoveEffectData::Array & data) { effect.add<kag::MoveEffect>(this, data); }
   void ILayer::ScaleEffect(const ScaleEffectData& data) { ScaleEffect(Array<ScaleEffect::Data>(1, data)); }
