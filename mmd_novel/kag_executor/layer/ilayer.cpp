@@ -116,7 +116,8 @@ namespace kag
     }
   }
 
-  ILayer::ILayer(const LayerManager & manager) :layer_manager_(manager), opacity_(255), visible_(true), z_index_(0)
+  ILayer::ILayer(const LayerManager & manager)
+    :layer_manager_(manager), opacity_(255), visible_(true), z_index_(0), position_(0, 0)
   {
   }
 

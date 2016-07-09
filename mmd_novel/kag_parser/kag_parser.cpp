@@ -236,7 +236,7 @@ namespace kag
         }
         else if ( span == L"back" )
         {
-          out = LayerPage::Fore;
+          out = LayerPage::Back;
         }
         else
         {
