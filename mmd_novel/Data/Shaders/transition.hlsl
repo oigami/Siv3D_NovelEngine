@@ -1,10 +1,12 @@
-struct VS_OUTPUT {
+struct VS_OUTPUT
+{
   float4 position : SV_POSITION;
   float2 tex : TEXCOORD0;
   float4 color : COLOR0;
 };
 
-cbuffer psConstants1 : register(b1) {
+cbuffer psConstants1 : register(b1)
+{
   float4 g_range;
 };
 
@@ -20,7 +22,9 @@ float4 PS(VS_OUTPUT input) : SV_Target{
 
   const float4 fore_color = texture1.Sample(sampler0, input.tex);
   const float4 back_color = texture2.Sample(sampler0, input.tex);
-  float4 color = fore_color * (1 - back_color.a * back_alpha) + back_color * (1 - fore_color.a * fore_alpha);
-  color.a = fore_color.a * fore_alpha + back_color.a * back_alpha;
+  const float4 color =
+    float4(fore_color.rgb * rcp(fore_color.a + 1e-32) * fore_alpha
+         + back_color.rgb * rcp(back_color.a + 1e-32) * back_alpha,
+           fore_color.a * fore_alpha + back_color.a * back_alpha);
   return color;
 }

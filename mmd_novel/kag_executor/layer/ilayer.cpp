@@ -231,8 +231,8 @@ namespace kag
         Texture().draw();
 
         constexpr BlendState blend(true,
-          Blend::One, Blend::Zero, BlendOp::Add,
-          Blend::One, Blend::Zero, BlendOp::Add);
+          Blend::SrcAlpha, Blend::InvSrcAlpha, BlendOp::Add,
+          Blend::One, Blend::One, BlendOp::Add);
 
         Graphics2D::SetBlendState(blend);
         layer->draw();
