@@ -1,5 +1,5 @@
 ﻿
-[position layer=message opacity=0]
+[position layer=message opacity=100]
 ;[move layer=message0 time=1000 path="(100,100,255)(0,0,0)"]
 [position layer=message0 visible=true left=20 top=0]
 [position layer="message1" visible=true left=25 top=80]
@@ -62,7 +62,7 @@
 [current layer="message0"][er]
 [nowait][[trans]タグ[p][endnowait]
 [current layer="message1"]
-[position layer="message1" visible=true left=25 opacity=0 top=80 color ="0x000000"]
+[position layer="message1" visible=true left=25 opacity=100 top=80 color ="0x00f000"]
 [image storage=Data/Siv3D-kun.png layer=0 page=back left=600 visible=true]
 [trans method="universal" rule="Data/rule1080p/002.png" time=2000 layer=0 vague=1]
 [p][er]
@@ -80,7 +80,7 @@
 
 [font size=60]
 [current layer=message1 page=back]
-[position layer="message1" page=back visible=true left=25 opacity=0 top=80 color ="0x000000"]
+[position layer="message1" page=back visible=true left=25 opacity=100 top=80 color ="0xf00000"]
 [current layer=message1 page=fore]
 文字もできる。[p]
 [trans method="universal" rule="Data/rule1080p/029.png" time=2000 layer=message1 vague=1]
