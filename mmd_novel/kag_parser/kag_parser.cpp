@@ -4,7 +4,7 @@ namespace kag
 {
   namespace file
   {
-    Parser::Parser(const FilePath & path)
+    Parser::Parser(const FilePath & path) :Parser()
     {
       TextReader reader(path);
       tokenizer_ = Tokenizer(reader.readAll());
