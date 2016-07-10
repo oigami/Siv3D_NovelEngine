@@ -24,9 +24,6 @@ namespace kag
       tag_func_[L"move"] = bind(&FileExecutor::MoveTag);
       tag_func_[L"trans"] = bind(&FileExecutor::TransTag);
 
-      /* MMD関連 */
-      tag_func_[L"camera"] = bind(&FileExecutor::CameraTag);
-
     }
 
     void FileExecutor::Load(const FilePath & path)
@@ -188,43 +185,10 @@ namespace kag
       Executor::Command(tag.func);
     }
 
-    /* MMD関連 */
-
-
-    void FileExecutor::CameraTag(CommandToken & token)
-    {
-      struct CameraVal
-      {
-        Optional<Vec3> pos_, lookat_;
-        CameraVal(CommandToken& token)
-        {
-          Optional<SnapShotSpan> pos, lookat;
-          token.GET(pos).GET(lookat);
-          Vec3 tmp;
-          if ( pos && swscanf(pos->Str(), L"(%lf,%lf,%lf)", &tmp.x, &tmp.y, &tmp.z) == 3 )
-            pos_ = tmp;
-          if ( lookat && swscanf(lookat->Str(), L"(%lf,%lf,%lf)", &tmp.x, &tmp.y, &tmp.z) == 3 )
-          {
-            lookat_ = tmp;
-          }
-        }
-        void attach() const
-        {
-          Camera camera;
-          if ( pos_ ) camera.pos = *pos_;
-          if ( lookat_ ) camera.lookat = *lookat_;
-          Graphics3D::SetCamera(camera);
-        }
-      };
-      Executor::Command([tag = CameraVal(token)](){ tag.attach(); });
-    }
-
     int FileExecutor::NowLine() const
     {
       return parser_.NowLine();
     }
-
-
 
   }
 }

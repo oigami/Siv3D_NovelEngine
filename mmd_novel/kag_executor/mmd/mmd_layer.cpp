@@ -1,10 +1,10 @@
-#ifdef USE_MMD_LAYER
-
 #include <MmdNovel/mmd/mmd_layer.h>
 namespace kag
 {
   namespace pimpl
   {
+    void MMDLayerPimpl::clone(ILayerPtr & out) { return DefaultClone(*this, out); }
+
     MMDLayerPimpl::MMDLayerPimpl(const LayerManager & manager) :ILayer(manager) {}
 
     void MMDLayerPimpl::SetModel(s3d_mmd::MMD model)
@@ -41,4 +41,3 @@ namespace kag
     }
   }
 }
-#endif /* USE_MMD_LAYER */

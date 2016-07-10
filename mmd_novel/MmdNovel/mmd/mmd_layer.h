@@ -1,5 +1,5 @@
 #pragma once
-#include <MmdNovel/layer.h>
+#include <MmdNovel/layer/ilayer.h>
 #include <MMD.h>
 namespace kag
 {
@@ -8,6 +8,8 @@ namespace kag
     class MMDLayerPimpl : public ILayer
     {
     public:
+      void clone(ILayerPtr& out)override;
+
       MMDLayerPimpl(const LayerManager& manager);
 
       void SetModel(s3d_mmd::MMD model);
