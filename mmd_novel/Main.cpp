@@ -5,6 +5,8 @@
 #include <MmdNovel/message/message_manager.h>
 
 #include <MmdNovel/mmd/mmd_manager.h>
+#include <MmdNovel/live2d/live2d_manager.h>
+void Live2DUpdate();
 void Main()
 {
   TextureAsset::Register(L"siv3d-kun", L"Data/siv3d-kun.png");
@@ -13,6 +15,7 @@ void Main()
   executor->AddManager<kag::file::MessageManager>(L"message");
 
   executor->AddManager<kag::file::MMDManager>(L"mmd");
+  executor->AddManager<kag::live2d::Live2DManager>(L"live2d");
 
   TextReader reader(L"test.txt");
   Window::SetFullscreen(false, Size(1024, 768));
@@ -39,6 +42,7 @@ void Main()
   bool isDebug = true;
   while ( System::Update() )
   {
+    Live2DUpdate();
     Circle(Mouse::Pos(), 50).draw({ 255, 0, 0, 127 });
     executor->Update();
     /*if ( Input::MouseR.clicked )
