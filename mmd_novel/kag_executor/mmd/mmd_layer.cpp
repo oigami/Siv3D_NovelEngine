@@ -10,34 +10,41 @@ namespace kag
     void MMDLayerPimpl::SetModel(s3d_mmd::MMD model)
     {
       model_ = model;
+      model_.attach(vmd_);
     }
+
     void MMDLayerPimpl::SetVMD(s3d_mmd::VMD vmd)
     {
       vmd_ = vmd;
-      vmd_.setTime(0);
+      vmd_.SetPosFrame(0);
+      vmd_.play();
+      if ( model_.isOpen() ) model_.attach(vmd_);
     }
     void MMDLayerPimpl::update()
     {
-      /*if ( model_.isOpen() )
+      world.update();
+      if ( model_.isOpen() )
       {
-        vmd_.UpdateTime();
-        vmd_.UpdateBone(*model_.bones());
-      }*/
+        model_.update();
+      }
     }
     void MMDLayerPimpl::draw() const
     {
-      /*if ( model_.isOpen() )
+      if ( model_.isOpen() )
       {
-        model_.draw(vmd_);
-      }*/
+        const static Mesh meshGround(MeshData::Plane({ 40, 40 }, { 6, 6 }));
+        //meshGround.draw();
+
+        model_.draw(Mat4x4::Translate(pos_.x, pos_.y, 0.0f));
+      }
     }
     void MMDLayerPimpl::IsLoop(bool loop)
     {
-      //vmd_.IsLoop(loop, 0);
+      vmd_.setLoop(loop);
     }
     void MMDLayerPimpl::SetTime(int time)
     {
-      vmd_.setTime(time);
+      vmd_.SetPosFrame(time);
     }
   }
 }

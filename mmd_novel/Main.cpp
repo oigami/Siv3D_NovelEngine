@@ -4,7 +4,7 @@
 #include <MmdNovel/image/image_manager.h>
 #include <MmdNovel/message/message_manager.h>
 
-//#include <MmdNovel/mmd/mmd_manager.h>
+#include <MmdNovel/mmd/mmd_manager.h>
 void Main()
 {
   TextureAsset::Register(L"siv3d-kun", L"Data/siv3d-kun.png");
@@ -12,7 +12,8 @@ void Main()
   executor->AddManager<kag::file::ImageManager>(L"image");
   executor->AddManager<kag::file::MessageManager>(L"message");
 
-  //executor.AddManager<kag::MMDManager>(L"mmd");
+  executor->AddManager<kag::file::MMDManager>(L"mmd");
+
   TextReader reader(L"test.txt");
   Window::SetFullscreen(false, Size(1024, 768));
   Array<String> file_line;
@@ -34,7 +35,7 @@ void Main()
   Graphics3D::SetCamera(camera);
 
   Font log{ FontProperty(L"meiryo",16) };
-
+  Graphics::SetBackground(Palette::Skyblue);
   bool isDebug = true;
   while ( System::Update() )
   {
@@ -56,6 +57,7 @@ void Main()
       {
         y -= log.height;
         log(file_line[line]).draw(0, y);
+        log(y, y);
         line--;
       }
     }

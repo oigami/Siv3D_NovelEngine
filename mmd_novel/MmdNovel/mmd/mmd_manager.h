@@ -2,6 +2,7 @@
 #include <MmdNovel/kag_file_executor.h>
 #include <MmdNovel/mmd/mmd_layer.h>
 #include <MmdNovel/kag_token.h>
+
 namespace kag
 {
   namespace file
@@ -9,7 +10,7 @@ namespace kag
     struct MMDManager : IFileManagerType<MMDManager>
     {
       void AddTag(FuncList& func_list) override;
-
+      void update() override {}
     public:
 
       MMDManager(const std::weak_ptr<Executor>& exe);
@@ -29,6 +30,7 @@ namespace kag
         bool loop = true;
         bool visible = true;
         std::shared_ptr<MMDManager> manager_;
+        int x = 0, y = 0;
         void attach() const;
       };
 

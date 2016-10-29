@@ -51,7 +51,7 @@ namespace kag
 
     MMDManager::MMDVal::MMDVal(CommandToken & token, const MMDManagerPtr & manager) : manager_(manager)
     {
-      token.GET(storage).GET(vmd).GET(loop).GET(start_time).GET(visible).GET(page);
+      token.GET(storage).GET(vmd).GET(loop).GET(start_time).GET(visible).GET(page).GET(x).GET(y);
     }
 
     MMDManager::MMDVal::MMDVal(const MMDManagerPtr & manager) : manager_(manager)
@@ -62,10 +62,11 @@ namespace kag
     {
       auto layer = manager_->GetLayer(0, page);
       layer->IsVisible(visible);
-      if ( storage ) layer->SetModel(storage->ToStr());
+      if ( storage ) layer->SetModel({ storage->ToStr(),layer->world });
       if ( vmd ) layer->SetVMD(vmd->ToStr());
       layer->IsLoop(loop);
       layer->SetTime(start_time);
+      layer->setPos({ x,y });
     }
 
     void MMDManager::CameraTag(CommandToken & token)

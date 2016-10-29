@@ -1,6 +1,6 @@
 #pragma once
 #include <MmdNovel/layer/ilayer.h>
-#include <MMD.h>
+#include <MMD/MMD.h>
 namespace kag
 {
   namespace pimpl
@@ -24,11 +24,17 @@ namespace kag
 
       void SetTime(int time);
 
+      void setPos(const Point& pos)
+      {
+        pos_ = pos;
+      }
+      physics3d::Physics3DWorld world;
+
     private:
 
       s3d_mmd::VMD vmd_;
       s3d_mmd::MMD model_;
-
+      Point pos_ = { 0,0 };
     };
   }
 
