@@ -44,13 +44,13 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(SIV3D_20160110)\Inc;D:\VisualStudio\gitlab\Siv3d_MMD\Siv3D_MMD\include;$(ProjectDir);C:\VisualStudio\git\siv3d_mmdmodel\Siv3D_MMD\include;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SIV3D_20160110)\Lib;A:\x64\debug_lib;D:\VisualStudio\gitlab\mmd_novel\mmd_novel\lib\Siv3d_MMD;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SIV3D_20160812)\Inc;$(ProjectDir);$(IncludePath)</IncludePath>
+    <LibraryPath>$(SIV3D_20160812)\Lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>$(SIV3D_20160110)\Inc;D:\VisualStudio\gitlab\Siv3d_MMD\Siv3D_MMD\include;$(ProjectDir);$(IncludePath)</IncludePath>
-    <LibraryPath>$(SIV3D_20160110)\Lib;D:\VisualStudio\gitlab\mmd_novel\mmd_novel\lib\Siv3d_MMD;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SIV3D_20160812)\Inc;$(ProjectDir);$(IncludePath)</IncludePath>
+    <LibraryPath>$(SIV3D_20160812)\Lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -169,6 +169,7 @@
     <None Include="Engine\Shaders\D3D11\Sprite.vs" />
     <None Include="Engine\Shaders\D3D11\Sprite_Font.ps" />
     <None Include="Engine\Shaders\D3D11\Sprite_Stencil.ps" />
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Resource.rc" />
@@ -207,5 +208,14 @@
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
+    <Import Project="..\packages\bullet.1.0.1\build\bullet.targets" Condition="Exists('..\packages\bullet.1.0.1\build\bullet.targets')" />
+    <Import Project="..\packages\Siv3D_MMD.1.0.0\build\siv3d_mmd.targets" Condition="Exists('..\packages\Siv3D_MMD.1.0.0\build\siv3d_mmd.targets')" />
   </ImportGroup>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>このプロジェクトは、このコンピューター上にない NuGet パッケージを参照しています。それらのパッケージをダウンロードするには、[NuGet パッケージの復元] を使用します。詳細については、http://go.microsoft.com/fwlink/?LinkID=322105 を参照してください。見つからないファイルは {0} です。</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\bullet.1.0.1\build\bullet.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\bullet.1.0.1\build\bullet.targets'))" />
+    <Error Condition="!Exists('..\packages\Siv3D_MMD.1.0.0\build\siv3d_mmd.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Siv3D_MMD.1.0.0\build\siv3d_mmd.targets'))" />
+  </Target>
 </Project>

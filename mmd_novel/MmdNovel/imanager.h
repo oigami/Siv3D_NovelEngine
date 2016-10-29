@@ -27,7 +27,7 @@ namespace kag
 
   protected:
 
-    template<class Type> type_traits::GetType_s<Type> GetLayer(int index, LayerPage& page)
+    template<class Type> type_traits::GetType_s<Type> GetLayer(int index, const LayerPage& page)
     {
       return Cast<Type>(GetLayer(index, page));
     }

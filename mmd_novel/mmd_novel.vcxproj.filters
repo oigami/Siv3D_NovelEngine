@@ -277,6 +277,7 @@
     <None Include="Engine\Shaders\D3D11\DeferredMesh.vs">
       <Filter>リソース ファイル\Engine\Shaders\D3D11</Filter>
     </None>
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Resource.rc">
